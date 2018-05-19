@@ -97,8 +97,119 @@ function camel_case($str,$separator = '_')
 {
     return str_replace(' ','',lcfirst(ucwords(str_replace($separator,' ',$str))));
 }
+
+
+/**
+ * @param $version          版本号
+ * @param string $delimiter 比较符号
+ * @return mixed
+ */
+function php_version($version, $delimiter = '>=')
+{
+    return version_compare(PHP_VERSION, $version, $delimiter);
+}
+```
+
+奇偶数
+
+```php
+function odd( $v )
+{
+    return !( $v & 1 );
+}
+
+function even( $v )
+{
+    return $v & 1;
+}
+```
+
+数组和对象的相互转换
+
+```php
+function array_to_object($arr)
+{
+    return is_array($arr) ? (object) array_map(__FUNCTION__, $arr) : $arr;
+}
+
+function object_to_array($argument)
+{
+    is_object($argument) && ($argument = get_object_vars($argument));
+    return is_array($argument) ? array_map(__FUNCTION__, $argument) : $argument;
+    //或者
+    return json_decode(json_encode($obj), true);
+}
+```
+
+I/O
+
+- php://stdin：访问PHP进程相应的输入流，比如用在获取cli执行脚本时的键盘输入。
+- php://stdout：访问PHP进程相应的输出流。
+- php://stderr：访问PHP进程相应的错误输出。
+- php://input：访问请求的原始数据的只读流。
+- php://output：只写的数据流，以 print 和 echo 一样的方式写入到输出区。
+- php://fd：允许直接访问指定的文件描述符。例 php://fd/3 引用了文件描述符 3。
+- php://memory：允许读写临时数据。 把数据储存在内存中。
+- php://temp：同上，会在内存量达到预定义的限制后（默认是 2MB）存入临时文件中。
+- php://filter：过滤器。
+
+```php
+$stdin = STDIN;
+$stdin = fopen('php://stdin', 'r');
+
+$stdout = STDOUT;
+$stdout = fopen('php://stdout', 'w') ? : fopen('php://output', 'w');
+
+$stderr = STDERR;
+$stderr = fopen('php://stderr', 'w');
+
+$input = file_get_contents('php://input');
+
+//例子
+$message = 'sdf';
+$stream = @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
+@fwrite($stream, $message);
+fflush($stream);
+```
+
+[官网手册](http://php.net/manual/zh/wrappers.php.php)
+
+
+
+xml操作
+
+```php
+/**
+ * xml操作
+ */
+$url = 'http://www.baidu.com';
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_FILE, fopen('php://stdout', 'w'));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+curl_setopt($ch, CURLOPT_URL, $url);
+$html = curl_exec($ch);
+curl_close($ch);
+
+// create document object model
+$dom = new DOMDocument();
+// load html into document object model
+@$dom->loadHTML($html);
+// create domxpath instance
+$xPath = new DOMXPath($dom);
+// get all elements with a particular id and then loop through and print the href attribute
+$elements = $xPath->query('//*[@id="lg"]/img/@src');
+foreach ($elements as $e) {
+    echo ($e->nodeValue);
+}
 ```
 
 
 
+
+
+
+
 https://cnodejs.org/topic/54b3fc05edf686411e1b9ce1
+
+
+
