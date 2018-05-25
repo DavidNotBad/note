@@ -203,13 +203,27 @@ foreach ($elements as $e) {
 }
 ```
 
+判断PHP是否以命令行模式运行
+
+```php
+in_array(PHP_SAPI, array('cli', 'phpdbg'), true) ? '是' : '否';
+```
+
+curl证书(解决cURL error 60)
+
+```shell
+#下载证书
+curl -O https://github.com/bagder/ca-bundle/blob/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt
+#下载证书(二选一)
+curl -O https://curl.haxx.se/ca/cacert.pem
+ # 配置php.ini
+curl.cainfo="真实路径/证书文件名"
+;openssl.cafile=
+```
 
 
 
 
-
-
-https://cnodejs.org/topic/54b3fc05edf686411e1b9ce1
 
 
 
