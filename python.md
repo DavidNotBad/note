@@ -215,6 +215,120 @@ number = [1,2,3]
 
 *
 
+### if语句
+
+```python
+if a == b
+elif:
+else
+```
+
+### 字典
+
+```python
+#创建字典
+alien = {'color': 'green', 'points': 5}
+#输出字典
+print(alien['color'])
+#添加字典
+alien['a'] = 'apple'
+#修改字典
+alien['a'] = 'banana'
+#删除字典
+del alien['a']
+#遍历字典
+for key, item in alien.items():
+    print(str(key) + '_' + str(item))
+#遍历字典中的所有键
+for key in alien:
+    print(key)
+for key in alien.keys():
+    print(key)
+#遍历字典中的所有的值
+for item in alien.values():
+    print(item)
+#排序并遍历
+for item in sorted(alien.values()):
+    print(item)
+#使用集合在遍历时去除重复项
+#通过对包含重复元素的列表调用set() ，可让Python找出列表中独一无二的元素，并使用这些元素来创建一个集合
+for item in set(alien.values()):
+    print(item)
+```
+
+
+
+### 嵌套
+
+```python
+#在列表中存储字典
+a = {'a': 'apple'}
+b = {'b': 'banana'}
+c = {'c': 'cat'}
+combine = [a, b, c]
+
+for item in combine:
+	print(item)
+#在字典中存储列表
+pizza = {
+	'crust': ['thick'],
+	'toppings': ['mushrooms', 'extra cheese'],
+}
+
+for topping in pizza['toppings']:
+	print(topping)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
