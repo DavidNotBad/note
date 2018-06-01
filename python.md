@@ -169,59 +169,13 @@ or
 number = [1,2,3]
 3 in number
 3 not in number
-```
 
-
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-### if语句
-
-```python
 if a == b
 elif:
 else
 ```
+
+
 
 ### 字典
 
@@ -279,7 +233,134 @@ for topping in pizza['toppings']:
 	print(topping)
 ```
 
+### 获取用户输入
 
+```python
+#python3获取用户输入
+message = input('请输入...: ')
+print(message)
+#python2.7获取用户输入
+raw_input()
+
+#让用户选择何时退出
+prompt = 'hello: '
+message = ''
+while message != 'quit':
+    message = input(prompt)
+    print(message)
+```
+
+### while循环
+
+```python
+#一般示例
+current_number = 1
+while current_number < 5:
+    print(current_number)
+    current_number += 1
+    
+#删除列表中包含特定值的字段
+pets = ['dog', 'cat', 'dog', 'goldfish', 'cat', 'rabbit', 'cat']
+while 'cat' in pets:
+    pets.remove('cat')
+print(pets)
+
+#获取用户输入并保存到列表中
+result = []
+while True:
+    message = input('please: ')
+    if message == 'quit':
+        break
+    else:
+        result.append(message)
+print(result)
+```
+
+### 函数
+
+```python
+def greet(name):
+    """显示简单的问候语"""
+    print('hello ' + name)
+
+
+greet('david')
+
+#关键字实参
+def greet(name, age=19, ):
+    """显示简单的问候语"""
+    print('hello ' + name + ' , you are ' + str(age) + ' years old')
+
+
+greet(age=18, name='david')
+
+#返回值
+def get_formatted_name(first_name, last_name):
+    """返回整洁的姓名"""
+    full_name = first_name + ' ' + last_name
+    return full_name.title()
+
+
+musician = get_formatted_name('david', 'yang')
+print(musician)
+
+#函数修改列表
+def build_person(animals):
+    """函数修改列表"""
+    animals.pop()
+
+
+animals = [1, 2, 3]
+build_person(animals)
+print(animals)
+
+#避免函数修改列表
+print(build_person(animals[:]))
+print(animals)
+
+#传递任意数量的实参
+def make_pizza(*toppings):
+    print(toppings)
+
+
+make_pizza('apple', 'banana', 'cat')
+
+#结合使用位置实参和任意数量实参
+def make_pizza(name, *toppings):
+    print('hello ' + name.title())
+    for topping in toppings:
+        print(topping)
+
+
+make_pizza('david yang', 'banana', 'cat')
+
+#使用任意数量的关键字实参
+def make_pizza(name, **toppings):
+    print('hello ' + name)
+    for key, topping in toppings.items():
+        print(key + '_' + topping)
+
+
+make_pizza('apple', location='banana')
+
+#将函数存储到模块中
+## 文件pizza.py
+def make_pizza(size, *toppings):
+    """概述要制作的披萨"""
+    print('size: ' + str(size))
+    for topping in toppings:
+        print(topping)
+##文件main.py(导入pizza.py函数文件并设置别名func)
+import pizza as func
+func.make_pizza(16, 'apple', 'banana')
+
+#导入特定的函数, 并给函数取别名
+from pizza import make_pizza, test_pizza as test
+
+#导入模块中的所有函数(不需要使用点语法, 可以直接使用函数名)
+from pizza import *
+make_pizza(16, 'apple')
+```
 
 
 
