@@ -109,7 +109,66 @@ len(cars)
 ### 遍历列表
 
 ```python
+cars = ['bmw', 'audi', 'toyota', 'subaru']
+for car in cars:
+    print(car)
+```
 
+### 列表相关
+
+```python
+#创建一系列的字符
+for item in range(1, 5):
+    print(item)
+#创建一系列的字符并将其放到列表中
+numbers = list(range(1, 5))
+#创建一系列的字符并制定步长
+range(1, 5, 2)
+#统计计算
+min(numbers)
+max(numbers)
+sum(numbers)
+#列表解析(将for循环中的每一项交给表达式item**2来处理)
+numbers = [item**2 for item in range(1,11)]
+#列表切片
+numbers[0:3]
+numbers[:3]
+numbers[2:]
+numbers[-3:]
+#复制列表, 注意不能写成 new_number = number, 这是引用赋值 
+new_number = number[:]
+```
+
+### 元组(不可变的列表)
+
+```python
+numbers = (1,2,3)
+#元组不可修改, 但是可以修改存储元组的变量
+numbers = (1,2,3)
+number = (4, 5, 6)
+```
+
+### if语句
+
+```python
+if number == 'apple':
+    print('apple')
+else:
+    print('other')
+    
+#条件判断
+==
+!=
+>=
+<=
+#逻辑与或
+and
+or
+
+#是否存在列表中
+number = [1,2,3]
+3 in number
+3 not in number
 ```
 
 
