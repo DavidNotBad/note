@@ -1,5 +1,14 @@
 ### 工具
 
+* 问题
+
+  ```
+  命名空间
+  异常中except使用exception基类
+  ```
+
+  
+
 * 命令行工具
 
   ```
@@ -22,39 +31,40 @@
   print("Hello World")
   ```
 
-* 字符串函数
+## 字符串
+ ```python
+#字符串函数
+message = 'i love ada wang'
+## 每个单词首字母大写
+message.title()
+## 所有字母转成大写
+message.upper()
+## 所有字母转成小写
+message.lower()
 
-  ```python
-  message = 'i love ada wang'
-  # 每个单词首字母大写
-  message.title()
-  # 所有字母转成大写
-  message.upper()
-  # 所有字母转成小写
-  message.lower()
-  ```
+#拼接字符串
+first_name = 'ada'
+last_name = 'wang'
+full_name = first_name + ' ' + last_name
+print(full_name)
 
-* 拼接字符串
+#去掉两端的空白(lstrip(), rstrip(), strip())
+favorite_language = 'python'
+favorite_language = favorite_language.rstrip()
 
-  ```python
-  first_name = 'ada'
-  last_name = 'wang'
-  full_name = first_name + ' ' + last_name
-  print(full_name)
-  ```
+#截取字符串
+favorite_language = 'python'
+#截取前三个字符串
+favorite_language[:3]
 
-* 去掉两端的空白(lstrip(), rstrip(), strip())
+#分割字符串
+favorite_language.split()
+ ```
 
-  ```python
-  favorite_language = 'python'
-  favorite_language = favorite_language.rstrip()
-  ```
-
-  
 
 ## 算术
 
-```Python
+ ```Python
 #乘方运算
 3 ** 2
 
@@ -65,11 +75,11 @@ str(age)
 #python中
 3/2 = 1 #只取整数部分
 3.0/2 = 1.5 #其中一个数字为浮点数才会得到小数点
-```
+ ```
 
 ### 列表
 
-```Python
+ ```Python
 bicycles = ['trek', 'cannondale', 'redline', 'specialized']
 #访问下标为0的函数
 print(bicycles[0])
@@ -87,11 +97,11 @@ item = bicycles.pop()
 item = bicycles.pop(2)
 #根据值删除元素
 bicycles.remove('apple')
-```
+ ```
 
 ### 组织列表
 
-```python
+ ```python
 cars = ['bmw', 'audi', 'toyota', 'subaru']
 #对列表进行永久性排序
 cars.sort()
@@ -104,7 +114,7 @@ sorted(cars, reverse=True)
 cars.reverse()
 #获取列表的长度
 len(cars)
-```
+ ```
 
 ### 遍历列表
 
@@ -116,7 +126,7 @@ for car in cars:
 
 ### 列表相关
 
-```python
+ ```python
 #创建一系列的字符
 for item in range(1, 5):
     print(item)
@@ -137,16 +147,16 @@ numbers[2:]
 numbers[-3:]
 #复制列表, 注意不能写成 new_number = number, 这是引用赋值 
 new_number = number[:]
-```
+ ```
 
 ### 元组(不可变的列表)
 
-```python
+ ```python
 numbers = (1,2,3)
 #元组不可修改, 但是可以修改存储元组的变量
 numbers = (1,2,3)
 number = (4, 5, 6)
-```
+ ```
 
 ### if语句
 
@@ -387,6 +397,114 @@ print(my_dog.name)
 print(my_dog.age)
 my_dog.sit()
 my_dog.roll_over()
+
+
+#继承
+class Car:
+    """一次模拟汽车的简单尝试"""
+    
+    def __init__(self, make, model, year):
+        self.make = make
+        self.model = model
+        self.year = year
+        self.odometer_reading = 0
+        
+    def get_descriptive_name(self):
+        long_name = str(self.year) + ' ' + self.make + ' ' + self.model
+        return long_name.title()
+    
+    def read_odometer(self):
+        print('this car has ' + str(self.odometer_reading) + ' miss on it')
+        
+    def update_odometer(self, mileage):
+        if mileage >= self.odometer_reading:
+            self.odometer_reading = mileage
+        else:
+            print('you can not roll back an odomenter!')
+            
+    def increment_odometer(self, miles):
+        self.odometer_reading += miles
+        
+
+class ElectricCar(Car):
+    """电动汽车的独特之处"""
+    
+    def __init__(self, make, model, year):
+        """初始化父类的属性"""
+        super().__init__(make, model, year)
+
+
+my_tesla = ElectricCar('tesla', 'model\'s', 2016)
+print(my_tesla.get_descriptive_name())
+
+#导入类
+## 导入car.py中的类Car, Test
+from car import Car, Test
+##导入整个模块
+imposer car
+car.Car()
+##导入模块中的所有类(不推荐)
+from car import *
+```
+
+## 文件操作
+
+```python
+#读取一个文件
+with open('./func.py') as file_object:
+    contents = file_object.read()
+    print(contents.rstrip())
+
+#分行读取文件
+with open('./func.py') as file_object:
+    contents = file_object.readlines()
+
+for line in contents:
+    print(line.rstrip())
+    
+#写入文件
+## 读取r, 写入w, 附加a, 读取和写入r+
+with open(filename, 'w') as file_object:
+    file_object.write("i do\n")
+```
+
+### 异常
+
+```python
+#接收异常
+try:
+    print(5/0)
+except ZeroDivisionError:
+    print('you can not divide by zero!')
+else:
+    print('try部分代码成功后执行else下面的语句')
+    
+#对异常不做任何处理, pass
+try:
+    print(s)
+except Exception:
+    pass
+else:
+    print('sd')
+
+print('the end')
+```
+
+## json的文件操作
+
+```python
+#基本使用
+import json
+numbers = [2, 3, 4, 5]
+##把列表转成json, 然后存储在文件中
+import json
+numbers = [2, 3, 4, 5]
+with open(filename, 'w') as f_obj:
+    json.dump(numbers, f_obj)
+##读取json文件
+with open(filename) as f_obj:
+    json.load(f_obj)
+
 ```
 
 
