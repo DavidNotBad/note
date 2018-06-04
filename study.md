@@ -221,6 +221,41 @@ curl.cainfo="真实路径/证书文件名"
 ;openssl.cafile=
 ```
 
+curl
+
+```php
+#1.php
+## 使用curl获取2.php返回的cookie
+$cookieFile = './cookie.txt';
+$curl = curl_init("http://127.0.0.1/test/2.php");
+
+date_default_timezone_set('PRC');
+curl_setopt($curl, CURLOPT_COOKIEJAR, $cookieFile);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+curl_exec($curl);
+curl_close($curl);
+
+## 带着cookie访问3.php
+$curl = curl_init("http://127.0.0.1/test/3.php");
+curl_setopt($curl, CURLOPT_COOKIEFILE, $cookieFile);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+var_dump(curl_exec($curl));
+
+#2.php
+## 设置cookie
+setcookie(rand(100,999), rand(100,999));
+
+#3.php
+var_dump($_COOKIE);
+```
+
+git本地服务器的搭建
+
+```
+http://www.runoob.com/git/git-server.html
+```
+
 
 
 
