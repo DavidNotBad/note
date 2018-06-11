@@ -1,3 +1,17 @@
+## 手册
+
+[官方文档](http://docs.pythontab.com/python/python3.4/appetite.html#)
+
+[requests](http://cn.python-requests.org/zh_CN/latest/)
+
+[Beautiful Soup 4.2.0](https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html)
+
+[书籍](https://germey.gitbooks.io/python3webspider/content/)
+
+[无头浏览器](https://developers.google.com/web/updates/2017/04/headless-chrome)
+
+
+
 ### 工具
 
 * 问题
