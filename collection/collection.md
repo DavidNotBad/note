@@ -223,6 +223,130 @@ print(r.text)
 
 ## 正则表达式
 
+```python
+import re
+
+content = 'Hello 123 4567 World_This is a Regex Demo'
+print(len(content))
+# 匹配开头
+result = re.match('^Hello\s\d\d\d\s\d{4}\s\w{10}', content)
+print(result)
+# 打印匹配的结果
+print(result.group())
+# 打印匹配结果的位置范围
+print(result.span())
+
+## 添加修饰符
+re.match('^He.*?(\d+).*?Demo$', content, re.S)
+
+# 正则匹配第一个内容
+re.search('<li.*?active.*?singer="(.*?)">(.*?)</a>', html, re.S)
+
+# 正则匹配所有内容
+results = re.findall('<li.*?href="(.*?)".*?singer="(.*?)">(.*?)</a>', html, re.S)
+print(results)
+print(type(results))
+for result in results:
+    print(result)
+    print(result[0], result[1], result[2])
+    
+# 正则替换
+content = '54aK54yr5oiR54ix5L2g'
+content = re.sub('\d+', '', content)
+print(content)
+
+# 生成正则表达式对象
+content = '2016-12-15 12:10'
+pattern = re.compile('\d{2}:\d{2}', re.I) # 可以添加修饰符, 其他方法调用就不需再传递了
+result = re.sub(pattern, '', content)
+print(result)
+```
+
+| 修饰符 | 描述                                                         |
+| ------ | ------------------------------------------------------------ |
+| re.I   | 使匹配对大小写不敏感                                         |
+| re.L   | 做本地化识别（locale-aware）匹配                             |
+| re.M   | 多行匹配，影响 ^ 和 $                                        |
+| re.S   | 使 . 匹配包括换行在内的所有字符                              |
+| re.U   | 根据Unicode字符集解析字符。这个标志影响 \w, \W, \b, \B.      |
+| re.X   | 该标志通过给予你更灵活的格式以便你将正则表达式写得更易于理解。 |
+
+## XPath
+
+### 常用规则
+
+| 表达式   | 描述                     |
+| -------- | ------------------------ |
+| nodename | 选取此节点的所有子节点   |
+| /        | 从当前节点选取直接子节点 |
+| //       | 从当前节点选取子孙节点   |
+| .        | 选取当前节点             |
+| ..       | 选取当前节点的父节点     |
+| @        | 选取属性                 |
+
+### 解析HTML文本
+
+```python
+# 初始化
+html = etree.HTML(text)
+# 自动修正html结构, 返回bytes类型
+result = etree.tostring(html)
+# 将bytes类型转为str类型
+html = result.decode('utf-8')
+
+# 整合成一句话
+html = etree.tostring(etree.HTML(text)).decode('utf-8')
+```
+
+### 解析文本文件
+
+```python
+etree.tostring(etree.parse('a.html', etree.HTMLParser())).decode('utf-8')
+```
+
+### 使用xpath
+
+```python
+from lxml import etree
+
+html = etree.parse('./a.html', etree.HTMLParser())
+# /div/text()   获取文本
+# //li[contains(@class, "li")]     属性匹配
+# //li[contains(@class, "li") and @name="item"]/a/text()      多属性匹配
+result = html.xpath('//*//div/li/a[@href="a.html"]/../parent::*/@class')
+print(result)
+```
+
+## BeautifulSoup
+
+## 基本使用
+
+```python
+from bs4 import BeautifulSoup
+
+soup = BeautifulSoup('<p>Hello</p>', 'lxml')
+# 把要解析的字符串以标准的缩进格式输出
+print(soup.prettify())
+print(soup.p.string)
+
+# 获取标签名
+soup.p.name
+# 获取属性
+soup.p.attrs['name']
+soup.p['name']
+# 获取内容
+soup.p.string
+
+# 嵌套选择
+soup.body.p
+```
+
+
+
+
+
+
+
 
 
 
