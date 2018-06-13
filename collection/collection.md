@@ -339,7 +339,167 @@ soup.p.string
 
 # 嵌套选择
 soup.body.p
+
+# 获取子节点
+print(soup.p.contents)
+for i, item in enumerate(soup.p.children):
+    print(i, str(item))
+for item in list(soup.p.children):
+    print(item.string)
+# 获取子孙节点
+for i, child in enumerate(soup.p.descendants):
+    print(i, child)
+
+# 获取父节点
+soup.a.parent
+# 获取祖先节点
+soup.a.parents
+list(enumerate(soup.a.parents))
+
+# 兄弟节点
+soup.a.next_sibling
+soup.a.previous_sibling
 ```
+
+### ### 方法选择器
+
+```python
+find_all(name , attrs , recursive , text , **kwargs)
+```
+
+```python
+# 查找多个
+soup.find_all(name='url')[0]
+soup.find_all(attrs={'id': 'list-1'}, text=re.compile('link'))
+
+#查找单个
+soup.find(name='ul')
+soup.find(class='list')
+
+# 其他
+find_parents() find_parent()
+find_next_siblings() find_next_sibling()
+find_previous_siblings() find_previous_sibling()
+find_all_next() find_next()
+find_all_previous() 和 find_previous()
+```
+
+### css选择器
+
+```python
+soup.select('.panel .panel-heading #list-2')[0]
+
+# 嵌套选择
+for ul in soup.select('ul'):
+    print(ul.select('li'))
+    # 选择属性
+    print(ul['id'])
+    print(ul.attrs['id'])
+    # 选择文本
+    print('Get Text:', li.get_text())
+    print('String:', li.string)
+```
+
+## pyquery
+
+### 基本用法
+
+```python
+from pyquery import PyQuery
+
+html = '''
+<div>
+    <ul>
+         <li class="item-0">first item</li>
+         <li class="item-1"><a href="link2.html">second item</a></li>
+         <li class="item-0 active"><a href="link3.html"><span class="bold">third item</span></a></li>
+         <li class="item-1 active"><a href="link4.html">fourth item</a></li>
+         <li class="item-0"><a href="link5.html">fifth item</a></li>
+     </ul>
+ </div>
+'''
+
+# 传入html字符
+query = PyQuery(html)
+query('li')
+
+# url参数
+PyQuery(url='http://davidnotbad.com')
+# 等同于
+import requests
+PyQuery(requests.get('http://davidnotbad.com').text)
+
+# 传入文件名
+PyQuery(filename='demo.html')
+
+# 查找子孙节点
+PyQuery('.list').find('li')
+# 查找子节点
+PyQuery('.list').children('.active')
+
+# 查找父节点
+PyQuery('.list').parent()
+PyQuery('.list').parent('.wrap')
+# 查找祖父节点
+PyQuery('.list').parents()
+
+# 兄弟节点
+PyQuery('.list').siblings()
+```
+
+### 遍历
+
+```python
+query = PyQuery('li')
+
+for li in query.values():
+    print(li)
+```
+
+### 获取属性
+
+````python
+PyQuery('li a').attr('href')
+PyQuery('li a').attr.href
+````
+
+### 获取文本
+
+```python
+# 获取文本
+PyQuery('li a').text()
+# 获取 inner html
+PyQuery('li a').html()
+```
+
+### 节点操作
+
+```python
+# 操作class
+PyQuery('.item').addClass('active')
+PyQuery('.item').removeClass('active')
+
+# 添加修改文本
+PyQuery('.item').attr('name', 'link')
+PyQuery('.item').text('changed item')
+PyQuery('.item').html('<span>changed item</span>')
+
+# 移除节点
+PyQuery('.item').find('p').remove()
+```
+
+### 伪类选择器
+
+```python
+PyQuery('li:first-child')
+PyQuery('li:last-child')
+PyQuery('li:nth-child(2)')
+PyQuery('li:gt(2)')
+PyQuery('li:nth-child(2n)')
+PyQuery('li:contains(second)')
+```
+
+
 
 
 
