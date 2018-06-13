@@ -73,6 +73,9 @@ favorite_language[:3]
 
 #分割字符串
 favorite_language.split()
+
+# 聚合字符串
+'\n'.join([question, author, answer])
  ```
 
 
@@ -477,9 +480,14 @@ for line in contents:
     print(line.rstrip())
     
 #写入文件
-## 读取r, 写入w, 附加a, 读取和写入r+
+##常用: 读取r, 写入w, 附加a, 读取和写入r+
 with open(filename, 'w') as file_object:
     file_object.write("i do\n")
+    
+# 函数的方式
+file = open('explore.txt', 'a', encoding='utf-8')
+file.write('\n'.join([question, author, answer]))
+file.close()
 ```
 
 ### 异常
@@ -518,7 +526,13 @@ with open(filename, 'w') as f_obj:
 ##读取json文件
 with open(filename) as f_obj:
     json.load(f_obj)
+    #读取json, 2个空格作为缩进, 不进行unique编码
+    json.loads(f_obj.read(), indent=2, ensure_ascii=False)
+    #输出json
+    json.dumps(f_obj.read())
 
+#把json字符串转变成json对象
+json.loads(str)
 ```
 
 
