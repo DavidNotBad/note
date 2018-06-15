@@ -44,6 +44,7 @@ accounts.json
 
 ```python
 # 拉取 -> (去掉)立即提交合并的改动
+# 提交 -> (去掉/左下角)立即推送变更到origin/master
 ```
 
 
