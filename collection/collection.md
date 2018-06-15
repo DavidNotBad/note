@@ -499,6 +499,121 @@ PyQuery('li:nth-child(2n)')
 PyQuery('li:contains(second)')
 ```
 
+## 数据存储
+
+### 文件存储
+
+```python
+file = open('explore.txt', 'a', encoding='utf-8')
+file.write('\n'.join([question, author, answer]))
+file.write('\n' + '=' * 50 + '\n')
+file.close()
+# 简化写法
+with open('explore.txt', 'a', encoding='utf-8') as file:
+    file.write('\n'.join([question, author, answer]))
+```
+
+### csv
+
+```python
+with open('data.csv', 'w') as csvfile:
+    # 设置分隔符
+    writer = csv.writer(csvfile, delimiter=' ')
+    writer.writerow(['id', 'name', 'age'])
+    writer.writerows([['10001', 'Mike', 20], ['10002', 'Bob', 22], ['10003', 'Jordan', 21]])
+    
+# 从字典中写入
+with open('data.csv', 'w') as csvfile:
+    fieldnames = ['id', 'name', 'age']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerow({'id': '10001', 'name': 'Mike', 'age': 20})
+
+# 写入中文
+with open('data.csv', 'a', encoding='utf-8') as csvfile:
+    fieldnames = ['id', 'name', 'age']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writerow({'id': '10005', 'name': '王伟', 'age': 22})
+
+# 读取
+with open('data.csv', 'r', encoding='utf-8') as csvfile:
+    reader = csv.reader(csvfile)
+    for row in reader:
+        print(row)
+
+# 读取
+import pandas  as pd
+df = pd.read_csv('data.csv')
+print(df)
+```
+
+### mysql
+
+```python
+import pymysql
+# 连接数据库
+db = pymysql.connect(host='localhost',user='root', password='root', port=3306)
+cursor = db.cursor()
+# 执行查询
+cursor.execute('SELECT VERSION()')
+data = cursor.fetchone()
+print('Database version:', data)
+# 创建数据库
+cursor.execute("CREATE DATABASE spiders DEFAULT CHARACTER SET utf8")
+# 创建表
+sql = 'CREATE TABLE IF NOT EXISTS students (id VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, age INT NOT NULL, PRIMARY KEY (id))'
+cursor.execute(sql)
+
+# 插入数据
+id = '20120001'
+user = 'Bob'
+age = 20
+
+sql = 'INSERT INTO students(id, name, age) values(%s, %s, %s)'
+try:
+    cursor.execute(sql, (id, user, age))
+    db.commit()
+except:
+    db.rollback()
+# 更新数据
+sql = 'UPDATE students SET age = %s WHERE name = %s'
+try:
+   cursor.execute(sql, (25, 'Bob'))
+   db.commit()
+except:
+   db.rollback()
+# 删除语句
+sql = 'DELETE FROM  {table} WHERE {condition}'.format(table=table, condition=condition)
+cursor.execute(sql) # 省略try|commit
+
+#查看语句
+sql = 'SELECT * FROM students WHERE age >= 20'
+try:
+    cursor.execute(sql)
+    # 获取结束数
+    cursor.rowcount
+    # 获取一行(指针)
+    one = cursor.fetchone()
+   	# 获取多行(指针)
+    results = cursor.fetchall()
+    for row in results:
+        print(row)
+except:
+    print('Error')
+# 查看语句(非指针)
+sql = 'SELECT * FROM students WHERE age >= 20'
+try:
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    while row:
+        row = cursor.fetchone()
+except:
+    print('Error')
+    
+# 关闭连接
+db.close()
+```
+
 
 
 
