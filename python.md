@@ -526,10 +526,11 @@ with open(filename, 'w') as f_obj:
 ##读取json文件
 with open(filename) as f_obj:
     json.load(f_obj)
-    #读取json, 2个空格作为缩进, 不进行unique编码
-    json.loads(f_obj.read(), indent=2, ensure_ascii=False)
-    #输出json
-    json.dumps(f_obj.read())
+    
+#读取json, 2个空格作为缩进, 不进行unique编码
+json.loads(f_obj.read(), indent=2, ensure_ascii=False)
+#输出json
+json.dumps(f_obj.read())
 
 #把json字符串转变成json对象
 json.loads(str)
