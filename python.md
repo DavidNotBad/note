@@ -535,6 +535,18 @@ with open(filename) as f_obj:
 json.loads(str)
 ```
 
+## 小技巧
+
+```python
+# 替换字符串, 类似PHP的sprintf
+'{0}/{1}.{2}'.format(item.get('title'), md5(response.content).hexdigest(), 'jpg')
+
+# 文件操作
+import os
+if not os.path.exists(item.get('title')):
+    os.mkdir(item.get('title'))
+```
+
 
 
 
