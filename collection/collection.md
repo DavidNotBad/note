@@ -189,7 +189,7 @@ req = requests.get('url', timeout=1)
 req = requests.get('url', timeout=(5, 11))
 ```
 
-###认证页面 
+### 认证页面 
 
 [官网地址](https://requests-oauthlib.readthedocs.org/)
 
@@ -361,7 +361,7 @@ soup.a.next_sibling
 soup.a.previous_sibling
 ```
 
-### ### 方法选择器
+### 方法选择器
 
 ```python
 find_all(name , attrs , recursive , text , **kwargs)
