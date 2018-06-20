@@ -1,0 +1,679 @@
+Sat Feb 10 01:54:45 PST 2018
+/home/david/sql/:
+total 216M
+drwxr-xr-x 19 root root 4.0K Feb  4 00:24 CMakeFiles
+-rw-r--r--  1 root root 4.5K Feb  4 00:24 cmake_install.cmake
+-rw-r--r--  1 root root  259 Feb  4 00:24 CTestTestfile.cmake
+-rwxr-xr-x  1 root root 103K Feb  4 00:26 gen_lex_hash
+-rwxr-xr-x  1 root root  62K Feb  4 00:28 gen_lex_token
+-rw-r--r--  1 root root 124K Feb  4 00:28 lex_hash.h
+-rw-r--r--  1 root root  39K Feb  4 00:28 lex_token.h
+-rwxr-xr-x  1 root root  20K Feb  4 00:42 locking_service.so
+-rw-r--r--  1 root root 242K Feb  4 00:24 Makefile
+-rwxr-xr-x  1 root root 208M Feb  4 01:34 mysqld
+-rwxr-xr-x  1 root root 5.0M Feb  4 00:28 mysql_tzinfo_to_sql
+drwxr-xr-x 27 root root 4.0K Feb  4 00:28 share
+-rw-r--r--  1 root root 1.8K Feb  4 00:24 sql_builtin.cc
+-rw-r--r--  1 root root  69K Feb  4 00:24 sql_hints.yy.cc
+-rw-r--r--  1 root root 3.9K Feb  4 00:24 sql_hints.yy.h
+-rw-r--r--  1 root root 2.0M Feb  4 00:24 sql_yacc.cc
+-rw-r--r--  1 root root  33K Feb  4 00:24 sql_yacc.h
+-rwxr-xr-x  1 root root 113K Feb  4 01:34 udf_example.so
+
+/home/david/sql/CMakeFiles:
+total 84K
+drwxr-xr-x 2 root root 4.0K Feb  4 00:37 binlog.dir
+-rw-r--r-- 1 root root  613 Feb  4 00:24 CMakeDirectoryInformation.cmake
+drwxr-xr-x 2 root root 4.0K Feb  4 00:24 distclean.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:24 dist.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 GenDigestServerSource.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:26 gen_lex_hash.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 gen_lex_token.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 GenServerSource.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:42 locking_service.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:37 master.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 01:34 mysqld.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 mysql_tzinfo_to_sql.dir
+-rw-r--r-- 1 root root    3 Feb  4 00:24 progress.marks
+drwxr-xr-x 2 root root 4.0K Feb  4 00:38 rpl.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:24 show-dist-name.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 00:37 slave.dir
+drwxr-xr-x 6 root root  12K Feb  4 01:30 sql.dir
+drwxr-xr-x 3 root root 4.0K Feb  4 00:42 sqlgunitlib.dir
+drwxr-xr-x 2 root root 4.0K Feb  4 01:34 udf_example.dir
+
+/home/david/sql/CMakeFiles/binlog.dir:
+total 16M
+-rw-r--r-- 1 root root 2.5M Feb  4 00:37 binlog.cc.o
+-rw-r--r-- 1 root root  42K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root   66 Feb  4 00:24 cmake_clean_target.cmake
+-rw-r--r-- 1 root root  56K Feb  4 00:36 CXX.includecache
+-rw-r--r-- 1 root root 3.7K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root 166K Feb  4 00:36 depend.internal
+-rw-r--r-- 1 root root 310K Feb  4 00:36 depend.make
+-rw-r--r-- 1 root root 1.1K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  905 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root 3.6M Feb  4 00:36 log_event.cc.o
+-rw-r--r-- 1 root root 754K Feb  4 00:36 log_event_old.cc.o
+-rw-r--r-- 1 root root  413 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root 819K Feb  4 00:37 rpl_filter.cc.o
+-rw-r--r-- 1 root root 431K Feb  4 00:36 rpl_gtid_execution.cc.o
+-rw-r--r-- 1 root root 567K Feb  4 00:36 rpl_gtid_misc.cc.o
+-rw-r--r-- 1 root root 403K Feb  4 00:36 rpl_gtid_mutex_cond_array.cc.o
+-rw-r--r-- 1 root root 342K Feb  4 00:36 rpl_gtid_owned.cc.o
+-rw-r--r-- 1 root root 802K Feb  4 00:36 rpl_gtid_persist.cc.o
+-rw-r--r-- 1 root root 551K Feb  4 00:36 rpl_gtid_set.cc.o
+-rw-r--r-- 1 root root 328K Feb  4 00:36 rpl_gtid_sid_map.cc.o
+-rw-r--r-- 1 root root 306K Feb  4 00:36 rpl_gtid_specification.cc.o
+-rw-r--r-- 1 root root 763K Feb  4 00:36 rpl_gtid_state.cc.o
+-rw-r--r-- 1 root root 518K Feb  4 00:37 rpl_injector.cc.o
+-rw-r--r-- 1 root root 421K Feb  4 00:37 rpl_record.cc.o
+-rw-r--r-- 1 root root 396K Feb  4 00:37 rpl_record_old.cc.o
+-rw-r--r-- 1 root root 418K Feb  4 00:37 rpl_table_access.cc.o
+-rw-r--r-- 1 root root 646K Feb  4 00:37 rpl_utility.cc.o
+-rw-r--r-- 1 root root 522K Feb  4 00:37 sql_binlog.cc.o
+
+/home/david/sql/CMakeFiles/distclean.dir:
+total 16K
+-rw-r--r-- 1 root root 2.2K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  200 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  316 Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root    1 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/dist.dir:
+total 16K
+-rw-r--r-- 1 root root 3.3K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  260 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  535 Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/GenDigestServerSource.dir:
+total 24K
+-rw-r--r-- 1 root root 2.6K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  240 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  316 Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root   99 Feb  4 00:28 depend.internal
+-rw-r--r-- 1 root root   99 Feb  4 00:28 depend.make
+-rw-r--r-- 1 root root   21 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/gen_lex_hash.dir:
+total 216K
+-rw-r--r-- 1 root root 4.8K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  269 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root 2.5K Feb  4 00:26 CXX.includecache
+-rw-r--r-- 1 root root 1.4K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root 1.1K Feb  4 00:26 depend.internal
+-rw-r--r-- 1 root root 2.0K Feb  4 00:26 depend.make
+-rw-r--r-- 1 root root 1.1K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root 174K Feb  4 00:26 gen_lex_hash.cc.o
+-rw-r--r-- 1 root root  253 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/gen_lex_token.dir:
+total 156K
+-rw-r--r-- 1 root root 4.9K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  274 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root 2.4K Feb  4 00:28 CXX.includecache
+-rw-r--r-- 1 root root 1.4K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root 1.1K Feb  4 00:28 depend.internal
+-rw-r--r-- 1 root root 1.9K Feb  4 00:28 depend.make
+-rw-r--r-- 1 root root 1.1K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root 114K Feb  4 00:28 gen_lex_token.cc.o
+-rw-r--r-- 1 root root  256 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/GenServerSource.dir:
+total 24K
+-rw-r--r-- 1 root root 3.8K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  297 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  535 Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root   99 Feb  4 00:28 depend.internal
+-rw-r--r-- 1 root root   99 Feb  4 00:28 depend.make
+-rw-r--r-- 1 root root   61 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/locking_service.dir:
+total 60K
+-rw-r--r-- 1 root root 5.2K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  291 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root 2.2K Feb  4 00:42 CXX.includecache
+-rw-r--r-- 1 root root 1.5K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root  940 Feb  4 00:42 depend.internal
+-rw-r--r-- 1 root root 1.8K Feb  4 00:42 depend.make
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  342 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root  17K Feb  4 00:42 locking_service_udf.cc.o
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/master.dir:
+total 1.9M
+-rw-r--r-- 1 root root 7.0K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  356 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root   66 Feb  4 00:24 cmake_clean_target.cmake
+-rw-r--r-- 1 root root  43K Feb  4 00:37 CXX.includecache
+-rw-r--r-- 1 root root 1.5K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root  21K Feb  4 00:37 depend.internal
+-rw-r--r-- 1 root root  39K Feb  4 00:37 depend.make
+-rw-r--r-- 1 root root 1.1K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  195 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root   61 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root 798K Feb  4 00:37 rpl_binlog_sender.cc.o
+-rw-r--r-- 1 root root 920K Feb  4 00:37 rpl_master.cc.o
+
+/home/david/sql/CMakeFiles/mysqld.dir:
+total 48K
+-rw-r--r-- 1 root root 5.8K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  237 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  191 Feb  4 01:34 CXX.includecache
+-rw-r--r-- 1 root root 3.2K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root  176 Feb  4 01:34 depend.internal
+-rw-r--r-- 1 root root  177 Feb  4 01:34 depend.make
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root 1.5K Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root 4.1K Feb  4 01:34 main.cc.o
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/mysql_tzinfo_to_sql.dir:
+total 208K
+-rw-r--r-- 1 root root 5.6K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  291 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  36K Feb  4 00:28 CXX.includecache
+-rw-r--r-- 1 root root 1.8K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root 9.6K Feb  4 00:28 depend.internal
+-rw-r--r-- 1 root root  19K Feb  4 00:28 depend.make
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  676 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root 110K Feb  4 00:28 tztime.cc.o
+
+/home/david/sql/CMakeFiles/rpl.dir:
+total 2.0M
+-rw-r--r-- 1 root root 8.5K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  375 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root   63 Feb  4 00:24 cmake_clean_target.cmake
+-rw-r--r-- 1 root root  41K Feb  4 00:37 CXX.includecache
+-rw-r--r-- 1 root root 1.6K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root  24K Feb  4 00:37 depend.internal
+-rw-r--r-- 1 root root  41K Feb  4 00:37 depend.make
+-rw-r--r-- 1 root root 1.1K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  213 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root   83 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root 405K Feb  4 00:38 rpl_context.cc.o
+-rw-r--r-- 1 root root 1.3M Feb  4 00:37 rpl_handler.cc.o
+-rw-r--r-- 1 root root 214K Feb  4 00:38 rpl_tblmap.cc.o
+
+/home/david/sql/CMakeFiles/show-dist-name.dir:
+total 16K
+-rw-r--r-- 1 root root 2.2K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  210 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root  316 Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root    1 Feb  4 00:24 progress.make
+
+/home/david/sql/CMakeFiles/slave.dir:
+total 13M
+-rw-r--r-- 1 root root  42K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root   65 Feb  4 00:24 cmake_clean_target.cmake
+-rw-r--r-- 1 root root  56K Feb  4 00:37 CXX.includecache
+-rw-r--r-- 1 root root 3.4K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root 143K Feb  4 00:37 depend.internal
+-rw-r--r-- 1 root root 268K Feb  4 00:37 depend.make
+-rw-r--r-- 1 root root 111K Feb  4 00:37 dynamic_ids.cc.o
+-rw-r--r-- 1 root root 1.1K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  901 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root  414 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root 841K Feb  4 00:37 rpl_channel_service_interface.cc.o
+-rw-r--r-- 1 root root  75K Feb  4 00:37 rpl_info.cc.o
+-rw-r--r-- 1 root root  24K Feb  4 00:37 rpl_info_dummy.cc.o
+-rw-r--r-- 1 root root 904K Feb  4 00:37 rpl_info_factory.cc.o
+-rw-r--r-- 1 root root 142K Feb  4 00:37 rpl_info_file.cc.o
+-rw-r--r-- 1 root root  21K Feb  4 00:37 rpl_info_handler.cc.o
+-rw-r--r-- 1 root root 416K Feb  4 00:37 rpl_info_table_access.cc.o
+-rw-r--r-- 1 root root 500K Feb  4 00:37 rpl_info_table.cc.o
+-rw-r--r-- 1 root root  83K Feb  4 00:37 rpl_info_values.cc.o
+-rw-r--r-- 1 root root 656K Feb  4 00:37 rpl_mi.cc.o
+-rw-r--r-- 1 root root 883K Feb  4 00:37 rpl_msr.cc.o
+-rw-r--r-- 1 root root 576K Feb  4 00:37 rpl_mts_submode.cc.o
+-rw-r--r-- 1 root root 585K Feb  4 00:37 rpl_reporting.cc.o
+-rw-r--r-- 1 root root 1.3M Feb  4 00:37 rpl_rli.cc.o
+-rw-r--r-- 1 root root 1.1M Feb  4 00:37 rpl_rli_pdb.cc.o
+-rw-r--r-- 1 root root 2.8M Feb  4 00:37 rpl_slave.cc.o
+-rw-r--r-- 1 root root 519K Feb  4 00:37 rpl_slave_commit_order_manager.cc.o
+-rw-r--r-- 1 root root 416K Feb  4 00:37 rpl_trx_boundary_parser.cc.o
+
+/home/david/sql/CMakeFiles/sql.dir:
+total 305M
+drwxr-xr-x 5 root root  4.0K Feb  4 00:24 __
+-rw-r--r-- 1 root root  476K Feb  4 00:45 abstract_query_plan.cc.o
+-rw-r--r-- 1 root root  585K Feb  4 00:46 aggregate_check.cc.o
+drwxr-xr-x 2 root root  4.0K Feb  4 00:45 auth
+-rw-r--r-- 1 root root  725K Feb  4 00:45 bootstrap.cc.o
+-rw-r--r-- 1 root root  431K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root   12K Feb  4 00:44 C.includecache
+-rw-r--r-- 1 root root  9.5K Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root    63 Feb  4 00:24 cmake_clean_target.cmake
+-rw-r--r-- 1 root root  405K Feb  4 01:29 command_service.cc.o
+drwxr-xr-x 2 root root  4.0K Feb  4 01:29 conn_handler
+-rw-r--r-- 1 root root  222K Feb  4 00:44 CXX.includecache
+-rw-r--r-- 1 root root  401K Feb  4 00:45 datadict.cc.o
+-rw-r--r-- 1 root root  5.0K Feb  4 00:45 debug_sync.cc.o
+-rw-r--r-- 1 root root   28K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root  1.9M Feb  4 00:44 depend.internal
+-rw-r--r-- 1 root root  3.3M Feb  4 00:44 depend.make
+-rw-r--r-- 1 root root  407K Feb  4 00:45 derror.cc.o
+-rw-r--r-- 1 root root   72K Feb  4 01:29 des_key_file.cc.o
+-rw-r--r-- 1 root root  222K Feb  4 00:45 discover.cc.o
+-rw-r--r-- 1 root root  659K Feb  4 01:29 event_data_objects.cc.o
+-rw-r--r-- 1 root root  548K Feb  4 01:29 event_db_repository.cc.o
+-rw-r--r-- 1 root root  422K Feb  4 01:29 event_parse_data.cc.o
+-rw-r--r-- 1 root root  675K Feb  4 01:29 event_queue.cc.o
+-rw-r--r-- 1 root root  795K Feb  4 01:29 events.cc.o
+-rw-r--r-- 1 root root  590K Feb  4 01:29 event_scheduler.cc.o
+-rw-r--r-- 1 root root  3.1M Feb  4 00:46 field.cc.o
+-rw-r--r-- 1 root root  489K Feb  4 00:46 field_conv.cc.o
+-rw-r--r-- 1 root root  1.2M Feb  4 00:46 filesort.cc.o
+-rw-r--r-- 1 root root  738K Feb  4 00:46 filesort_utils.cc.o
+-rw-r--r-- 1 root root  4.5K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  5.0M Feb  4 00:46 geometry_rtree.cc.o
+-rw-r--r-- 1 root root   57K Feb  4 00:46 gstream.cc.o
+-rw-r--r-- 1 root root  2.5M Feb  4 00:46 handler.cc.o
+-rw-r--r-- 1 root root  131K Feb  4 00:46 hostname.cc.o
+-rw-r--r-- 1 root root   50K Feb  4 00:46 init.cc.o
+-rw-r--r-- 1 root root  544K Feb  4 00:46 item_buff.cc.o
+-rw-r--r-- 1 root root  3.5M Feb  4 00:46 item.cc.o
+-rw-r--r-- 1 root root  3.3M Feb  4 00:47 item_cmpfunc.cc.o
+-rw-r--r-- 1 root root  4.2M Feb  4 00:47 item_create.cc.o
+-rw-r--r-- 1 root root  3.5M Feb  4 00:47 item_func.cc.o
+-rw-r--r-- 1 root root   16M Feb  4 00:53 item_geofunc_buffer.cc.o
+-rw-r--r-- 1 root root   31M Feb  4 01:18 item_geofunc.cc.o
+-rw-r--r-- 1 root root   12M Feb  4 01:19 item_geofunc_internal.cc.o
+-rw-r--r-- 1 root root   29M Feb  4 01:21 item_geofunc_relchecks_bgwrap.cc.o
+-rw-r--r-- 1 root root   14M Feb  4 01:19 item_geofunc_relchecks.cc.o
+-rw-r--r-- 1 root root   35M Feb  4 01:23 item_geofunc_setops.cc.o
+-rw-r--r-- 1 root root  583K Feb  4 01:23 item_inetfunc.cc.o
+-rw-r--r-- 1 root root  2.9M Feb  4 01:23 item_json_func.cc.o
+-rw-r--r-- 1 root root  568K Feb  4 01:23 item_row.cc.o
+-rw-r--r-- 1 root root  2.5M Feb  4 01:23 item_strfunc.cc.o
+-rw-r--r-- 1 root root  1.8M Feb  4 01:23 item_subselect.cc.o
+-rw-r--r-- 1 root root  1.7M Feb  4 01:23 item_sum.cc.o
+-rw-r--r-- 1 root root  2.0M Feb  4 01:23 item_timefunc.cc.o
+-rw-r--r-- 1 root root  1.7M Feb  4 01:23 item_xmlfunc.cc.o
+-rw-r--r-- 1 root root  718K Feb  4 01:23 json_binary.cc.o
+-rw-r--r-- 1 root root  2.2M Feb  4 01:23 json_dom.cc.o
+-rw-r--r-- 1 root root  406K Feb  4 01:23 json_path.cc.o
+-rw-r--r-- 1 root root   92K Feb  4 01:23 keycaches.cc.o
+-rw-r--r-- 1 root root  278K Feb  4 01:23 key.cc.o
+-rw-r--r-- 1 root root   78K Feb  4 00:45 keyring_service.cc.o
+-rw-r--r-- 1 root root  8.3K Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root  541K Feb  4 01:24 lock.cc.o
+-rw-r--r-- 1 root root  442K Feb  4 01:24 locking_service.cc.o
+-rw-r--r-- 1 root root  850K Feb  4 01:24 log.cc.o
+-rw-r--r-- 1 root root  589K Feb  4 01:24 mdl.cc.o
+-rw-r--r-- 1 root root  377K Feb  4 01:29 mf_iocache.cc.o
+-rw-r--r-- 1 root root  435K Feb  4 01:24 migrate_keyring.cc.o
+-rw-r--r-- 1 root root  424K Feb  4 01:24 my_decimal.cc.o
+-rw-r--r-- 1 root root  2.0M Feb  4 01:29 mysqld.cc.o
+-rw-r--r-- 1 root root   62K Feb  4 01:30 mysqld_daemon.cc.o
+-rw-r--r-- 1 root root  623K Feb  4 01:29 mysqld_thd_manager.cc.o
+-rw-r--r-- 1 root root   97K Feb  4 01:24 net_serv.cc.o
+-rw-r--r-- 1 root root  454K Feb  4 01:24 opt_costconstantcache.cc.o
+-rw-r--r-- 1 root root  257K Feb  4 01:24 opt_costconstants.cc.o
+-rw-r--r-- 1 root root  226K Feb  4 01:24 opt_costmodel.cc.o
+-rw-r--r-- 1 root root  1.2M Feb  4 01:24 opt_explain.cc.o
+-rw-r--r-- 1 root root  1.8M Feb  4 01:24 opt_explain_json.cc.o
+-rw-r--r-- 1 root root  703K Feb  4 01:24 opt_explain_traditional.cc.o
+-rw-r--r-- 1 root root  442K Feb  4 01:24 opt_hints.cc.o
+-rw-r--r-- 1 root root  2.7M Feb  4 01:24 opt_range.cc.o
+-rw-r--r-- 1 root root  207K Feb  4 01:24 opt_statistics.cc.o
+-rw-r--r-- 1 root root  537K Feb  4 01:24 opt_sum.cc.o
+-rw-r--r-- 1 root root  470K Feb  4 01:24 opt_trace2server.cc.o
+-rw-r--r-- 1 root root  339K Feb  4 01:24 opt_trace.cc.o
+-rw-r--r-- 1 root root  203K Feb  4 01:24 parse_file.cc.o
+-rw-r--r-- 1 root root  569K Feb  4 01:24 parser_service.cc.o
+-rw-r--r-- 1 root root  599K Feb  4 01:24 parse_tree_helpers.cc.o
+-rw-r--r-- 1 root root  561K Feb  4 01:24 parse_tree_hints.cc.o
+-rw-r--r-- 1 root root  900K Feb  4 01:24 parse_tree_items.cc.o
+-rw-r--r-- 1 root root  374K Feb  4 01:24 parse_tree_node_base.cc.o
+-rw-r--r-- 1 root root  787K Feb  4 01:24 parse_tree_nodes.cc.o
+-rw-r--r-- 1 root root  777K Feb  4 01:24 partition_info.cc.o
+drwxr-xr-x 2 root root  4.0K Feb  4 01:24 partitioning
+-rw-r--r-- 1 root root  562K Feb  4 01:24 procedure.cc.o
+-rw-r--r-- 1 root root  4.8K Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root  447K Feb  4 01:29 protocol_callback.cc.o
+-rw-r--r-- 1 root root  831K Feb  4 01:24 protocol_classic.cc.o
+-rw-r--r-- 1 root root  520K Feb  4 01:24 records.cc.o
+-rw-r--r-- 1 root root  551K Feb  4 01:25 rpl_group_replication.cc.o
+-rw-r--r-- 1 root root  1.3M Feb  4 01:25 rpl_handler.cc.o
+-rw-r--r-- 1 root root  553K Feb  4 01:25 rpl_transaction_ctx.cc.o
+-rw-r--r-- 1 root root  1.1M Feb  4 01:25 rpl_transaction_write_set_ctx.cc.o
+-rw-r--r-- 1 root root  1.1M Feb  4 01:25 rpl_write_set_handler.cc.o
+-rw-r--r-- 1 root root  423K Feb  4 01:25 rules_table_service.cc.o
+-rw-r--r-- 1 root root  9.4K Feb  4 01:24 select_lex_visitor.cc.o
+-rw-r--r-- 1 root root  745K Feb  4 01:25 session_tracker.cc.o
+-rw-r--r-- 1 root root  840K Feb  4 01:25 set_var.cc.o
+-rw-r--r-- 1 root root  569K Feb  4 01:29 signal_handler.cc.o
+-rw-r--r-- 1 root root  2.7M Feb  4 01:25 spatial.cc.o
+-rw-r--r-- 1 root root  385K Feb  4 01:25 sp_cache.cc.o
+-rw-r--r-- 1 root root  1.1M Feb  4 01:25 sp.cc.o
+-rw-r--r-- 1 root root  1.3M Feb  4 01:25 sp_head.cc.o
+-rw-r--r-- 1 root root  1.5M Feb  4 01:25 sp_instr.cc.o
+-rw-r--r-- 1 root root  540K Feb  4 01:25 sp_pcontext.cc.o
+-rw-r--r-- 1 root root  609K Feb  4 01:25 sp_rcontext.cc.o
+-rw-r--r-- 1 root root  957K Feb  4 01:25 sql_admin.cc.o
+-rw-r--r-- 1 root root  392K Feb  4 01:25 sql_alloc_error_handler.cc.o
+-rw-r--r-- 1 root root  512K Feb  4 01:25 sql_alter.cc.o
+-rw-r--r-- 1 root root  415K Feb  4 01:25 sql_alter_instance.cc.o
+-rw-r--r-- 1 root root  865K Feb  4 01:25 sql_analyse.cc.o
+-rw-r--r-- 1 root root  698K Feb  4 01:30 sql_audit.cc.o
+-rw-r--r-- 1 root root  1.9M Feb  4 01:25 sql_base.cc.o
+-rw-r--r-- 1 root root  9.1K Feb  4 01:25 sql_bootstrap.cc.o
+-rw-r--r-- 1 root root   50K Feb  4 00:45 sql_builtin.cc.o
+-rw-r--r-- 1 root root  973K Feb  4 01:26 sql_cache.cc.o
+-rw-r--r-- 1 root root  2.2M Feb  4 01:26 sql_class.cc.o
+-rw-r--r-- 1 root root  385K Feb  4 01:30 sql_client.cc.o
+-rw-r--r-- 1 root root  541K Feb  4 01:26 sql_connect.cc.o
+-rw-r--r-- 1 root root   54K Feb  4 01:26 sql_crypt.cc.o
+-rw-r--r-- 1 root root  478K Feb  4 01:26 sql_cursor.cc.o
+-rw-r--r-- 1 root root  405K Feb  4 01:26 sql_data_change.cc.o
+-rw-r--r-- 1 root root  779K Feb  4 01:26 sql_db.cc.o
+-rw-r--r-- 1 root root 1020K Feb  4 01:26 sql_delete.cc.o
+-rw-r--r-- 1 root root  558K Feb  4 01:26 sql_derived.cc.o
+-rw-r--r-- 1 root root  387K Feb  4 01:26 sql_digest.cc.o
+-rw-r--r-- 1 root root  477K Feb  4 01:26 sql_do.cc.o
+-rw-r--r-- 1 root root  864K Feb  4 01:26 sql_error.cc.o
+-rw-r--r-- 1 root root  1.3M Feb  4 01:26 sql_executor.cc.o
+-rw-r--r-- 1 root root  684K Feb  4 01:26 sql_get_diagnostics.cc.o
+-rw-r--r-- 1 root root  830K Feb  4 01:26 sql_handler.cc.o
+-rw-r--r-- 1 root root  900K Feb  4 01:26 sql_help.cc.o
+-rw-r--r-- 1 root root  633K Feb  4 00:45 sql_hints.yy.cc.o
+-rw-r--r-- 1 root root  1.9M Feb  4 01:25 sql_initialize.cc.o
+-rw-r--r-- 1 root root  1.2M Feb  4 01:26 sql_insert.cc.o
+-rw-r--r-- 1 root root  1.2M Feb  4 01:26 sql_join_buffer.cc.o
+-rw-r--r-- 1 root root  1.3M Feb  4 01:26 sql_lex.cc.o
+-rw-r--r-- 1 root root   84K Feb  4 01:26 sql_lex_hash.cc.o
+-rw-r--r-- 1 root root  477K Feb  4 01:26 sql_lex_hints.cc.o
+-rw-r--r-- 1 root root   62K Feb  4 01:26 sql_list.cc.o
+-rw-r--r-- 1 root root  973K Feb  4 01:27 sql_load.cc.o
+-rw-r--r-- 1 root root  881K Feb  4 01:27 sql_locale.cc.o
+-rw-r--r-- 1 root root  396K Feb  4 01:27 sql_manager.cc.o
+-rw-r--r-- 1 root root  2.4M Feb  4 01:27 sql_optimizer.cc.o
+-rw-r--r-- 1 root root  2.0M Feb  4 01:27 sql_parse.cc.o
+-rw-r--r-- 1 root root  630K Feb  4 01:27 sql_partition_admin.cc.o
+-rw-r--r-- 1 root root  1.7M Feb  4 01:27 sql_partition.cc.o
+-rw-r--r-- 1 root root  1.2M Feb  4 01:27 sql_planner.cc.o
+-rw-r--r-- 1 root root  1.2M Feb  4 01:27 sql_plugin.cc.o
+-rw-r--r-- 1 root root  1.3M Feb  4 01:27 sql_prepare.cc.o
+-rw-r--r-- 1 root root  730K Feb  4 01:27 sql_profile.cc.o
+-rw-r--r-- 1 root root  457K Feb  4 01:27 sql_query_rewrite.cc.o
+-rw-r--r-- 1 root root  616K Feb  4 01:27 sql_reload.cc.o
+-rw-r--r-- 1 root root  422K Feb  4 01:27 sql_rename.cc.o
+-rw-r--r-- 1 root root  1.3M Feb  4 01:27 sql_resolver.cc.o
+-rw-r--r-- 1 root root  529K Feb  4 01:27 sql_rewrite.cc.o
+-rw-r--r-- 1 root root  1.4M Feb  4 01:27 sql_select.cc.o
+-rw-r--r-- 1 root root  573K Feb  4 01:27 sql_servers.cc.o
+-rw-r--r-- 1 root root  2.5M Feb  4 01:28 sql_show.cc.o
+-rw-r--r-- 1 root root  988K Feb  4 01:28 sql_show_status.cc.o
+-rw-r--r-- 1 root root  593K Feb  4 01:28 sql_signal.cc.o
+-rw-r--r-- 1 root root   29K Feb  4 01:28 sql_state.c.o
+-rw-r--r-- 1 root root  2.0M Feb  4 01:28 sql_table.cc.o
+-rw-r--r-- 1 root root  383K Feb  4 01:28 sql_tablespace.cc.o
+-rw-r--r-- 1 root root  687K Feb  4 01:28 sql_test.cc.o
+-rw-r--r-- 1 root root  399K Feb  4 01:28 sql_thd_internal_api.cc.o
+-rw-r--r-- 1 root root  563K Feb  4 01:28 sql_time.cc.o
+-rw-r--r-- 1 root root  421K Feb  4 01:28 sql_timer.cc.o
+-rw-r--r-- 1 root root  817K Feb  4 01:28 sql_tmp_table.cc.o
+-rw-r--r-- 1 root root  463K Feb  4 01:28 sql_trigger.cc.o
+-rw-r--r-- 1 root root  511K Feb  4 01:28 sql_truncate.cc.o
+-rw-r--r-- 1 root root  506K Feb  4 01:28 sql_udf.cc.o
+-rw-r--r-- 1 root root  662K Feb  4 01:28 sql_union.cc.o
+-rw-r--r-- 1 root root  1.1M Feb  4 01:28 sql_update.cc.o
+-rw-r--r-- 1 root root  686K Feb  4 01:28 sql_view.cc.o
+-rw-r--r-- 1 root root  4.8M Feb  4 00:45 sql_yacc.cc.o
+-rw-r--r-- 1 root root  970K Feb  4 01:30 srv_session.cc.o
+-rw-r--r-- 1 root root  411K Feb  4 01:30 srv_session_info_service.cc.o
+-rw-r--r-- 1 root root  419K Feb  4 01:30 srv_session_service.cc.o
+-rw-r--r-- 1 root root   69K Feb  4 00:45 ssl_wrapper_service.cc.o
+-rw-r--r-- 1 root root  408K Feb  4 01:28 strfunc.cc.o
+-rw-r--r-- 1 root root   85K Feb  4 01:25 string_service.cc.o
+-rw-r--r-- 1 root root  2.4M Feb  4 01:28 sys_vars.cc.o
+-rw-r--r-- 1 root root   71K Feb  4 01:28 sys_vars_resource_mgr.cc.o
+-rw-r--r-- 1 root root  420K Feb  4 01:28 table_cache.cc.o
+-rw-r--r-- 1 root root  1.7M Feb  4 01:28 table.cc.o
+-rw-r--r-- 1 root root  551K Feb  4 01:28 table_trigger_dispatcher.cc.o
+-rw-r--r-- 1 root root  638K Feb  4 01:28 tc_log.cc.o
+-rw-r--r-- 1 root root  384K Feb  4 01:28 thr_malloc.cc.o
+-rw-r--r-- 1 root root  605K Feb  4 01:28 transaction.cc.o
+-rw-r--r-- 1 root root  641K Feb  4 01:29 transaction_info.cc.o
+-rw-r--r-- 1 root root  572K Feb  4 01:29 trigger.cc.o
+-rw-r--r-- 1 root root  426K Feb  4 01:29 trigger_chain.cc.o
+-rw-r--r-- 1 root root  396K Feb  4 01:29 trigger_creation_ctx.cc.o
+-rw-r--r-- 1 root root  637K Feb  4 01:29 trigger_loader.cc.o
+-rw-r--r-- 1 root root  570K Feb  4 01:29 tztime.cc.o
+-rw-r--r-- 1 root root  542K Feb  4 01:29 uniques.cc.o
+-rw-r--r-- 1 root root  649K Feb  4 01:29 unireg.cc.o
+-rw-r--r-- 1 root root  1.1M Feb  4 01:29 xa.cc.o
+
+/home/david/sql/CMakeFiles/sql.dir/__:
+total 12K
+drwxr-xr-x 3 root root 4.0K Feb  4 00:24 extra
+drwxr-xr-x 2 root root 4.0K Feb  4 01:29 libmysql
+drwxr-xr-x 2 root root 4.0K Feb  4 01:29 sql-common
+
+/home/david/sql/CMakeFiles/sql.dir/__/extra:
+total 4.0K
+drwxr-xr-x 2 root root 4.0K Feb  4 01:29 lz4
+
+/home/david/sql/CMakeFiles/sql.dir/__/extra/lz4:
+total 36K
+-rw-r--r-- 1 root root 33K Feb  4 01:29 xxhash.c.o
+
+/home/david/sql/CMakeFiles/sql.dir/__/libmysql:
+total 48K
+-rw-r--r-- 1 root root 47K Feb  4 01:29 errmsg.c.o
+
+/home/david/sql/CMakeFiles/sql.dir/__/sql-common:
+total 848K
+-rw-r--r-- 1 root root  83K Feb  4 01:29 client_authentication.cc.o
+-rw-r--r-- 1 root root 338K Feb  4 01:29 client.c.o
+-rw-r--r-- 1 root root 116K Feb  4 01:29 client_plugin.c.o
+-rw-r--r-- 1 root root  42K Feb  4 01:29 get_password.c.o
+-rw-r--r-- 1 root root  86K Feb  4 01:29 my_time.c.o
+-rw-r--r-- 1 root root  11K Feb  4 01:29 my_user.c.o
+-rw-r--r-- 1 root root  12K Feb  4 01:29 pack.c.o
+-rw-r--r-- 1 root root 151K Feb  4 01:29 sql_string.cc.o
+
+/home/david/sql/CMakeFiles/sql.dir/auth:
+total 6.1M
+-rw-r--r-- 1 root root  56K Feb  4 00:45 password.c.o
+-rw-r--r-- 1 root root  91K Feb  4 00:45 password_policy_service.cc.o
+-rw-r--r-- 1 root root 430K Feb  4 00:45 service_security_context.cc.o
+-rw-r--r-- 1 root root 1.3M Feb  4 00:45 sql_auth_cache.cc.o
+-rw-r--r-- 1 root root 870K Feb  4 00:45 sql_authentication.cc.o
+-rw-r--r-- 1 root root 1.3M Feb  4 00:45 sql_authorization.cc.o
+-rw-r--r-- 1 root root 430K Feb  4 00:45 sql_security_ctx.cc.o
+-rw-r--r-- 1 root root 1.1M Feb  4 00:45 sql_user.cc.o
+-rw-r--r-- 1 root root 644K Feb  4 00:45 sql_user_table.cc.o
+
+/home/david/sql/CMakeFiles/sql.dir/conn_handler:
+total 2.5M
+-rw-r--r-- 1 root root 383K Feb  4 01:29 channel_info.cc.o
+-rw-r--r-- 1 root root 444K Feb  4 00:45 connection_handler_manager.cc.o
+-rw-r--r-- 1 root root 419K Feb  4 01:29 connection_handler_one_thread.cc.o
+-rw-r--r-- 1 root root 530K Feb  4 01:29 connection_handler_per_thread.cc.o
+-rw-r--r-- 1 root root 769K Feb  4 01:29 socket_connection.cc.o
+
+/home/david/sql/CMakeFiles/sql.dir/partitioning:
+total 904K
+-rw-r--r-- 1 root root 902K Feb  4 01:24 partition_handler.cc.o
+
+/home/david/sql/CMakeFiles/sqlgunitlib.dir:
+total 1.9M
+drwxr-xr-x 3 root root 4.0K Feb  4 00:24 __
+-rw-r--r-- 1 root root  14K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  524 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root   71 Feb  4 00:24 cmake_clean_target.cmake
+-rw-r--r-- 1 root root  36K Feb  4 00:42 CXX.includecache
+-rw-r--r-- 1 root root 1.8K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root  21K Feb  4 00:42 depend.internal
+-rw-r--r-- 1 root root  40K Feb  4 00:42 depend.make
+-rw-r--r-- 1 root root 738K Feb  4 00:42 filesort_utils.cc.o
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  346 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root 589K Feb  4 00:42 mdl.cc.o
+-rw-r--r-- 1 root root  121 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root  62K Feb  4 00:42 sql_list.cc.o
+-rw-r--r-- 1 root root 384K Feb  4 00:42 thr_malloc.cc.o
+
+/home/david/sql/CMakeFiles/sqlgunitlib.dir/__:
+total 4.0K
+drwxr-xr-x 2 root root 4.0K Feb  4 00:42 sql-common
+
+/home/david/sql/CMakeFiles/sqlgunitlib.dir/__/sql-common:
+total 152K
+-rw-r--r-- 1 root root 151K Feb  4 00:42 sql_string.cc.o
+
+/home/david/sql/CMakeFiles/udf_example.dir:
+total 252K
+-rw-r--r-- 1 root root 4.8K Feb  4 00:24 build.make
+-rw-r--r-- 1 root root  267 Feb  4 00:24 cmake_clean.cmake
+-rw-r--r-- 1 root root 6.1K Feb  4 01:34 CXX.includecache
+-rw-r--r-- 1 root root 1.4K Feb  4 00:24 DependInfo.cmake
+-rw-r--r-- 1 root root 2.1K Feb  4 01:34 depend.internal
+-rw-r--r-- 1 root root 3.9K Feb  4 01:34 depend.make
+-rw-r--r-- 1 root root 1.2K Feb  4 00:24 flags.make
+-rw-r--r-- 1 root root  274 Feb  4 00:24 link.txt
+-rw-r--r-- 1 root root   41 Feb  4 00:24 progress.make
+-rw-r--r-- 1 root root 208K Feb  4 01:34 udf_example.cc.o
+
+/home/david/sql/share:
+total 148K
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 bulgarian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:24 CMakeFiles
+-rw-r--r-- 1 root root 6.4K Feb  4 00:24 cmake_install.cmake
+-rw-r--r-- 1 root root  271 Feb  4 00:24 CTestTestfile.cmake
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 czech
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 danish
+-rw-r--r-- 1 root root  25K Feb  4 00:24 dictionary.txt
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 dutch
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 english
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 estonian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 french
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 german
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 greek
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 hungarian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 italian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 japanese
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 korean
+-rw-r--r-- 1 root root 6.6K Feb  4 00:24 Makefile
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 norwegian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 norwegian-ny
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 polish
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 portuguese
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 romanian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 russian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 serbian
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 slovak
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 spanish
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 swedish
+drwxr-xr-x 2 root root 4.0K Feb  4 00:28 ukrainian
+
+/home/david/sql/share/bulgarian:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/CMakeFiles:
+total 8.0K
+-rw-r--r-- 1 root root 613 Feb  4 00:24 CMakeDirectoryInformation.cmake
+-rw-r--r-- 1 root root   2 Feb  4 00:24 progress.marks
+
+/home/david/sql/share/czech:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/danish:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/dutch:
+total 80K
+-rw-r--r-- 1 root root 77K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/english:
+total 76K
+-rw-r--r-- 1 root root 75K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/estonian:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/french:
+total 80K
+-rw-r--r-- 1 root root 77K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/german:
+total 84K
+-rw-r--r-- 1 root root 83K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/greek:
+total 84K
+-rw-r--r-- 1 root root 82K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/hungarian:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/italian:
+total 80K
+-rw-r--r-- 1 root root 77K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/japanese:
+total 84K
+-rw-r--r-- 1 root root 83K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/korean:
+total 80K
+-rw-r--r-- 1 root root 78K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/norwegian:
+total 76K
+-rw-r--r-- 1 root root 75K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/norwegian-ny:
+total 76K
+-rw-r--r-- 1 root root 75K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/polish:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/portuguese:
+total 80K
+-rw-r--r-- 1 root root 78K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/romanian:
+total 80K
+-rw-r--r-- 1 root root 77K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/russian:
+total 92K
+-rw-r--r-- 1 root root 90K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/serbian:
+total 80K
+-rw-r--r-- 1 root root 78K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/slovak:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/spanish:
+total 80K
+-rw-r--r-- 1 root root 77K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/swedish:
+total 76K
+-rw-r--r-- 1 root root 76K Feb  4 00:28 errmsg.sys
+
+/home/david/sql/share/ukrainian:
+total 88K
+-rw-r--r-- 1 root root 85K Feb  4 00:28 errmsg.sys
