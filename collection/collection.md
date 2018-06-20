@@ -499,6 +499,9 @@ PyQuery('li:nth-child(2n)')
 PyQuery('li:contains(second)')
 ```
 
+<<<<<<< HEAD
+## Selenium
+=======
 ## 数据存储
 
 ### 文件存储
@@ -614,7 +617,253 @@ except:
 db.close()
 ```
 
+>>>>>>> dea3995aaa3d7176c41cd475ea1d3e502bd7d5d5
 
+[官方文档](http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains)
+
+### 使用示例
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
+
+browser = webdriver.Chrome()
+try:
+    browser.get('https://www.baidu.com')
+    input = browser.find_element_by_id('kw')
+    input.send_keys('Python')
+    input.send_keys(Keys.ENTER)
+    wait = WebDriverWait(browser, 10)
+    wait.until(EC.presence_of_element_located((By.ID, 'content_left')))
+    print(browser.current_url)
+    print(browser.get_cookies())
+    print(browser.page_source)
+finally:
+    browser.close()
+```
+
+### 初始化浏览器
+
+```python
+from selenium import webdriver
+
+browser = webdriver.Chrome()
+browser = webdriver.Firefox()
+browser = webdriver.Edge()
+browser = webdriver.PhantomJS()
+browser = webdriver.Safari()
+```
+
+### 访问页面
+
+````python
+browser.get('https://www.taobao.com')
+print(browser.page_source)
+````
+
+### 查找节点
+
+```python
+# 单个节点
+## 根据id值
+find_element_by_id
+## 根据name属性
+find_element_by_name
+## 使用xpath
+find_element_by_xpath
+## 根据链接文本
+find_element_by_link_text
+## 根据部分链接文本
+find_element_by_partial_link_text
+## 根据标签名
+find_element_by_tag_name
+## 根据class的值
+find_element_by_class_name
+## 根据css选择器
+find_element_by_css_selector
+## 通用
+from selenium.webdriver.common.by import By
+find_element(By.ID, 'id值')
+
+# 多个节点
+find_elements_by_id
+find_elements_by_name
+find_elements_by_xpath
+find_elements_by_link_text
+find_elements_by_partial_link_text
+find_elements_by_tag_name
+find_elements_by_class_name
+find_elements_by_css_selector
+## 通用
+from selenium.webdriver.common.by import By
+find_elements(By.ID, 'id值')
+```
+
+### 节点交互
+
+```python
+browser.get('https://www.taobao.com')
+input = browser.find_element_by_id('q')
+# 输入文字
+input.send_keys('iPhone')
+# 清除文字
+input.clear()
+button = browser.find_element_by_class_name('btn-search')
+# 点击按钮
+button.click()
+
+# 前进
+browser.forward()
+# 后退
+browser.back()
+```
+
+### 执行JavaScript
+
+```python
+from selenium import webdriver
+
+browser = webdriver.Chrome()
+browser.get('https://www.zhihu.com/explore')
+browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+browser.execute_script('alert("To Bottom")')
+```
+
+### 获取节点信息
+
+```python
+logo = browser.find_element_by_id('zh-top-link-logo')
+# 获取属性
+logo.get_attribute('class')
+
+input = browser.find_element_by_class_name('zu-top-add-question')
+# 获取文本值
+input.text
+# 获取id
+input.id
+# 获取该节点在页面中的相对位置
+input.location
+# 获取标签名称
+input.tag_name
+# 获取节点大小(宽高)
+input.size
+```
+
+### 切换Frame
+
+```python
+# 进入子iframe, 参数: frame的index|id|name|browser.find_element_by_tag_name("iframe")
+browser.switch_to.frame('iframeResult')
+# 返回父iframe
+browser.switch_to.parent_frame()
+```
+
+### 选项卡管理
+
+```python
+from selenium import webdriver
+
+browser = webdriver.Chrome()
+browser.get('https://www.baidu.com')
+browser.execute_script('window.open()')
+
+browser.switch_to.window(browser.window_handles[1])
+# browser.switch_to_window(browser.window_handles[1])
+
+browser.get('https://www.taobao.com')
+
+browser.switch_to.window(browser.window_handles[0])
+# browser.switch_to_window(browser.window_handles[0])
+
+browser.get('https://www.google.org')
+```
+
+### 延时等待
+
+[文档](http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.support.expected_conditions)
+
+```python
+# 隐式等待
+browser = webdriver.Chrome()
+browser.implicitly_wait(10)
+browser.get('https://www.zhihu.com/explore')
+input = browser.find_element_by_class_name('zu-top-add-question')
+print(input)
+
+# 显式等待
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+browser = webdriver.Chrome()
+browser.get('https://www.taobao.com/')
+## 设置等待时间
+wait = WebDriverWait(browser, 10)
+## 等待加载
+input = wait.until(EC.presence_of_element_located((By.ID, 'q')))
+## 等待按钮激活(可点击)
+button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.btn-search')))
+```
+
+| 等待条件                                     | 含义                                              |
+| -------------------------------------------- | ------------------------------------------------- |
+| title_is                                     | 标题是某内容                                      |
+| title_contains                               | 标题包含某内容                                    |
+| presence_of_element_located                  | 节点加载出，传入定位元组，如(By.ID, 'p')          |
+| visibility_of_element_located                | 节点可见，传入定位元组                            |
+| visibility_of                                | 可见，传入节点对象                                |
+| presence_of_all_elements_located             | 所有节点加载出                                    |
+| text_to_be_present_in_element                | 某个节点文本包含某文字                            |
+| text_to_be_present_in_element_value          | 某个节点值包含某文字                              |
+| frame_to_be_available_and_switch_to_it frame | 加载并切换                                        |
+| invisibility_of_element_located              | 节点不可见                                        |
+| element_to_be_clickable                      | 节点可点击                                        |
+| staleness_of                                 | 判断一个节点是否仍在DOM，可判断页面是否已经刷新   |
+| element_to_be_selected                       | 节点可选择，传节点对象                            |
+| element_located_to_be_selected               | 节点可选择，传入定位元组                          |
+| element_selection_state_to_be                | 传入节点对象以及状态，相等返回True，否则返回False |
+| element_located_selection_state_to_be        | 传入定位元组以及状态，相等返回True，否则返回False |
+| alert_is_present                             | 是否出现Alert                                     |
+
+### cookie
+
+```python
+# 获取cookie
+browser.get_cookies()
+# 添加cookie
+browser.add_cookie({'name': 'name'})
+# 删除所有cookie
+browser.delete_all_cookies()
+```
+
+### 捕获异常
+
+[文档](http://selenium-python.readthedocs.io/api.html#module-selenium.common.exceptions)
+
+```python
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
+browser = webdriver.Chrome()
+# 捕获超时异常
+try:
+    browser.get('https://www.baidu.com')
+except TimeoutException:
+    print('Time Out')
+
+# 捕获节点未找到异常
+try:
+    browser.find_element_by_id('hello')
+except NoSuchElementException:
+    print('No Element')
+finally:
+    browser.close()
+```
 
 
 
