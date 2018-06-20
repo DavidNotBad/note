@@ -499,9 +499,6 @@ PyQuery('li:nth-child(2n)')
 PyQuery('li:contains(second)')
 ```
 
-<<<<<<< HEAD
-## Selenium
-=======
 ## 数据存储
 
 ### 文件存储
@@ -617,7 +614,7 @@ except:
 db.close()
 ```
 
->>>>>>> dea3995aaa3d7176c41cd475ea1d3e502bd7d5d5
+## Selenium
 
 [官方文档](http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains)
 
