@@ -198,3 +198,72 @@ ITEM_PIPELINES = {
 }
 ```
 
+## 技巧
+
+```python
+# urlencode
+from urllib.parse import quote
+quote(keyword)
+
+# url拼接
+from urlparse import urljoin
+from urlparse import urlparse
+from urlparse import urlunparse
+from posixpath import normpath
+ 
+def myjoin(base, url):
+    url1 = urljoin(base, url)
+    arr = urlparse(url1)
+    path = normpath(arr[2])
+    return urlunparse((arr.scheme, arr.netloc, path, arr.params, arr.query, arr.fragment))
+ 
+if __name__ == "__main__":
+    print myjoin("http://www.baidu.com", "abc.html")
+    print myjoin("http://www.baidu.com", "/../../abc.html")
+    print myjoin("http://www.baidu.com/xxx", "./../../abc.html")
+    print myjoin("http://www.baidu.com", "abc.html?key=value&m=x")
+```
+
+## 选择器
+
+| CSS            | Xpath                              | 备注                                            |                                                              |
+| -------------- | ---------------------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
+| 含有属性       | response.css('div[class]')         | response.xpath('//div[@class]')                 | css可以简写为 div.class 甚至 .class，div#abc 或 #abc 则对应于id=abc |
+| 匹配属性值     | response.css('div[class="quote"]') | response.xpath('//div[@class="quote"]')         | response.xpath('//small[text()="Albert Einstein"]')          |
+| 匹配部分属性值 | response.css('div[class*="quo"]')  | response.xpath('//div[contains(@class,"quo")]') | response.xpath('//small[contains(text(),"Einstein")]')       |
+| 提取属性值     | response.css('small::attr(class)') | response.xpath('//small/@class')                | css里面text排除在attr以外，所以不支持上面两个过滤text？？？  |
+| 提取文字       | response.css('small::text')        | response.xpath('//small/text()')                |                                                              |
+| 提取文本       | response.css('small::string')      | response.xpath('//small//text()')               |                                                              |
+
+```python
+# 文本一
+response.xpath('//title/text()').extract()
+response.css('title::text').extract()
+
+# 文本 包括子节点
+sel.xpath("//a[1]//text()").extract()
+
+# 文本 包括子节点
+sel.xpath("string(//a[1])").extract()
+
+
+# 属性
+response.xpath('//img/@src').extract()
+response.css('img::attr(src)').extract()
+
+# 混合
+response.css('img').xpath('@src').extract()
+response.xpath('//img').css('::attr(src)').extract()
+
+# 精确
+response.xpath('//div[@id="images"]/a/text()').extract()
+response.css('div[id=images] a::text').extract()
+
+# 模糊
+response.xpath('//div[contains(@id, "image")]/a/text()').extract()
+response.css('div[id*=image] a::text').extract()
+
+# 正则
+response.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
+```
+
