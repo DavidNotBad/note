@@ -327,35 +327,26 @@ array_columns($data, $get);
     }
 ```
 
-## 过滤数组或对象
+## 退出登录
 
 ```php
-/**
- * 过滤数组或对象
- * @param array|object $filterData  操作的数组/对象
- * @param callable|null $callback   回调函数
- * @return array|object
- */
-function _filter($filterData, callable $callback=null)
-{
-    $data = (array) $filterData;
+session_start();
 
-    if(is_null($callback)){
-        $result = array_filter($data);
-    }elseif(version_compare(PHP_VERSION, '5.6', '>=')){
-        $result = array_filter($data, $callback, ARRAY_FILTER_USE_BOTH);
-    }else{
-        $result = array();
-        foreach (array_chunk($data, 1, true) as $key=>$item)
-        {
-            if( call_user_func($callback, current($item), current(array_keys($item))) ){
-                $result = array_merge($result, $item);
-            }
-        }
-    }
+// 重置会话中的所有变量
+$_SESSION = array();
 
-    return is_object($filterData) ? (object) $result : $result;
+// 如果要清理的更彻底，那么同时删除会话 cookie
+// 注意：这样不但销毁了会话中的数据，还同时销毁了会话本身
+if (@ini_get("session.use_cookies")) {
+    $params = @session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+              $params["path"], $params["domain"],
+              $params["secure"], $params["httponly"]
+             );
 }
+
+// 最后，销毁会话
+session_destroy();
 ```
 
 

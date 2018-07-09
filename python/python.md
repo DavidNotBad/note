@@ -10,7 +10,7 @@
 
 [无头浏览器](https://developers.google.com/web/updates/2017/04/headless-chrome)
 
-
+[中文文档](https://yiyibooks.cn/xx/python_352/index.html)
 
 ### 工具
 
@@ -546,6 +546,21 @@ json.loads(str)
 import os
 if not os.path.exists(item.get('title')):
     os.mkdir(item.get('title'))
+```
+
+### 枚举
+
+```python
+# 参数1, 代表从一开始
+for i, item in enumerate(iterable, 1):
+    print i, item
+```
+
+### 字典/集合 解析
+
+```python
+my_dict = {i: i * i for i in xrange(100)} 
+my_set = {i * 15 for i in xrange(100)}
 ```
 
 

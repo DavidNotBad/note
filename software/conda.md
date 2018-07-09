@@ -123,3 +123,18 @@ conda install -prefix=D:\pyenv\py27 package
 conda install -prefix=D:\pyenv\py36 anaconda
 ```
 
+## 示例
+
+```python
+# 1. 把 E:\Anaconda\Scripts 加入到环境变量
+# 2. 进入 F:\www\python, 右键, git bash here
+# 2.1 set PATH=
+# 2.2 exit
+# 3. 再次进入 F:\www\python, 右键, git bash here
+# 4. conda create --prefix=./venv python=3.6
+# 5. source activate ./venv
+# 6. 输入python --version 和 pip --version 测试
+# 7. conda install --prefix=./venv scrapy
+# 8. 检查包是否安装成功, conda list
+```
+
