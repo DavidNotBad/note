@@ -32,6 +32,23 @@ source deactivate python34 # for Linux & Mac
 conda remove --name python34 --all
 ```
 
+## 在window系统下的git bash使用python命令交互模式
+
+```python
+# 1. 运行git bash命令行
+# 2. 进入家目录
+cd
+# 3. 编辑文件.bash_profile
+vim .bash_profile
+# 4. 另起一行
+alias python='winpty python'
+# 5. 退出vim, 使用命令 :wq
+# 6. 使配置生效
+source .bash_profile
+```
+
+
+
 ## 包管理
 
 ```python
