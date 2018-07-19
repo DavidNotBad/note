@@ -23,6 +23,8 @@ python3.6 -m venv venv存储目录
 source venv存储目录/bin/active
 # 升级pip
 pip install --upgrade pip
+# 退出隔离环境
+deactivate
 ```
 
 #### 方法二: 使用pycharm自动生成(推荐)
@@ -38,6 +40,8 @@ s
 source 项目目录/venv/bin/active
 # 升级pip
 pip install --upgrade pip
+# 退出隔离环境
+deactivate
 ```
 
 ### 安装scrapy
