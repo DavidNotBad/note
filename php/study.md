@@ -5,7 +5,7 @@ str_replace( '\\', '/', str_replace(pathinfo(__FILE__, PATHINFO_BASENAME), '', _
 
 str_replace( '\\', '/', pathinfo(__FILE__, PATHINFO_DIRNAME) );
 
-define('API_PROXY_PATH', str_replace('\\', '/', pathinfo(__FILE__, PATHINFO_DIRNAME)).'/');
+define('API_PROXY_PATH', str_replace('\\', '/', dirname(__FILE__)).'/');
 define('ROOT_PATH', substr(API_PROXY_PATH, 0,-1 - strpos(strrev(rtrim(API_PROXY_PATH,'/')), '/')));
 ```
 
@@ -14,6 +14,22 @@ define('ROOT_PATH', substr(API_PROXY_PATH, 0,-1 - strpos(strrev(rtrim(API_PROXY_
 ```php
 $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';  
 echo $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+// 获取根目录
+public function base_path($path=null, $returnDomain=false)
+{
+    if(!$returnDomain){
+        $return = $path ? ROOT_FW_PATH . $path : ROOT_FW_PATH;
+        //尝试创建目录
+        is_dir(dirname($return)) or @mkdir($return, 0777, true);
+        return $return;
+    }
+
+    $httpType = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+    $parse = parse_url($httpType . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+
+    return str_replace('\\', '/', $parse['scheme'] . '://' . $parse['host'] . dirname($parse['path']) . $path);
+}
 ```
 
 ## 获取文件列表
