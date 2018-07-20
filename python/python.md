@@ -8,7 +8,7 @@
 
 [书籍](https://germey.gitbooks.io/python3webspider/content/)
 
-[无头浏览器](https://developers.google.com/web/updates/2017/04/headless-chrome)
+[无界面浏览器](https://developers.google.com/web/updates/2017/04/headless-chrome)
 
 [中文文档](https://yiyibooks.cn/xx/python_352/index.html)
 
@@ -42,6 +42,9 @@
 * 打印
 
   ```python
+  #!/usr/bin/python
+  # -*- coding: UTF-8 -*-
+  
   print("Hello World")
   ```
 
@@ -78,6 +81,27 @@ favorite_language.split()
 '\n'.join([question, author, answer])
  ```
 
+## 变量
+
+```python
+# 获取变量类型
+type()
+# 判断类的实例
+isinstance()
+
+# type() 与 isinstance()区别：
+class A:
+    pass
+class B(A):
+    pass
+
+isinstance(A(), A)    # returns True
+type(A()) == A        # returns True
+isinstance(B(), A)    # returns True
+type(B()) == A        # returns False
+```
+
+
 
 ## 算术
 
@@ -89,9 +113,14 @@ favorite_language.split()
 age = 23
 str(age)
 
-#python中
+#python2中
 3/2 = 1 #只取整数部分
 3.0/2 = 1.5 #其中一个数字为浮点数才会得到小数点
+
+#python3
+3/2 = 1.5
+6/3 = 2.0
+6//3 = 2
  ```
 
 ### 列表
@@ -139,6 +168,16 @@ len(cars)
 cars = ['bmw', 'audi', 'toyota', 'subaru']
 for car in cars:
     print(car)
+
+# for else语句
+# 当（for）循环迭代完整个列表或（while）循环条件变为假，而非由break语句终止时，就会执行这个else语句
+for n in range(2, 10):
+    for x in range(2, n):
+        if n % x == 0:
+            print(n, ' equals', x, '*', n//x)
+            break
+    else:
+        print(n, ' is a prime number')
 ```
 
 ### 列表相关
