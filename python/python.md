@@ -25,8 +25,12 @@
 
 * 命令行工具
 
-  ```
+  ```python
+  # upterm
   https://github.com/railsware/upterm
+  # 自带的idel
+  ## 在命令行输入
+  idel3.6 &
   ```
 
 * IDE
@@ -76,6 +80,15 @@ favorite_language.split()
 
 # 聚合字符串
 '\n'.join([question, author, answer])
+
+# 原始字符串
+str = r'D:\nowfilename'
+str = r'D:\nowfilename' + '\\'
+
+# 长串字符串
+str = """你好
+你好
+哈哈"""
  ```
 
 
