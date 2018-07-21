@@ -162,6 +162,23 @@ cars.reverse()
 len(cars)
  ```
 
+### 堆栈
+
+```python
+from collections import deque
+queue = deque(['apple', 'banana', 'cat', 'dog'])
+
+print(queue)
+
+print(queue.pop())
+print(queue)
+
+print(queue.popleft())
+print(queue)
+```
+
+
+
 ### 遍历列表
 
 ```python
@@ -590,9 +607,14 @@ if not os.path.exists(item.get('title')):
 ### 枚举
 
 ```python
+# 遍历列表
 # 参数1, 代表从一开始
 for i, item in enumerate(iterable, 1):
-    print i, item
+    print(i, item)
+
+# 遍历字典
+for key, item in knights.items():
+    print()
 ```
 
 ### 字典/集合 解析

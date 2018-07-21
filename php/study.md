@@ -15,24 +15,27 @@ define('ROOT_PATH', substr(API_PROXY_PATH, 0,-1 - strpos(strrev(rtrim(API_PROXY_
 $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';  
 echo $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-// 获取根目录
- public function base_path($path=null, $returnDomain=false)
- {
-     if(!$returnDomain){
-         $return = $path ? ROOT_FW_PATH . $path : ROOT_FW_PATH;
+//获取路径
+function base_path($path=null, $returnDomain=false, $isMkdir=false)
+{
+    if(!$returnDomain){
+        $return = $path ? __DIR__ . '/' . $path : __DIR__;
 
-         //尝试创建目录
-         $dir = pathinfo($path, PATHINFO_EXTENSION) ? dirname($return) : $return;
-         is_dir($dir) or @mkdir($dir, 0777, true);
+        //尝试创建目录
+        if($isMkdir){
+            $dir = pathinfo($path, PATHINFO_EXTENSION) ? dirname($return) : $return;
+            is_dir($dir) or @mkdir($dir, 0777, true);
+        }
 
-         return $return;
-     }
+        return str_replace('\\', '/', $return);
+    }
 
-     $httpType = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-     $parse = parse_url($httpType . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    $httpType = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+    $parse = parse_url($httpType . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 
-     return str_replace('\\', '/', $parse['scheme'] . '://' . $parse['host'] . dirname($parse['path']) . $path);
- }
+    $domain = $parse['scheme'] . '://' . $parse['host'] . dirname($parse['path']);
+    return str_replace('\\', '/', $path ? $domain . '/' . $path : $domain);
+}
 ```
 
 ## 获取文件列表
