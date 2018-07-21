@@ -15,20 +15,26 @@ define('ROOT_PATH', substr(API_PROXY_PATH, 0,-1 - strpos(strrev(rtrim(API_PROXY_
 $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';  
 echo $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-// 获取根目录
-public function base_path($path=null, $returnDomain=false)
+//获取路径
+function base_path($path=null, $returnDomain=false, $isMkdir=false)
 {
     if(!$returnDomain){
-        $return = $path ? ROOT_FW_PATH . $path : ROOT_FW_PATH;
+        $return = $path ? __DIR__ . '/' . $path : __DIR__;
+
         //尝试创建目录
-        is_dir(dirname($return)) or @mkdir($return, 0777, true);
-        return $return;
+        if($isMkdir){
+            $dir = pathinfo($path, PATHINFO_EXTENSION) ? dirname($return) : $return;
+            is_dir($dir) or @mkdir($dir, 0777, true);
+        }
+
+        return str_replace('\\', '/', $return);
     }
 
     $httpType = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
     $parse = parse_url($httpType . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 
-    return str_replace('\\', '/', $parse['scheme'] . '://' . $parse['host'] . dirname($parse['path']) . $path);
+    $domain = $parse['scheme'] . '://' . $parse['host'] . dirname($parse['path']);
+    return str_replace('\\', '/', $path ? $domain . '/' . $path : $domain);
 }
 ```
 
@@ -63,7 +69,7 @@ function glob_recursive($basepath)
 }
 ```
 
-## 字符和数组转义
+## 将 用下划线组装成一维数组的数组 转成 多维数组
 
 ```php
 /**
@@ -91,7 +97,13 @@ function stack_case($data, $flag = '_')
     }
     return $result;
 }
+```
 
+
+
+## 驼峰法与下划线命名转换
+
+```php
 /**
  * 驼峰式命名转成下划线命名
  * @param $str              待转义的字符串
@@ -115,7 +127,11 @@ function camel_case($str,$separator = '_')
     return str_replace(' ','',lcfirst(ucwords(str_replace($separator,' ',$str))));
 }
 
+```
 
+## php版本
+
+```php
 /**
  * @param $version          版本号
  * @param string $delimiter 比较符号
@@ -126,6 +142,8 @@ function php_version($version, $delimiter = '>=')
     return version_compare(PHP_VERSION, $version, $delimiter);
 }
 ```
+
+
 
 ## 奇偶数
 
@@ -363,6 +381,21 @@ if (@ini_get("session.use_cookies")) {
 
 // 最后，销毁会话
 session_destroy();
+```
+
+## array_map改造
+
+```php
+public function map(array $array, callable $callback)
+{
+    $arguments = array_slice(func_get_args(), 2);
+    $return = array();
+    foreach ($array as $item)
+    {
+        $return[] = call_user_func_array($callback, array_merge((array) $item, $arguments));
+    }
+    return $return;
+}
 ```
 
 

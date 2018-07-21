@@ -14,3 +14,9 @@ Pycharm->Preferences->Project:名称->Project Interpreter->点击齿轮->add->Ex
 option + enter
 ```
 
+## 设置文件编码
+
+```python
+File->settings->Editor->File Encodings->Global Encoding和Project Encoding改成UTF-8
+```
+
