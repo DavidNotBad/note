@@ -95,6 +95,9 @@ str = """你好
 
 # 替换字符串, 类似PHP的sprintf
 '{0}/{1}.{2}'.format(item.get('title'), md5(response.content).hexdigest(), 'jpg')
+# 传入字典
+table = {'Sjoerd': 4127, 'Jack': 4098, 'Dcab': 8637678}
+print('Jack: {Jack:d}; Sjoerd: {Sjoerd:d}; Dcab: {Dcab:d}'.format(**table))
 # 关键字参数
 '{a}/{b}'.format(a='1', b='2')
 # 格式化字符串
