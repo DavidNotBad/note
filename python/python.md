@@ -299,7 +299,7 @@ alien['a'] = 'banana'
 #删除字典
 del alien['a']
 #遍历字典
-for key, item in alien.items():
+for key, item in alien.items():  # for循环可以这样: for item in alien.items():
     print(str(key) + '_' + str(item))
 #遍历字典中的所有键
 for key in alien:
@@ -316,6 +316,55 @@ for item in sorted(alien.values()):
 #通过对包含重复元素的列表调用set() ，可让Python找出列表中独一无二的元素，并使用这些元素来创建一个集合
 for item in set(alien.values()):
     print(item)
+    
+# 合并多个数组
+## 结果: [(1, 4), (2, 5), (3, 6)]
+list(zip((1,2,3),(4,5,6)))
+
+# 创建重复的值的字典
+## 结果: {'one': 'value', 'two': 'value', 'three': 'value'}
+{}.fromkeys(('one', 'two', 'three'), 'value')
+
+# 根据键获取值, 当键不存在时, 使用 a['mykey']会报错, 如果不想报错, 使用get()
+a.get('尝试获取的键', '默认值, 可以为空')
+# 根据键获取值, 如果键不存在, 则会新增该键并且赋值
+a = {'one': 'applie', 'two': 'banana', 'three': 'cat'}
+result = a.setdefault('four', 'dog') # result = dog, 原字典新增了{'four':  'dog', ...}
+
+# 检查键是否存在
+23 in a
+# 检查值是否存在
+'test_value' in a.values()
+
+# 清空字典
+a = b = {'test': 'apple'}
+a = {}
+## 此时 a 为 {}, 但是 b 为{'test': 'apple'}
+## 正确的清空字典的方法
+a.clear()
+
+# 根据键弹出值
+a = {'one': '1', 'two': '2', 'three': '3'}
+a.pop('one')  # 结果1, a字典剩下 {'two': '2', 'three': '3'}
+a.popitem()  # 随机弹出结果, 形如: ('one': '1'), a字典剩下 {'two': '2', 'three': '3'}
+
+# 拼接填充字典
+a = {'one': 'applie', 'two': 'banana'}
+a.update({'three':  'cat'}) # a为{'one': 'applie', 'two': 'banana', 'three': 'cat'}
+```
+
+### 集合
+
+```python
+set1 = {1, 2, 3}
+# 定义空的集合
+set2 = set()
+# 向集合添加元素
+set1.add(1)
+# 移除集合中的元素
+set1.remove(3)
+# 创建一个不可变的集合
+set2 = frozenset([1,2,3])
 ```
 
 
