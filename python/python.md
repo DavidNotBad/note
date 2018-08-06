@@ -595,7 +595,74 @@ imposer car
 car.Car()
 ##导入模块中的所有类(不推荐)
 from car import *
+
+# BIF
+## 检查一个类是否是另外一个类的子类
+issubclass()
+## 检查一个对象是否属于一个类
+isinstance()
+## 测试对象是否有指定的属性
+hasattr(object, name)
+## 返回对象指定的属性值
+getattr(object, name [, default])
+## 设置对象中指定的属性的值
+setattr(object, name, value)
+## 删除对象中指定的属性
+delattr(object, name)
+
+# 指定属性的属性
+class C:
+    def __init__(self, size=19):
+        self.size = size
+	def getSize(self):
+        return self.size
+    def setSize(self, value):
+        self.size = value
+	def delSize(self):
+        del self.size
+	x = property(getSize, setSize, delSize)
+c = C()
+c.size # 10
+c.getSize() #10
+c.x #10
+c.x = 12
+c.x #12
+c.getSize() #12
+
+# 魔术方法
+## 构造方法
+__init__(self)
+## 析构方法
+__del__(self)
+## 初始化类时第一个执行的方法
+__new__(cls) 
+class CapStr(str):
+    def __new__(cls, string):
+        string = string.upper()
+        return str.__new__(cls, string)
+a = Capstr('I love Apple.com!')
+a # 'I LOVE APPLE.COM!'
 ```
+
+### 类的算术运算
+
+| 魔术方法名                     | 描述                      |
+| ------------------------------ | ------------------------- |
+| __add__(self, other)           | 加法+                     |
+| __sub__(self, other)           | 减法-                     |
+| __mul__(self, other)           | 乘法*                     |
+| __truediv__(self,other)        | 真除法/                   |
+| __floordiv__(self, other)      | 整除法//                  |
+| __mod__(self, ohter)           | 取模%                     |
+| __divmod__(self, other)        | 当divmod()被调用时        |
+| __pow__(self, other[, modulo]) | 当被power()调用或**运算时 |
+| __lshift__                     | 左移位<<                  |
+| __rshift__(self, other)        | 右移位>>                  |
+| __and__(self, other)           | 按位与&&                  |
+| __xor__(self, other)           | 按位异或^                 |
+| __or__(self, other)            | 按位或\|                  |
+
+
 
 ## 文件操作
 
@@ -622,6 +689,23 @@ file = open('explore.txt', 'a', encoding='utf-8')
 file.write('\n'.join([question, author, answer]))
 file.close()
 ```
+
+## 泡菜
+
+```python
+import pickle
+my_list = [123, 3.14, ['a', 'b']]
+pickle_file = open('my_list.pkl', 'wb')
+# 存储成二进制
+pickle.dump(my_list, pickle_file)
+pickle_file.close()
+
+pickle_file = open('my_list.pkl', 'rb')
+# 读取二进制文件
+my_list2 = pickle.load(pickle_file)
+```
+
+
 
 ### 异常
 
@@ -747,6 +831,35 @@ dir(list)
 | zfill(width)                              | 返回长度为 width 的字符串，原字符串右对齐，前边用 0 填充。   |
 
 
+
+## 图形用户界面入门
+
+```python
+# 官方文档
+'http://easygui.sourceforget.net'
+# 官方教学文档
+'easygui-docs-0.96/tutorial/index.html'
+# 翻译改编的教学文档
+'http://bbs.fishc.com/thread-46069-1-1.html'
+```
+
+## 调试方式
+
+```python
+# 查看文档(简洁)
+print(packages.__doc__)
+# 查看文档(中间)
+help(packages)
+# 查看内容方法
+dir(packages)
+# 查看外界调用的方法, import * 只会导入all指定的方法名
+packages.__all__
+# 查看源代码所在的位置
+packages.__file__
+
+# 查看BIF
+dir(__builtins__)
+```
 
 
 
