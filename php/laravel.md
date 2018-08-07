@@ -1,33 +1,44 @@
 # laravel
 
-* laravel相关网址
+## laravel相关网址
   * [phpArtisan.cn-laravel学习网](https://phpartisan.cn)
   * [表注释](https://packagist.org/packages/zedisdog/laravel-schema-extend)
 
-* 使用的composer库
+## 使用的composer库
+
+### 爬虫类
 
   ```php
-  #爬虫类
   [
       'symfony/css-selector',   //css 选择器
       'symfony/dom-crawler',	 //爬虫
       'fabpot/goutte',		//表单提交
       'guzzlehttp/guzzle',	//http
   ]
-  #表注释
-  'zedisdog/laravel-schema-extend';
-  
   ```
 
-  
+### 表注释
+
+  ```php
+  #表注释
+  'zedisdog/laravel-schema-extend';
+  ```
+
+### collection
+
+  ```php
+  composer require tightenco/collect
+  ```
+### illuminate database
+
+  ```php
+composer require illuminate/database
+composer require illuminate/events
+  ```
 
 
 
-
-
-  
-
-* 打印sql日志
+## 打印sql日志
 
   ```php
   //在AppServiceProvider中的boot方法中调用以下方法
