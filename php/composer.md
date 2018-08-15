@@ -11,7 +11,7 @@
 
 [composer 中文文档](https://docs.phpcomposer.com/04-schema.html)
 
-## ## 库
+## 库
 
 ### phpexcel
 
@@ -57,6 +57,68 @@ composer require illuminate/database
 composer require illuminate/events
 ```
 
+```php
+<?php
+//配置自动加载
+require_once('./vendor/autoload.php');
+//设置字符集
+header('Content-Type: text/html;charset=UTF-8');
+//设置时间戳
+date_default_timezone_set('PRC');
+
+//引用数据库驱动
+use Illuminate\Database\Capsule\Manager as Capsule;
+//引用门面
+use Illuminate\Support\Facades\Facade;
+//引用事件调度器
+use Illuminate\Events\Dispatcher;
+//引用服务容器
+use Illuminate\Container\Container;
+
+//实例化数据库驱动
+$capsule = new Capsule();
+
+//数据库连接
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'tc',
+    'username'  => 'root',
+    'password'  => 'root',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => 'tc_',
+]);
+
+//实例化服务容器
+$container = new Container();
+
+//设置事件调度器
+$capsule->setEventDispatcher(new Dispatcher($container));
+
+//通过静态方法使此Capsule实例全局可用
+$capsule->setAsGlobal();
+
+//开启 Eloquent ORM
+$capsule->bootEloquent();
+
+//绑定db门面
+$container->bind('db', Capsule::class);
+//初始化门面
+/** @var \Illuminate\Contracts\Foundation\Application $container */
+Facade::setFacadeApplication($container);
+
+
+echo '<pre>';
+
+$controller = 'App\\Controller\\' . $_GET['c'];
+$method = $_GET['a'];
+call_user_func(array(new $controller(), $method));
+
+```
+
+
+
 ### phpunit
 
 ```python
@@ -64,6 +126,12 @@ composer require illuminate/events
 http://phar.phpunit.cn/
 # 安装方式2: composer安装(适合指定php版本的项目中)
 composer require --dev phpunit/phpunit 版本号
+```
+
+### 错误提示包
+
+```python
+composer require filp/whoops
 ```
 
 
