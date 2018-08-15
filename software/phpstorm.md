@@ -21,3 +21,10 @@ ctrl+o
 # 快捷键: shift + f1
 ```
 
+## Mac
+
+```python
+# 选择相同
+ctrl + g
+```
+
