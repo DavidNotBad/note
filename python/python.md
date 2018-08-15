@@ -77,6 +77,8 @@ favorite_language = favorite_language.rstrip()
 favorite_language = 'python'
 #截取前三个字符串
 favorite_language[:3]
+# 从索引1切到索引3
+favorite_language[1:3]
 
 #分割字符串
 favorite_language.split()
@@ -166,6 +168,17 @@ item = bicycles.pop()
 item = bicycles.pop(2)
 #根据值删除元素
 bicycles.remove('apple')
+#扩展列表
+s1 = [1,2,3]
+s2 = [4]
+s1.extend(s2)
+
+
+# extend 和 append 和 + 的区别
+## append
+### 1. 追加值, 在原List上的修改，不会返回一个新的值, append 操作可以向List中添加任何元素，比如字典，不过字典整体作为List中的一个元素(比如上面字典的{})
+### 2. +运算是对于两个类型相同的变量之间的运算，不改变原有的变量，并返回一个新的值，是内容之间的拼接
+### 3.extend 也是在原有List上进行修改，没有返回值，可以扩展不同类型的变量，并将其内容以List变量的形式加入到原List中。 从输出中可见如果extend的是字符串，则字符串会被拆分成字符数组，如果extend的是字典，则字典的key会被加入到List中
  ```
 
 ### 组织列表

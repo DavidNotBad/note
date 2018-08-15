@@ -9,3 +9,10 @@ alt+j
 ctrl+o
 ```
 
+## Mac
+
+```python
+# 选择相同
+ctrl + g
+```
+
