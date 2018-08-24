@@ -114,10 +114,7 @@ echo '<pre>';
 $controller = 'App\\Controller\\' . $_GET['c'];
 $method = $_GET['a'];
 call_user_func(array(new $controller(), $method));
-
 ```
-
-
 
 ### phpunit
 
@@ -132,6 +129,12 @@ composer require --dev phpunit/phpunit 版本号
 
 ```python
 composer require filp/whoops
+```
+
+### url
+
+```php
+# composer require league/url
 ```
 
 

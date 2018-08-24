@@ -155,3 +155,17 @@ conda install -prefix=D:\pyenv\py36 anaconda
 # 8. 检查包是否安装成功, conda list
 ```
 
+## 结合pycharm
+
+```python
+# 1. Tools -> Terminal
+# 2. shell path 修改为
+cmd.exe "/k" activate "F:\www\python\proxy_pool\venv" 
+```
+
+## 安装依赖文件中的内容
+
+```python
+# conda install --yes --file requirements.txt
+```
+

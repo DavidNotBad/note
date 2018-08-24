@@ -115,6 +115,12 @@ function snake_case($str,$separator='_')
     return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $str));
 }
 
+function snake_case($str, $separator='_')
+{
+    $value = preg_replace('/\s+/u', '', ucwords($value));
+    return strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1'.'_', $value));
+}
+
 
 /**
  * 将 下划线分割 变成 驼峰式命名
@@ -125,6 +131,13 @@ function snake_case($str,$separator='_')
 function camel_case($str,$separator = '_')
 {
     return str_replace(' ','',lcfirst(ucwords(str_replace($separator,' ',$str))));
+}
+
+
+function camel_case($str, $separator='_')
+{
+    $value = ucwords(str_replace(['-', '_'], ' ', $value));
+    return lcfirst(str_replace(' ', '', $value));
 }
 
 ```

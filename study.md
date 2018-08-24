@@ -14,6 +14,30 @@ define('ROOT_PATH', substr(API_PROXY_PATH, 0,-1 - strpos(strrev(rtrim(API_PROXY_
 ```php
 $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';  
 echo $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+
+//获取目录
+public function base_path($path=null, $returnDomain=false)
+{
+    if(!$returnDomain){
+        $return = $path ? ROOT_FW_PATH . '/' . ltrim($path, '/') : ROOT_FW_PATH;
+
+        //尝试创建目录
+        $dir = pathinfo($path, PATHINFO_EXTENSION) ? dirname($return) : $return;
+        is_dir($dir) or @mkdir($dir, 0777, true);
+
+        return $return;
+    }
+
+    $httpType = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+    $parse = parse_url($httpType . $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI']);
+
+    $domain = $parse['scheme'] . '://' . $parse['host'] .
+        (isset($parse['port']) && (strpos($parse['host'], ':') === false) ? (':' . $parse['port']) : '') .
+        dirname($parse['path']);
+    $fullDomail = $path ? $domain . '/' . ltrim($path, '/') : $domain;
+    return str_replace('\\', '/', $fullDomail);
+}
 ```
 
 ## 获取文件列表
