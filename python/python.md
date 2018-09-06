@@ -124,6 +124,11 @@ isinstance(A(), A)    # returns True
 type(A()) == A        # returns True
 isinstance(B(), A)    # returns True
 type(B()) == A        # returns False
+
+# 判断变量是否为None
+# 不能用 == 
+if x is None:
+    print(None)
 ```
 
 
@@ -740,6 +745,24 @@ else:
     print('sd')
 
 print('the end')
+
+
+# input 可能出现的异常
+# 1. ValueError  值错误
+# 2. EOFError    文件末尾end of file
+# 3. KeyboardInterrupt  用户按ctrl+c取消输入
+
+
+# 文件相关异常
+try:
+    f = open('sfsl.txt')
+    print(f.read())
+except OSError as reason:
+    print(str(reason))
+finally:
+    # 如果文件对象变量存在当前局部变量符号表的话, 说明打开成功
+    if 'f' in locals():
+        f.close()
 ```
 
 ## json的文件操作
@@ -872,6 +895,14 @@ packages.__file__
 
 # 查看BIF
 dir(__builtins__)
+```
+
+## 设置字符集为utf8编码
+
+```python
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 ```
 
 
