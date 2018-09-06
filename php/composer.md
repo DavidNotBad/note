@@ -114,10 +114,7 @@ echo '<pre>';
 $controller = 'App\\Controller\\' . $_GET['c'];
 $method = $_GET['a'];
 call_user_func(array(new $controller(), $method));
-
 ```
-
-
 
 ### phpunit
 
@@ -132,6 +129,103 @@ composer require --dev phpunit/phpunit 版本号
 
 ```python
 composer require filp/whoops
+```
+
+### url
+
+```php
+# composer require league/url
+```
+
+### var_dumper
+
+```php
+# composer require symfony/var-dumper
+```
+
+### 拼音
+
+```python
+# composer require overtrue/pinyin
+# 针对laravel
+# composer require overtrue/laravel-pinyin
+```
+
+
+
+## 发布到package
+
+```php
+cd packages/包提供者名/包名
+composer init
+  填写信息: 
+    Minimum Stability: 最低的稳定版本标准(dev)
+    License : MIT
+    dependencies: 依赖
+  最后会生成composer.json文件
+```
+
+在composer.json添加行 
+
+```php
+"autoload": {
+    "psr-4": {
+        "包提供者名\\报名\\" : "src/"
+    }
+},
+```
+
+提交到git 
+
+```php
+git init
+git add .
+git comment -m '描述信息'
+```
+
+进入github
+
+```php
+添加新仓库: https://github.com/new
+
+git remote(远程) add origin(源) 仓库ssh地址
+  仓库ssh地址从github仓库右上角clone or download -> use SSH 得到
+  
+git push -u origin master
+
+如果push报错: git pull --rebase origin master
+```
+
+关联packagist 
+
+```php
+github上打开你的项目->settings->Integrations &I services->Add service->输入packagist
+  登录 https://packagist.org/
+      token: 点击右上角的用户名->profile->profile->show api token
+      domail可以不填
+提交
+  packages右上角submit->github的ssh
+    仓库ssh地址从github仓库右上角clone or download -> use SSH 得到
+```
+
+从composer拉取代码
+
+```php
+//把中国镜像改为composer官网镜像
+composer config -g repo.packagist composer https://packagist.org
+
+//拉取代码时时拉取开发版本
+composer require 包名:dev-master
+```
+
+拉取正式版本
+
+```php
+//先在GitHub上声明正式版本
+// 1: 进入仓库首页
+// 2: 点击菜单releases
+// 3. 填写版本信息
+// 4. 手动更新composer包: 进入packages, 点击update
 ```
 
 

@@ -142,7 +142,54 @@ composer require illuminate/events
   }
   ```
 
-  
+## 查看路由信息
+
+```php
+https://phpartisan.cn/news/58.html
+```
+
+  ## 查看系统预注册
+
+```php
+# 1. 打开 /public/index.php
+	$app = require_once __DIR__.'/../bootstrap/app.php';
+# 2. 打开 /bootstrap/app.php
+	$app = new Illuminate\Foundation\Application(
+        realpath(__DIR__.'/../')
+     );
+# 3. 打开 \Illuminate\Foundation\Application::class
+    public function __construct($basePath = null)
+    {
+        if ($basePath) {
+            $this->setBasePath($basePath);
+        }
+
+        $this->registerBaseBindings();
+
+        $this->registerBaseServiceProviders();
+
+        $this->registerCoreContainerAliases();
+    }
+# 举个例子
+# 4. 查看 registerCoreContainerAliases 的 url
+	\Illuminate\Routing\UrlGenerator::class
+# 5. 查看 full()
+    public function full()
+    {
+        return $this->request->fullUrl();
+    }
+# 6. 得到 \Illuminate\Http\Request::class
+    public function fullUrl()
+    {
+        $query = $this->getQueryString();
+
+        $question = $this->getBaseUrl().$this->getPathInfo() == '/' ? '/?' : '?';
+
+        return $query ? $this->url().$question.$query : $this->url();
+    }
+```
+
+
 
 
 

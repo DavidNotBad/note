@@ -115,6 +115,12 @@ function snake_case($str,$separator='_')
     return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $str));
 }
 
+function snake_case($str, $separator='_')
+{
+    $value = preg_replace('/\s+/u', '', ucwords($value));
+    return strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1'.'_', $value));
+}
+
 
 /**
  * 将 下划线分割 变成 驼峰式命名
@@ -125,6 +131,13 @@ function snake_case($str,$separator='_')
 function camel_case($str,$separator = '_')
 {
     return str_replace(' ','',lcfirst(ucwords(str_replace($separator,' ',$str))));
+}
+
+
+function camel_case($str, $separator='_')
+{
+    $value = ucwords(str_replace(['-', '_'], ' ', $value));
+    return lcfirst(str_replace(' ', '', $value));
 }
 
 ```
@@ -341,24 +354,44 @@ array_columns($data, $get);
 ## 无限极分类关系树
 
 ```php
-    /**
-     * 无限极分类关系树
-     * @param array $items        源数组
-     * @param string $sign  附加键名
-     * @param string $id    id名
-     * @param string $pid   pid名
-     * @return array        关系树
-     */
-    function tree(array $items, $sign='_children', $id='id', $pid='pid')
+/**
+ * 无限极分类关系树
+ * @param array $items        源数组
+ * @param string $sign  附加键名
+ * @param string $id    id名
+ * @param string $pid   pid名
+ * @return array        关系树
+ */
+function tree(array $items, $sign='_children', $id='id', $pid='pid')
+{
+    $items = array_combine(array_column($items, $id), $items);
+    foreach ($items as $item)
     {
-        $items = array_combine(array_column($items, $id), $items);
-        foreach ($items as $item)
-        {
-            $items[$item[$pid]][$sign][$item[$id]] = &$items[$item[$id]];
-        }
-
-        return isset($items[0][$sign]) ? $items[0][$sign] : array();
+        $items[$item[$pid]][$sign][$item[$id]] = &$items[$item[$id]];
     }
+
+    return isset($items[0][$sign]) ? $items[0][$sign] : array();
+}
+
+
+//版本2, 改进了版本1中键名的排序问题(js中解析json会自动根据索引自然排序)
+function tree(array $items, $sign='_children', $id='id', $pid='pid')
+{
+    $min = min(array_column($items, $pid));
+    $rules = array_combine(array_column($items, $id), array_keys($items));
+    $takeKeys = array();
+
+    foreach ($items as $k=>$item)
+    {
+        if(isset($item[$pid]) && isset($rules[$item[$pid]]) && isset($items[$rules[$item[$id]]]) && $item[$pid] != $min) {
+            $items[$rules[$item[$pid]]][$sign][] = &$items[$rules[$item[$id]]];
+        }else{
+            $takeKeys[] = $k;
+        }
+    }
+
+    return array_intersect_key($items, array_flip($takeKeys));
+}
 ```
 
 ## 退出登录
@@ -396,6 +429,25 @@ public function map(array $array, callable $callback)
     }
     return $return;
 }
+```
+
+## 通过反射访问类的私有方法
+
+```php
+//通过类名MyClass进行反射
+$ref_class = new ReflectionClass('MyClass');
+ 
+//通过反射类进行实例化
+$instance  = $ref_class->newInstance();
+ 
+//通过方法名myFun获取指定方法
+$method = $ref_class->getmethod('myFun');
+ 
+//设置可访问性
+$method->setAccessible(true);
+ 
+//执行方法
+$method->invoke($instance);
 ```
 
 

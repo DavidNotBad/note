@@ -19,3 +19,17 @@ if ($row = mysql_fetch_array($result)) {
 mysql_close($connection);
 ```
 
+## 不把整形转换成字符串
+
+```php
+$db = new PDO('mysql:host=' . $host . ';port=3306;dbname=' . $dbname, $username, $password,
+    array(PDO::ATTR_PERSISTENT => TRUE, PDO::ATTR_STRINGIFY_FETCHES => FALSE));
+$db->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, FALSE);
+```
+
+## pdo参数
+
+```python
+# http://php.net/manual/zh/pdo.setattribute.php
+```
+
