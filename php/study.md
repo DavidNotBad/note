@@ -450,6 +450,12 @@ $method->setAccessible(true);
 $method->invoke($instance);
 ```
 
+## 文件分片上传
+
+```php
+http://www.php.cn/php-weizijiaocheng-393275.html
+```
+
 
 
 
