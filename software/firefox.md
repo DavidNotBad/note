@@ -9,9 +9,9 @@ MarkDown
 ```
 
 ```
-FireGestures
+Gesturefy
 
-现在浏览器没有个鼠标手势哪敢说自己是21世纪的浏览器，来看看火狐的FireGestures。
+现在浏览器没有个鼠标手势哪敢说自己是21世纪的浏览器。
 ```
 
 ```
@@ -38,3 +38,4 @@ https://github.com/bannedbook/fanqiang/wiki/%E7%81%AB%E7%8B%90firefox%E4%B8%80%E
 
 
 
+# JSON Lite 

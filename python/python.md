@@ -21,8 +21,6 @@
   异常中except使用exception基类
   ```
 
-  
-
 * 命令行工具
 
   ```python
@@ -897,9 +895,21 @@ import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 ```
 
+## 正则表达式
+
+```python
+# 在线测试
+https://regex101.com/#python
+
+# 匹配html标签里面的内容
+## (<?<=标签)表示前面要匹配"标签"
+## (?=标签)表示后面要匹配"标签"
+(?<=<ul id="pins">)([\s\S]*?)(?=</ul>)
+```
 
 
 
+http://www.yczlf.com
 
 
 
