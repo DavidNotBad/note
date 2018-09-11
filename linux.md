@@ -188,3 +188,105 @@ firewall-cmd --reload
 #安装bc
 yum -y install bc
 ```
+## 下载文件
+
+```python
+# 下载文件
+wget http://www.linuxde.net/testfile.zip
+    
+# 下载文件并重命名
+wget -O wordpress.zip http://www.linuxde.net/download.aspx?id=1080
+    
+    
+# curl
+curl http://www.linux.com >> linux.html
+## 把输出写到该文件中
+curl -o linux.html http://www.linux.com
+## 把输出写到该文件中，保留远程文件的文件名
+curl -O http://www.linux.com/hello.sh
+```
+
+## 解压zip
+
+```php
+# 将压缩文件test.zip在指定目录/tmp下解压缩，如果已有相同的文件存在，要求unzip命令覆盖原先的文件。
+unzip -o test.zip -d tmp/
+```
+
+## 开启防火墙
+
+```php
+# 查看防火墙状态
+service  iptables  status
+# 开启防火墙
+service  iptables  start          
+# 关闭防火墙
+service  iptables  stop           
+# 重启防火墙
+service  iptables  restart      
+
+# 添加可访问端口
+/sbin/iptables -I INPUT -p tcp --dport 端口(端口开始:端口结束) -j ACCEPT
+/etc/rc.d/init.d/iptables save
+/etc/init.d/iptables restart
+
+# 添加端口无效的方法
+如果防火墙放行了端口，但是仍然访问不到的话，可能是因为添加规则的时候，用的是iptables -A 选项，这样，增加的规则会排列在 reject-with icmp-host-prohibited 规则后面，虽然service iptables status显示放行了端口，但是实际上，由于 reject-with icmp-host-prohibited 的原因，新增加的这条并没有起作用。
+改为使用iptables -I 插入规则即可，将规则添加的 第6条 之前，就可以生效了
+```
+
+## 查找服务器配置
+
+```php
+<<<DOC
+如何在linux中查看nginx、apache、php、mysql配置文件路径了，如果你接收一个别人配置过的环境，但没留下相关文档。这时该怎么判断找到正确的加载文件路径了。可以通过以下来判断
+1、判断apache
+首先执行命令找到httpd路径
+ps aux | grep httpd
+如httpd路径为 /usr/local/apache/bin/httpd
+然后执行以下命令
+/usr/local/apache/bin/httpd -V | grep “SERVER_CONFIG_FILE”
+即可找到编译时加载的配置文件路径 httpd.conf
+-V 参数可以看到编译时配置的参数
+
+2、判断nginx
+首先执行命令找到nginx路径
+ps aux | grep nginx
+如nginx路径为
+/usr/local/nginx/sbin/nginx
+
+然后执行以下命令
+/usr/local/nginx/sbin/nginx -V
+默认放在 安装目录下 conf/nginx.conf
+3、判断mysql
+首先执行命令找到mysql路径
+ps aux | grep mysqld
+如mysqld路径为
+/usr/bin/mysql
+
+然后执行以下命令
+/usr/bin/mysql –verbose –help | grep -A 1 ‘Default options’
+或
+/usr/bin/mysql –print-defaults
+
+4、判断php加载的配置文件路径
+（1）、可通过php函数phpinfo来查看，写个文件，然后用网址访问一下，查找“Loaded Configuration File”对应的值即为php加载的配置文件
+（2）、如果是nginx+php配置，也可以通过查找php执行路径
+ps aux | grep php
+如，路径为 /usr/local/nginx/sbin/php-fpm
+然后执行以下命令
+/usr/local/nginx/sbin/php-fpm -i | grep “Loaded Configuration File”
+即可看到php加载的配置文件
+(3)、如果是apache+mod_php配置，也可以在apache配置文件中查看加载的php.ini路径。如 PHPIniDir “/usr/local/apache/conf/php.ini”
+
+当然也有简单的方法，就是通过find来搜索
+如
+find / -name nginx.conf
+find / -name php.ini
+find / -name my.cnf
+find / -name httpd.conf
+
+这种找法要经过刷选才行
+>>>
+```
+
