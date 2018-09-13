@@ -27,16 +27,16 @@
 我在标记外面`我是行内标记`我在标记外面
 
 ## 5. 代码块
-	​```php
-	<?php
-	echo 'hello world';
-	print_r('my name is David Yang');
-	$text = 'nice to meet you';
-	var_dump($text);
-	exit('886');
-	?>
-	​```
 ```php
+<?php
+echo 'hello world';
+print_r('my name is David Yang');
+$text = 'nice to meet you';
+var_dump($text);
+exit('886');
+?>
+```
+```php	
 <?php
 echo 'hello world';
 print_r('my name is David Yang');
@@ -128,7 +128,8 @@ exit('886');
 文章内容[^1]
 [^1]: 这个是脚注的内容, 一般放到文章的最后面
 
-
 *推荐使用`Typora`软件浏览该文档*
 
+下载typora主题:
 
+https://www.jianshu.com/p/0f503f64d7da
