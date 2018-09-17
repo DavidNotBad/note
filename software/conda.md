@@ -169,3 +169,23 @@ cmd.exe "/k" activate "F:\www\python\proxy_pool\venv"
 # conda install --yes --file requirements.txt
 ```
 
+
+
+## 基本使用
+
+```shell
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --set show_channel_urls yes
+conda config --remove channels defaults #这里删除了默认源，不然总是从官网下载然后超时。
+ 
+#添加Python2.7
+conda create -n py27 python=2.7
+conda config ? #查看可以使用的命令
+conda config --show #可以看到channels等信息
+
+
+conda info -e   #查看已有的环境
+conda remove -n env_name --all  #删除环境
+conda install -n py27 anaconda #在py27下安装科学计算的包，包很多，慎重选择
+```
+
