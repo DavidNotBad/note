@@ -2,9 +2,12 @@
 
 ### mac
 
-```python
+```shell
 Upterm
 https://github.com/railsware/upterm
+
+打开信任任何来源
+sudo spctl --master-disable
 ```
 
 ### win
