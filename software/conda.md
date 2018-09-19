@@ -184,6 +184,7 @@ conda config ? #查看可以使用的命令
 conda config --show #可以看到channels等信息
 
 
+conda info
 conda info -e   #查看已有的环境
 conda remove -n env_name --all  #删除环境
 conda install -n py27 anaconda #在py27下安装科学计算的包，包很多，慎重选择
