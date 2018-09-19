@@ -1,7 +1,7 @@
-## 开发者版本
+## 开发者版本(firefox developer edition)
 
-```
-firefox developer edition
+```shell
+https://www.mozilla.org/zh-CN/firefox/developer/
 ```
 
 
