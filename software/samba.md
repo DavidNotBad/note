@@ -1,3 +1,48 @@
+https://www.cnblogs.com/xiangsikai/p/9158745.html
+配置:
+https://blog.csdn.net/splenday/article/details/47116969
+
+```shell
+# 安装进程监控工具, 以使用ps命令
+yum install net-tools 
+
+
+# 安装samba
+yum -y install samba samba-client samba-common
+# 查看samba版本信息
+rpm -qi samba
+
+cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+
+
+[global]
+	workgroup = BIGCLOUD
+	netbios name = ZZSRV2
+	server string = SAMBA SERVER
+	security = user
+	map to guest = Bad User
+[SHAREDOCS]
+	path = /home/clj/share/
+	readonly = yes
+	browseable = yes
+	grest ok = yes
+[RDDOCS]
+	path = /home/wwwroot/default/
+	public no
+	writable = yes
+	write list = @www
+	valid users = @www
+```
+
+
+
+
+
+
+
+
+
 ```shell
 yum -y install samba samba-client samba-common
 
@@ -21,7 +66,7 @@ vim smb.conf
 	
 [homes]
 	comment = Home
-	browseable = no
+	browseable = yes
 	writable = yes
 	create mode = 0644
 	directory mode = 0755
@@ -58,12 +103,12 @@ pdbedit -x -u smb3
 pdbedit -Lw
 
 
-systemctl restart smb
-systemctl restart nmb
+systemctl restart smb nmb
+
 
 smbclient -L //127.0.0.1
 
-smbclient _L //127.0.0.1 -U smb1
+smbclient -L //127.0.0.1 -U smb1
 mount -t cifs //127.0.0.1/smb1 /mnt -o username=smb1
 
 ls -al /home/smb1
@@ -74,5 +119,11 @@ ls -a /mnt
 
 umount /mnt
 
+
+
+net use \\192.168.1.223 /delete
+
 ```
+
+
 
