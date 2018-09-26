@@ -12,7 +12,84 @@ yum -y install samba samba-client samba-common
 # 查看samba版本信息
 rpm -qi samba
 
+# 备份配置文件
 cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+# 编辑配置文件
+vim /etc/samba/smb.conf
+[global]
+	# config file = /etc/samba/smb.conf.%m
+	workgroup = WORKGROUP
+	server string = Samba Server Version %v
+	log file = /var/log/samba/log.%m
+	security = user
+	passdb backend = tdbsam
+	# username map = /etc/samba/smbusers
+	guest account = nobody
+[samba]
+	comment = 描述
+	path = /var/www/samba
+	browseable = yes
+	writable = yes
+	available = yes
+	valid users = @samba
+	write list = @samba
+	public = no
+	
+# 测试配置文件是否正确
+testparm
+
+mkdir /home/project
+chgrp users /home/project
+chmod 2770 /home/project
+ll -d /home/project
+
+useradd -G users smb1
+useradd -G users smb2
+useradd -G users smb3
+echo 1234 | passwd --stdin smb1
+echo 1234 | passwd --stdin smb2
+echo 1234 | passwd --stdin smb3
+
+pdbedit -a -u smb1
+pdbedit -a -u smb2
+pdbedit -a -u smb3
+
+pdbedit -L
+
+smbpasswd smb3
+
+pdbedit -x -u smb3
+pdbedit -Lw
+
+
+systemctl restart smb nmb
+
+
+smbclient -L //127.0.0.1
+
+smbclient -L //127.0.0.1 -U smb1
+mount -t cifs //127.0.0.1/smb1 /mnt -o username=smb1
+
+ls -al /home/smb1
+ls -al /mnt
+
+setsebool -P samba_enable_home_dirs=1
+ls -a /mnt
+
+umount /mnt
+
+
+
+net use \\192.168.1.223 /delete
+	
+137、138、139、445
+systemctl stop firewalld
+getenforce
+sestatus
+setenforce 0
+vi /etc/selinux/config
+
 
 # 全局参数
 [global]
