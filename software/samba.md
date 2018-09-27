@@ -1,9 +1,70 @@
+```shell
+# 安装进程监控工具, 以使用netstat,vim命令
+yum install -y net-tools vim
+
+
+# 安装samba
+yum -y install samba samba-client samba-common
+# 查看samba版本信息
+rpm -qi samba
+
+# 备份配置文件
+cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+# 编辑配置
+vim /etc/samba/smb.conf
+# 进入vim编辑该文件
+[global]
+	workgroup = WORKGROUP
+	server string = Samba Server Version %v
+	log file = /var/log/samba/log.%m
+	security = user
+	passdb backend = tdbsam
+	username map = /etc/samba/smbusers
+	guest account = nobody
+[test]
+	comment = 共享描述
+	path = /mnt/
+	browseable = yes
+	writable = yes
+	available = yes
+	valid users = @samba
+	write list = @samba
+	public = no
+	
+	#create mode = 0644
+	#directory mode = 0755
+
+	#create mask = 0777
+    #directory mask = 0777
+    #force directory mode = 0777
+    #force create mode = 0777
+    
+    
+    
+    
+	
+	
+```
+
+​		
+
+
+
+
+
+
+
+
+
+
+
 https://www.cnblogs.com/xiangsikai/p/9158745.html
 配置:
 https://blog.csdn.net/splenday/article/details/47116969
 
 ```shell
-# 安装进程监控工具, 以使用ps命令
+# 安装进程监控工具, 以使用netstat命令
 yum install net-tools 
 
 
@@ -47,6 +108,7 @@ cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
 	guest account = nobody
 
 # 共享参数
+[共享文件夹名]
 	# 说明：comment是对该共享的描述，可以是任意字符串。
 	comment = 共享描述
 	# 说明：path用来指定共享目录的路径。可以用%u、%m这样的宏来代替路径里的unix用户和客户机的Netbios名，用宏表示主要用于[homes]共享域。例如：如果我们不打算用home段做为客户的共享，而是在/home/share/下为每个Linux用户以他的用户名建个目录，作为他的共享目录，这样path就可以写成：path = /home/share/%u; 。用户在连接到这共享时具体的路径会被他的用户名代替，要注意这个用户名路径一定要存在，否则，客户机在访问时会找不到网络路径。同样，如果我们不是以用户来划分目录，而是以客户机来划分目录，为网络上每台可以访问samba的机器都各自建个以它的netbios名的路径，作为不同机器的共享资源，就可以这样写：path = /home/share/%m 。
@@ -132,6 +194,11 @@ vim smb.conf
 	writable = yes
 	create mode = 0644
 	directory mode = 0755
+	
+	create mask = 0777
+    directory mask = 0777
+    force directory mode = 0777
+    force create mode = 0777
 [project]
 	comment = smbuserssss
 	path = /home/project
