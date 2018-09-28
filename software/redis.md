@@ -9,3 +9,10 @@
 # 6. 下载解压, 运行redis-server.exe
 ```
 
+## centos 7
+
+```shell
+https://blog.csdn.net/www63912/article/details/68944165
+daemonize 改为yes  设置为no时， systemctl start redis-server 才能够成功运行
+```
+

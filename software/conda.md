@@ -12,6 +12,8 @@ source ~/.bashrc
 ## 环境管理
 
 ```python
+# 查看当前系统下的环境
+conda info -e
 # 创建一个名为python34的环境，指定Python版本是3.4（不用管是3.4.x，conda会为我们自动寻找3.4.x中的最新版本）
 conda create --name python34 python=3.4
 
