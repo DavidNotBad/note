@@ -95,6 +95,9 @@ yum install -y vim
 ## 关闭seLinux
 
 ```shell
+# 临时关闭
+setenforce 0
+# 永久关闭
 vim /etc/selinux/config
 ```
 
@@ -215,15 +218,61 @@ unzip -o test.zip -d tmp/
 
 ## 开启防火墙
 
-```php
+```shell
 # 查看防火墙状态
 service  iptables  status
+systemctl status firewalld
 # 开启防火墙
-service  iptables  start          
+service  iptables  start  
+systemctl start firewalld
 # 关闭防火墙
 service  iptables  stop           
+systemctl stop firewalld
 # 重启防火墙
 service  iptables  restart      
+systemctl restart firewalld
+
+# 查看所有开放的端口
+firewall-cmd --zone=public --list-ports
+# 查看端口是否打开
+firewall-cmd --zone=public --query-port=666/tcp
+# 开放永久端口号
+firewall-cmd --zone=public --add-port=666/tcp --permanent
+# 重新载入配置
+firewall-cmd --reload
+# 移除端口
+firewall-cmd --permanent --zone=public --remove-port=666/tcp
+
+
+# 伪装ip
+# 检查是否允许伪装IP
+firewall-cmd --query-masquerade 
+# 允许防火墙伪装IP
+firewall-cmd --add-masquerade 
+# 禁止防火墙伪装IP
+firewall-cmd --remove-masquerade
+
+# 端口转发
+# 查看设置了哪些端口转发
+firewall-cmd --permanent --zone=public --list-forward-ports
+# 将80端口的流量转发至8080
+firewall-cmd --zone=public --permanent --add-forward-port=port=80:proto=tcp:toport=8080
+# 将80端口的流量转发至
+firewall-cmd --zone=public --permanent --add-forward-port=port=80:proto=tcp:toaddr=192.168.1.0.1
+# 将80端口的流量转发至192.168.0.1的8080端口
+firewall-cmd --zone=public --permanent --add-forward-port=port=80:proto=tcp:toaddr=192.168.0.1:toport=8080 
+---------------------
+本文来自 可能青蛙 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/hejun1218/article/details/73385735?utm_source=copy 
+
+
+firewall-cmd [--permanent] [--zone=zone] --list-forward-ports
+
+firewall-cmd [--permanent] [--zone=zone] --add-forward-port=port=portid[-portid]:proto=protocol[:toport=portid[-portid]][:toaddr=address[/mask]][--timeout=seconds]
+
+firewall-cmd [--permanent] [--zone=zone] --remove-forward-port=port=portid[-portid]:proto=protocol[:toport=portid[-portid]][:toaddr=address[/mask]]
+
+firewall-cmd [--permanent] [--zone=zone] --query-forward-port=port=portid[-portid]:proto=protocol[:toport=portid[-portid]][:toaddr=address[/mask]]
+
 
 # 添加可访问端口
 /sbin/iptables -I INPUT -p tcp --dport 端口(端口开始:端口结束) -j ACCEPT
@@ -288,5 +337,21 @@ find / -name httpd.conf
 
 这种找法要经过刷选才行
 >>>
+```
+
+## 文件传输scp
+
+```shell
+# 拷贝本地的id_rsa.pub到服务器的/root目录下
+scp /root/.ssh/id_rsa.pub root@192.168.1.200:/root
+```
+
+## 获取公网地址
+
+```shell
+# linux中输入命令：
+curl ifconfig.me
+# 或者
+curl ifconfig.me/all
 ```
 

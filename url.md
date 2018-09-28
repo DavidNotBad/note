@@ -22,3 +22,9 @@ https://lvwenhan.com/php/405.html
 # https://github.com/Python3WebSpider/ProxyPool
 ```
 
+## 鸟哥的linux私房菜-服务器架设
+
+```shell
+https://www.ctolib.com/docs/sfile/vbird-linux-server-3e/index.html
+```
+

@@ -1,4 +1,30 @@
+https://www.oschina.net/question/2366409_2181253
+
+https://www.google.com.hk/search?newwindow=1&safe=strict&ei=k6OsW5TyMsbr-Qbs6oqoBw&q=%E8%85%BE%E8%AE%AF%E4%BA%91+samba&oq=%E8%85%BE%E8%AE%AF%E4%BA%91+samba&gs_l=psy-ab.3..0.4582.31072.0.31473.6.4.0.2.2.0.94.313.4.4.0....0...1c.1j4.64.psy-ab..0.6.319...0i67k1j0i12k1.0.hAi9dfGvbgo
+
 ```shell
+# https://www.jianshu.com/p/ca21d7beffb6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 安装进程监控工具, 以使用netstat,vim命令
 yum install -y net-tools vim
 
@@ -49,11 +75,16 @@ vim /etc/samba/smb.conf
 
 ​		
 
+| 端口 | 协议 | 服务         | 守护进程 | 描述                       |
+| ---- | ---- | ------------ | -------- | -------------------------- |
+| 137  | UDP  | netbios-ns   | nmbd     | NetBIOS名称服务            |
+| 138  | UDP  | netbios-dgm  | nmbd     | NetBIOS数据报服务          |
+| 139  | TCP  | netbios-ssn  | smdb     | NetBIOS over TCP(会话服务) |
+| 445  | TCP  | microsoft-ds | smdb     | 直接托管的SMB              |
 
 
 
-
-
+cifs-utils 
 
 
 
@@ -131,6 +162,7 @@ smbclient -L //127.0.0.1
 
 smbclient -L //127.0.0.1 -U smb1
 mount -t cifs //127.0.0.1/smb1 /mnt -o username=smb1
+mount -t cifs -o username=samba,password=4321,port=4450 //127.0.0.1/samba /mnt 
 
 ls -al /home/smb1
 ls -al /mnt
@@ -144,16 +176,20 @@ umount /mnt
 
 net use \\192.168.1.223 /delete
 	
-137、138、139、445
+
+
+
 systemctl stop firewalld
 getenforce
 sestatus
 setenforce 0
-vi /etc/selinux/config
+vim /etc/selinux/config
 
 
 # 全局参数
 [global]
+	# 监听的端口号
+	smb ports = 1399
 	# 说明：config file可以让你使用另一个配置文件来覆盖缺省的配置文件。如果文件不存在，则该项无效。这个参数很有用，可以使得samba配置更灵活，可以让一台samba服务器模拟多台不同配置的服务器。比如，你想让PC1（主机名）这台电脑在访问Samba Server时使用它自己的配置文件，那么先在/etc/samba/host/下为PC1配置一个名为smb.conf.pc1的文件，然后在smb.conf中加入：config file = /etc/samba/host/smb.conf.%m。这样当PC1请求连接Samba Server时，smb.conf.%m就被替换成smb.conf.pc1。这样，对于PC1来说，它所使用的Samba服务就是由smb.conf.pc1定义的，而其他机器访问Samba Server则还是应用smb.conf。
 	config file = /etc/samba/smb.conf.%m
 	# 设定 Samba Server 所要加入的工作组或者域
@@ -210,30 +246,28 @@ vi /etc/selinux/config
 	
 	
 	
-	
-	
-
-
-
-
-
 [global]
-	workgroup = BIGCLOUD
-	netbios name = ZZSRV2
-	server string = SAMBA SERVER
-	security = user
-	map to guest = Bad User
-[SHAREDOCS]
-	path = /home/clj/share/
-	readonly = yes
-	browseable = yes
-	grest ok = yes
-[RDDOCS]
-	path = /home/wwwroot/default/
-	public no
-	writable = yes
-	write list = @www
-	valid users = @www
+        workgroup = WORKGROUP
+        #netbios name = ZZSRV2
+        server string = SAMBA SERVER
+        security = user
+        #map to guest = Bad User
+[share]
+        path = /samba/share
+        readonly = yes
+        browseable = yes
+        guest ok = yes
+[docs]
+        path = /samba/docs
+        public = no
+        writable = yes
+        write list = @samba
+        valid users = @samba
+
+	
+	
+
+
 ```
 
 
@@ -314,7 +348,7 @@ systemctl restart smb nmb
 
 smbclient -L //127.0.0.1
 
-smbclient -L //127.0.0.1 -U smb1
+    smbclient -L //127.0.0.1 -U smb1
 mount -t cifs //127.0.0.1/smb1 /mnt -o username=smb1
 
 ls -al /home/smb1
