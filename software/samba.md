@@ -1,3 +1,9 @@
+端口转发
+
+https://blog.csdn.net/jsd2honey/article/details/79473689
+
+
+
 https://www.oschina.net/question/2366409_2181253
 
 https://www.google.com.hk/search?newwindow=1&safe=strict&ei=k6OsW5TyMsbr-Qbs6oqoBw&q=%E8%85%BE%E8%AE%AF%E4%BA%91+samba&oq=%E8%85%BE%E8%AE%AF%E4%BA%91+samba&gs_l=psy-ab.3..0.4582.31072.0.31473.6.4.0.2.2.0.94.313.4.4.0....0...1c.1j4.64.psy-ab..0.6.319...0i67k1j0i12k1.0.hAi9dfGvbgo
@@ -364,6 +370,8 @@ umount /mnt
 net use \\192.168.1.223 /delete
 
 ```
+
+
 
 
 

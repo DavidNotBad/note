@@ -343,7 +343,7 @@ find / -name httpd.conf
 
 ```shell
 # 拷贝本地的id_rsa.pub到服务器的/root目录下
-scp /root/.ssh/id_rsa.pub root@192.168.1.200:/root
+scp -r /root/.ssh/id_rsa.pub root@192.168.1.200:/root
 ```
 
 ## 获取公网地址
