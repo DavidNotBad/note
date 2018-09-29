@@ -18,7 +18,7 @@ http://blog.51cto.com/12173069/2120166
 
 ```shell
 # 准备
-## 云主机安全组规则开启80,443,4443端口, 防火墙开放这些端口,selinux关闭
+## 云主机安全组规则开启8888,4444,4443端口, 防火墙开放这些端口,selinux关闭
 
 # 下载依赖
 yum  -y install zlib-devel perl-ExtUtils-MakeMaker asciidoc xmlto openssl-devel
@@ -49,9 +49,9 @@ cp server.key assets/server/tls/snakeoil.key
 
 cd /usr/local/ngrok/
 make release-server
-/usr/local/ngrok/bin/ngrokd -domain="$NGROK_DOMAIN" -httpAddr=":80" -httpsAddr=":443"
+/usr/local/ngrok/bin/ngrokd -domain="$NGROK_DOMAIN" -httpAddr=":8888" -httpsAddr=":4444"
 # 同时输出日志
-/usr/local/ngrok/bin/ngrokd -domain="$NGROK_DOMAIN" -httpAddr=":80" -httpsAddr=":443" > /usr/local/ngrok/ngrok-server.log 2>&1 &
+/usr/local/ngrok/bin/ngrokd -domain="$NGROK_DOMAIN" -httpAddr=":8888" -httpsAddr=":4444" > /usr/local/ngrok/ngrok-server.log 2>&1 &
 
 
 # 编译linux客户端
@@ -82,7 +82,7 @@ GOOS=darwin GOARCH=amd64 make release-client
  scp -r root@132.232.177.144:/usr/local/ngrok/bin/windows_amd64/ngrok.exe .
 
 
-# 在存放ngrok.exe同级目录下新建配置文件 ngrok.cfg
+# 在存放ngrok.exe同级目录下新建配置文件 ngrok.conf
 # server_addr和服务端的domain和证书的域名，三者必须相同
 server_addr: "ngrok.davidnotbad.com:4443"
 trust_host_root_certs: false
@@ -97,10 +97,12 @@ cd %cd%
 ngrok -config=ngrok.conf 80
 
 
+
+
 # 编写启动脚本
 vim /usr/local/ngrok/ngrokd.sh
 #!/bin/bash
-/usr/local/ngrok/bin/ngrokd -tlsKey=/usr/local/ngrok/assets/server/tls/snakeoil.key -tlsCrt=/usr/local/ngrok/assets/server/tls/snakeoil.crt -domain="ngrok.davidnotbad.com" -httpAddr=":80" -httpsAddr=":443" -log="/var/log/ngrok/ngrok.log" 1> /dev/null 2> /var/log/ngrok/ngrok.log &
+/usr/local/ngrok/bin/ngrokd -tlsKey=/usr/local/ngrok/assets/server/tls/snakeoil.key -tlsCrt=/usr/local/ngrok/assets/server/tls/snakeoil.crt -domain="ngrok.davidnotbad.com" -httpAddr=":8888" -httpsAddr=":4444" -log="/var/log/ngrok/ngrok.log" 1> /dev/null 2> /var/log/ngrok/ngrok.log &
 echo $! > /usr/local/ngrok/ngrokd.pid
 
 
@@ -114,15 +116,37 @@ After=network.target
 Type=forking  
 PIDFile=/usr/local/ngrok/ngrokd.pid
 ExecStart=/usr/bin/bash  /usr/local/ngrok/ngrokd.sh
-ExecStop=pkill -9 ngrok
+ExecStop=/usr/bin/pkill -9 ngrok
 PrivateTmp=true  
 
 [Install]  
 WantedBy=multi-user.target
 
 
+启动linux客户端，映射http
+#启动客户端
+./ngrok -config=ngrok.conf -subdomain=ngrok.davidnotbad.com 80
+映射TCP
+#这里以SSH连接Linux时的22端口为例
+./ngrok -proto=tcp 22
 
 
 
+
+ 36     server {
+ 37         listen 80;
+ 38         server_name ~^.*\.ngrox\.davidnotbad\.com$;
+ 39         location / {
+ 40             proxy_pass http://$host:8888;
+ 41         }
+ 42     }
+ 43 
+ 44 
+ 45     server {
+ 46         listen       80;
+ 47         server_name  www.davidnotbad.com davidnotbad.com 132.232.177.144;
+ 
+ # http内
+ 126     resolver 8.8.8.8;
 ```
 

@@ -355,3 +355,10 @@ curl ifconfig.me
 curl ifconfig.me/all
 ```
 
+## 查看端口是否可通
+
+```shell
+ssh -v -p port username@ip
+telnet localhost 22
+```
+
