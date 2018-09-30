@@ -1,6 +1,12 @@
 端口转发
 
+https://xz.aliyun.com/t/2068
+
 https://blog.csdn.net/jsd2honey/article/details/79473689
+
+
+
+
 
 
 
@@ -11,23 +17,25 @@ https://www.google.com.hk/search?newwindow=1&safe=strict&ei=k6OsW5TyMsbr-Qbs6oqo
 ```shell
 # https://www.jianshu.com/p/ca21d7beffb6
 
-# xp
+# xp安装ipv6支持
 netsh  interface ipv6 install
 
-netsh interface portproxy delete v4tov4 listenaddress=127.0.0.1 listenport=445
-
-netsh  interface portproxy add v4tov4 listenaddress=192.168.2.222 listenport=445 connectaddress=132.232.177.144 connectport=4450
-
-netsh interface portproxy show all
-
+# 进入路径，以管理员身份运行
+C:\Windows\System32\cmd.exe
+# 查看是否监听端口
 netstat -antp tcp|findstr LISTENING|findstr 445
+# 端口转发
+netsh interface portproxy add v4tov4 listenport=445 listenaddress=127.0.0.1 connectport=4450 connectaddress=132.232.177.144
+# 查看转发的端口
+netsh interface portproxy show all
+# 重置网络
+netsh winsock reset
+# 重启
 
-
-
-
-
-
-
+# 删除所有的端口转发
+netsh interface portproxy reset
+# 删除部分端口转发
+netsh interface portproxy delete v4tov4 listenaddress=127.0.0.1 listenport=445
 
 
 
@@ -176,6 +184,7 @@ smbclient -L //127.0.0.1
 smbclient -L //127.0.0.1 -U smb1
 mount -t cifs //127.0.0.1/smb1 /mnt -o username=smb1
 mount -t cifs -o username=samba,password=4321,port=4450 //127.0.0.1/samba /mnt 
+mount -t cifs -o username=samba,password=david,port=4450 //132.232.177.144/samba /mnt 
 
 ls -al /home/smb1
 ls -al /mnt
