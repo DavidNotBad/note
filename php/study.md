@@ -486,6 +486,23 @@ echo date('Y-m-d',strtotime('-1 month', strtotime(date('Y-m', time()).'-01 00:00
 echo date('Y-m-d',strtotime(date('Y-m', time()).'-01 00:00:00')-86400); //本月一日减一天即是上月最后一日
 ```
 
+## 数组根据key排序
+
+```php
+function sortByKey($array, $keys)
+{
+    uksort($array, function($a, $b)use($rules){
+        $ak = array_search($a, $rules);
+        $bk = array_search($b, $rules);
+        if($ak == $bk) {
+            return 0;
+        }
+        return $ak > $bk ? 1 : -1;
+    });
+    return $array;
+}
+```
+
 
 
 

@@ -261,6 +261,8 @@ firewall-cmd --zone=public --permanent --add-forward-port=port=80:proto=tcp:topo
 firewall-cmd --zone=public --permanent --add-forward-port=port=80:proto=tcp:toaddr=192.168.1.0.1
 # 将80端口的流量转发至192.168.0.1的8080端口
 firewall-cmd --zone=public --permanent --add-forward-port=port=80:proto=tcp:toaddr=192.168.0.1:toport=8080 
+# 删除端口转发
+firewall-cmd --zone=public --permanent --remove-forward-port=port=80:proto=tcp:toport=8080
 ---------------------
 本文来自 可能青蛙 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/hejun1218/article/details/73385735?utm_source=copy 
 
@@ -353,12 +355,5 @@ scp -r /root/.ssh/id_rsa.pub root@192.168.1.200:/root
 curl ifconfig.me
 # 或者
 curl ifconfig.me/all
-```
-
-## 查看端口是否可通
-
-```shell
-ssh -v -p port username@ip
-telnet localhost 22
 ```
 

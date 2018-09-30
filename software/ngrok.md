@@ -31,7 +31,7 @@ git clone https://github.com/inconshreveable/ngrok.git
 cd ngrok
 
 vim ~/.bash_profile
-export NGROK_DOMAIN="ngrok.davidnotbad.com"
+export NGROK_DOMAIN="dev.davidnotbad.com"
 source ~/.bash_profile
 
 openssl genrsa -out base.key 2048
@@ -46,12 +46,28 @@ cp server.crt assets/server/tls/snakeoil.crt
 cp server.key assets/server/tls/snakeoil.key
 
 
+# 修改客户端ngrok默认服务地址
+#修改默认服务地址
+vim /usr/local/ngrok/src/ngrok/client/model.go
+#找到第23行，将
+defaultServerAddr = "ngrokd.ngrok.com:443"
+#修改为defaultServerAddr = "dev.davidnotbad.com:4443" 即可
+
+#修改客户端蓝色文字logo
+vim ./src/ngrok/client/views/term/view.go
+# 找到第100行，将
+v.APrintf(termbox.ColorBlue|termbox.AttrBold, 0, 0, "ngrok")
+# 修改为
+v.APrintf(termbox.ColorBlue|termbox.AttrBold, 0, 0, "your logo")
+
+
 
 cd /usr/local/ngrok/
 make release-server
 /usr/local/ngrok/bin/ngrokd -domain="$NGROK_DOMAIN" -httpAddr=":8888" -httpsAddr=":4444"
 # 同时输出日志
 /usr/local/ngrok/bin/ngrokd -domain="$NGROK_DOMAIN" -httpAddr=":8888" -httpsAddr=":4444" > /usr/local/ngrok/ngrok-server.log 2>&1 &
+pkill -9 ngrokd
 
 
 # 编译linux客户端
@@ -82,9 +98,10 @@ GOOS=darwin GOARCH=amd64 make release-client
  scp -r root@132.232.177.144:/usr/local/ngrok/bin/windows_amd64/ngrok.exe .
 
 
+# 如果修改了文件  ./src/ngrok/client/model.go, 该步骤略
 # 在存放ngrok.exe同级目录下新建配置文件 ngrok.conf
 # server_addr和服务端的domain和证书的域名，三者必须相同
-server_addr: "ngrok.davidnotbad.com:4443"
+server_addr: "dev.davidnotbad.com:4443"
 trust_host_root_certs: false
 
 
@@ -102,7 +119,7 @@ ngrok -config=ngrok.conf 80
 # 编写启动脚本
 vim /usr/local/ngrok/ngrokd.sh
 #!/bin/bash
-/usr/local/ngrok/bin/ngrokd -tlsKey=/usr/local/ngrok/assets/server/tls/snakeoil.key -tlsCrt=/usr/local/ngrok/assets/server/tls/snakeoil.crt -domain="ngrok.davidnotbad.com" -httpAddr=":8888" -httpsAddr=":4444" -log="/var/log/ngrok/ngrok.log" 1> /dev/null 2> /var/log/ngrok/ngrok.log &
+/usr/local/ngrok/bin/ngrokd -tlsKey=/usr/local/ngrok/assets/server/tls/snakeoil.key -tlsCrt=/usr/local/ngrok/assets/server/tls/snakeoil.crt -domain="dev.davidnotbad.com" -httpAddr=":8888" -httpsAddr=":4444" -log="/var/log/ngrok/ngrok.log" &
 echo $! > /usr/local/ngrok/ngrokd.pid
 
 
@@ -116,16 +133,23 @@ After=network.target
 Type=forking  
 PIDFile=/usr/local/ngrok/ngrokd.pid
 ExecStart=/usr/bin/bash  /usr/local/ngrok/ngrokd.sh
-ExecStop=/usr/bin/pkill -9 ngrok
+ExecStop=/usr/bin/pkill -9 ngrokd
 PrivateTmp=true  
 
 [Install]  
 WantedBy=multi-user.target
 
 
+systemctl start ngrokd
+systemctl status -l ngrokd
+netstat -antp | grep ngrokd
+systemctl stop ngrokd
+
+
+
 启动linux客户端，映射http
 #启动客户端
-./ngrok -config=ngrok.conf -subdomain=ngrok.davidnotbad.com 80
+./ngrok -config=ngrok.conf -subdomain=david 80
 映射TCP
 #这里以SSH连接Linux时的22端口为例
 ./ngrok -proto=tcp 22
@@ -135,7 +159,7 @@ WantedBy=multi-user.target
 
  36     server {
  37         listen 80;
- 38         server_name ~^.*\.ngrox\.davidnotbad\.com$;
+ 38         server_name ~^.*\.dev\.davidnotbad\.com$;
  39         location / {
  40             proxy_pass http://$host:8888;
  41         }

@@ -11,9 +11,16 @@ https://www.google.com.hk/search?newwindow=1&safe=strict&ei=k6OsW5TyMsbr-Qbs6oqo
 ```shell
 # https://www.jianshu.com/p/ca21d7beffb6
 
+# xp
+netsh  interface ipv6 install
 
+netsh interface portproxy delete v4tov4 listenaddress=127.0.0.1 listenport=445
 
+netsh  interface portproxy add v4tov4 listenaddress=192.168.2.222 listenport=445 connectaddress=132.232.177.144 connectport=4450
 
+netsh interface portproxy show all
+
+netstat -antp tcp|findstr LISTENING|findstr 445
 
 
 
@@ -354,7 +361,7 @@ systemctl restart smb nmb
 
 smbclient -L //127.0.0.1
 
-    smbclient -L //127.0.0.1 -U smb1
+smbclient -L //127.0.0.1 -U smb1
 mount -t cifs //127.0.0.1/smb1 /mnt -o username=smb1
 
 ls -al /home/smb1
