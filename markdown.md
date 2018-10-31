@@ -128,8 +128,10 @@ exit('886');
 文章内容[^1]
 [^1]: 这个是脚注的内容, 一般放到文章的最后面
 
+
+## 声明
 *推荐使用`Typora`软件浏览该文档*
 
 下载typora主题:
 
-https://www.jianshu.com/p/0f503f64d7da
+[如何下载并安装新的typora主题](https://www.jianshu.com/p/0f503f64d7da)
