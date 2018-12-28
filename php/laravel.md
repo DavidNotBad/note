@@ -20,8 +20,23 @@
 ### 表注释
 
   ```php
-  #表注释
-  'zedisdog/laravel-schema-extend';
+# 执行表注释
+composer require zedisdog/laravel-schema-extend
+# 修改文件config/app.php
+//'Schema' => Illuminate\Support\Facades\Schema::class,
+'Schema' => \Jialeo\LaravelSchemaExtend\Schema::class,
+# 使用
+use Jialeo\LaravelSchemaExtend\Schema;
+Schema::create('tests', function ($table) {
+    $table->increments('id')->comment('列注释');
+    $table->comment = '表注释';
+});
+# 优化(db\vendor\laravel\framework\src\Illuminate\Database\Migrations\stubs\create.stub)
+//修改 \Illuminate\Support\Facades\Schema 为
+use Jialeo\LaravelSchemaExtend\Schema;
+
+# migrate使用文档
+//https://laravelacademy.org/post/9580.html
   ```
 
 ### collection
@@ -36,7 +51,11 @@ composer require illuminate/database
 composer require illuminate/events
   ```
 
+### debug包
 
+```php
+composer require barryvdh/laravel-debugbar
+```
 
 ## 打印sql日志
 
@@ -189,7 +208,348 @@ https://phpartisan.cn/news/58.html
     }
 ```
 
+## utf8字符编码字节数设置
 
+```php
+//提示：Syntax error or access violation: 1071 Specified key was too long; max key length is 767 bytes
+
+// 文件: \App\Providers\AppServiceProvider
+use Illuminate\Support\Facades\Schema;
+
+/**
+* Bootstrap any application services.
+*
+* @return void
+*/
+public function boot()
+{
+   Schema::defaultStringLength(191);
+}
+```
+
+## 步骤
+
+```php
+# 1: 安装并开启php扩展/权限等
+# 1.1: phpstorem设置
+	app -> 右键 -> make directory as -> Source Root
+	public -> 右键 -> make directory as -> Resource Root
+	tests -> 右键 -> make directory as -> Test Source Root
+	vendor -> 右键 -> make directory as -> Excluded
+# 2: composer update
+# 3: 创建并修改env
+DB_CHARSET=utf8
+DB_COLLATION=utf8_general_ci
+DB_PREFIX=tc_
+DB_ENGINE=InnoDB
+TIMEZONE=PRC
+# 4: 修改config/app.php
+'timezone' => env('TIMEZONE'),
+# 5: 修改config/database.php的mysql的内容
+'charset' => env('DB_CHARSET'),
+'collation' => env('DB_COLLATION'),
+'prefix' => env('DB_PREFIX'),
+'engine' => env('DB_ENGINE'),
+# 6: 设置utf8字符集的字节数为3个字节(在 \App\Providers\AppServiceProvider 的boot方法添加)
+use Illuminate\Support\Facades\Schema;
+Schema::defaultStringLength(191);
+# 7: 执行php artisan migrate, 生成表
+# 8: 开启php内置的服务器
+php artisan serve
+# 9: 使用浏览器访问(host和port参数可选)
+php artisan serve --host=0.0.0.0 --port=8080
+```
+
+## 修改make:model和创建公共模型类
+
+```php
+//修改文件: vendor\laravel\framework\src\Illuminate\Foundation\Console\stubs\model.stub
+<?php
+namespace DummyNamespace;
+
+class DummyClass extends Model
+{
+    //
+}
+//修改文件: \Illuminate\Foundation\Console\ModelMakeCommand
+protected function getDefaultNamespace($rootNamespace)
+{
+    return $rootNamespace . '\Models';
+}
+//添加文件: app\Models\Model.php
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model as BaseModel;
+
+//添加公共模型
+```
+
+## 添加公共模型
+
+```php
+<?php
+
+namespace App\Models;
+
+use \Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model as BaseModel;
+
+
+/**
+ * Class Model
+ * @package App\Models
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
+ */
+class Model extends BaseModel
+{
+    public $timestamps = false;
+    protected $primaryKey = 'id';
+    protected $perPage = 15;
+    protected $fillable = [];
+    protected $table;
+
+    /**
+     * 获取当前对象的 collection 集合
+     * @return \Illuminate\Support\Collection
+     */
+    public function toCollection()
+    {
+        return collect($this->toArray());
+    }
+
+    /**
+     * 自定义集合类型
+     *
+     * @param  array  $models
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new Collection($models);
+    }
+
+
+
+}
+
+```
+
+## 添加辅助函数和辅助类
+
+```php
+//根目录下新建helpers文件夹
+	// -- helpers.php 辅助函数
+	// -- Test.php  辅助类
+//修改composer.json, 在autoload上加上 
+"files": [
+    "helpers/helpers.php"
+]
+//修改composer.json, 在autoload上的psr-4里面加上
+"Helpers\\": "helpers/"
+//执行
+composer dump-autoload
+```
+
+## 生成json
+
+```php
+\Illuminate\Support\Facades\Response::json(['数据'])->getContent()
+//直接return这个对象即可
+//@see index.php -> $response->send();
+```
+
+## 自定义功能 - helpers.php
+
+```php
+# helpers.php
+/**
+ * 获取集合
+ * @param \Illuminate\Support\Collection $collection
+ * @return \Illuminate\Support\Collection
+ */
+function toCollection(\Illuminate\Support\Collection $collection)
+{
+    return $collection->map(function($item, $key){
+        return $item->toCollection();
+    });
+}
+```
+
+## 自定义功能 - Model.php
+
+```php
+/**
+ * 获取当前对象的 collection 集合
+ * @return \Illuminate\Support\Collection
+ */
+public function toCollection()
+{
+    return collect($this->toArray());
+}
+```
+
+## 关联关系 - 渴求式加载
+
+```php
+//模型
+/**
+ * 关联用户表
+ * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+ */
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+//使用
+OrdUser::with('user')->find(1);
+OrdUser::with(['user'=>function($query){
+    return $query->select('*');
+}])->find(1);
+//https://blog.csdn.net/u013032345/article/details/82772938
+```
+
+## 本地作用域
+
+```php
+//模型
+
+use Illuminate\Database\Eloquent\Builder;
+/**
+ * 查询自身和关联用户的数据
+ * @param $query
+ * @param array $orduserSelect
+ * @param array $userSelect
+ * @return mixed
+ */
+public function scopeGetUser(Builder $query, array $orduserSelect, array $userSelect)
+{
+    return $query->select($orduserSelect)->with([
+        'user' => function($builder)use($userSelect){
+            return $builder->select($userSelect);
+    	}, 
+    ]);
+}
+
+//客户端
+$orduserSelect = ['id', 'phone', 'user_id'];
+$userSelect = ['id', 'phone'];
+OrdUser::getUser($orduserSelect, $userSelect);
+```
+
+## 扩展collection
+
+```php
+# 1.扩展Eloquent\Collection
+//在app下新建Eloquent\Collection.php
+<?php
+namespace App\Eloquent;
+use \Support\Collection as SupportCollection;
+use Illuminate\Database\Eloquent\Collection as BaseCollection;
+
+class Collection extends BaseCollection
+{
+    /**
+     * 设置base集合
+     * @return \Support\Collection
+     */
+    public function toBase()
+    {
+        return new SupportCollection($this);
+    }
+
+    /**
+     * 获取当前对象的 collection 集合
+     * @return \Support\Collection
+     */
+    public function toCollection()
+    {
+        return new SupportCollection($this->toArray());
+    }
+
+}
+
+
+
+# 2.扩展Support\Collection
+//在support下新增Collection.php
+<?php
+namespace Support;
+use \Illuminate\Support\Collection as BaseCollection;
+
+class Collection extends BaseCollection
+{
+    /**
+     * @param $column
+     * @param null $key
+     * @return static
+     */
+    public function column($column, $key=null)
+    {
+        return new static(array_column($this->items, $column, $key));
+    }
+}
+
+
+# 3.support/helpers.php添加方法
+use Support\Collection as SupportCollection;
+/**
+ * 添加一个自定义的collection集合
+ *
+ * @param  mixed  $value
+ * @return \Support\Collection
+ */
+function collection($value = null)
+{
+    return new SupportCollection($value);
+}
+
+# 4. 模型基类添加
+<?php
+namespace App\Models;
+use \App\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model as BaseModel;
+
+/**
+ * Class Model
+ * @package App\Models
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
+ */
+class Model extends BaseModel
+{
+    public $timestamps = false;
+    protected $primaryKey = 'id';
+    protected $perPage = 15;
+    protected $fillable = [];
+    protected $table;
+
+    /**
+     * 获取当前对象的 collection 集合
+     * @return \App\Eloquent\Collection
+     */
+    public function toCollection()
+    {
+        return new Collection($this->toArray());
+    }
+
+    /**
+     * 自定义集合类型
+     *
+     * @param  array  $models
+     * @return \App\Eloquent\Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new Collection($models);
+    }
+}
+
+
+```
 
 
 

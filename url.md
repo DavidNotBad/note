@@ -28,3 +28,9 @@ https://lvwenhan.com/php/405.html
 https://www.ctolib.com/docs/sfile/vbird-linux-server-3e/index.html
 ```
 
+## 学习视频
+
+```python
+https://www.shiyanlou.com/
+```
+

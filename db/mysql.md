@@ -33,3 +33,47 @@ $db->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, FALSE);
 # http://php.net/manual/zh/pdo.setattribute.php
 ```
 
+## 查看列描述
+
+```mysql
+SELECT
+	COLUMN_NAME AS "字段名",
+	# COLUMN_TYPE AS "字段类型",
+	column_comment AS "描述"
+FROM
+	INFORMATION_SCHEMA. COLUMNS
+WHERE
+	table_schema = 'tc'
+AND table_name = 'tc_service_provider'
+
+```
+
+## 查看所有的表描述
+
+```mysql
+SELECT
+	TABLE_NAME as "表明",
+	TABLE_COMMENT as "表描述"
+FROM
+	information_schema. TABLES
+WHERE
+	table_schema = 'tc';
+```
+
+## 查看所有表的列描述
+
+```mysql
+SELECT
+	t.TABLE_NAME as "表名",
+	t.TABLE_COMMENT as "表注释",
+	c.COLUMN_NAME as "列名",
+	c.COLUMN_TYPE as "列类型",
+	c.COLUMN_COMMENT as "列注释"
+FROM
+	information_schema. TABLES t,
+	INFORMATION_SCHEMA. COLUMNS c
+WHERE
+	c.TABLE_NAME = t.TABLE_NAME
+AND t.`TABLE_SCHEMA` = 'tc'
+```
+

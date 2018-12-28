@@ -12,6 +12,7 @@ http://blog.leanote.com/post/jesse/045ba03e0da6
 https://www.cnblogs.com/anruy/p/4989161.html
 https://www.pocketdigi.com/20161011/1490.html
 http://blog.51cto.com/12173069/2120166
+https://xicheng412.github.io/2016/09/27/ngrok-config/
 ```
 
 ## 安装
@@ -82,14 +83,14 @@ cd /usr/lib/golang/src
 GOOS=windows GOARCH=amd64 ./make.bash
 cd /usr/local/ngrok/
 GOOS=windows GOARCH=amd64 make release-client
-## 生成的linux客户端为 /usr/local/ngrok/bin/windows_amd64
+## 生成的window客户端为 /usr/local/ngrok/bin/windows_amd64
 
 # 编译mac客户端
 cd /usr/lib/golang/src
 GOOS=darwin GOARCH=amd64 ./make.bash
 cd /usr/local/ngrok/
 GOOS=darwin GOARCH=amd64 make release-client
-## 生成的linux客户端为 /usr/local/ngrok/bin/darwin_amd64
+## 生成的mac客户端为 /usr/local/ngrok/bin/darwin_amd64
 
 
 
@@ -107,12 +108,17 @@ trust_host_root_certs: false
 
 # 新建文件 ngrok.bat
 @echo on
-cd %cd%
-#ngrok -proto=tcp 80
-#ngrok start web
-# ngrok -config=ngrok.conf -log=%cd%/ngrok.log -subdomain=david 80
-ngrok -config=ngrok.conf 80
+if "%1"=="hide" goto CmdBegin
+start mshta vbscript:createobject("wscript.shell").run("""%~0"" hide",0)(window.close)&&exit
+:CmdBegin
 
+taskkill /f /fi "IMAGENAME eq ngrok.exe"
+
+cd %cd%
+del %cd%\ngrok.log
+:: box.dev.davidnotbad.com
+:: ngrok -config=ngrok.conf -log=%cd%/ngrok.log -subdomain=david 80
+ngrok -subdomain=box -log=%cd%/ngrok.log 8080
 
 
 

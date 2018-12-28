@@ -1,3 +1,16 @@
+## 自定规范
+
+```php
+# 控制器规范
+//控制器接收参数
+//设置事务
+//转义参数调用repository的函数
+//捕获repository的异常
+//不操作数据库
+```
+
+
+
 ## 截取路径
 
 ```php
@@ -41,6 +54,38 @@ function base_path($path=null, $returnDomain=false, $isMkdir=false)
 ## 获取文件列表
 
 ```php
+/**
+ * 获取文件列表
+ *
+ * @param string $path  源路径
+ * @param null|string $extend   文件后缀(例如: md|php)
+ * @param bool $recursive   是否递归查找目录
+ * @param null $callback    用于筛选的回调函数
+ * @param int $flags    参考glob函数的flags参数
+ * 
+ * @see http://php.net/manual/zh/function.glob.php
+ * @return array
+ */
+function flist($path, $extend=null, $recursive=false, $callback=null, $flags=0)
+{
+    $path = realpath(preg_replace(array('/\/$/', '/\\\\$/'), '', $path)) . DIRECTORY_SEPARATOR;
+    $pattern = is_string($extend) ? $path . '*' . $extend : $path . '*';
+    $array = is_callable($callback) ? array_filter(glob($pattern, $flags), $callback) : glob($pattern, $flags);
+
+    if($recursive) {
+        $pattern = $path . '*';
+        $dirs = glob($pattern, GLOB_ONLYDIR);
+        foreach ($dirs as $item) {
+            $array = array_merge($array, (array) flist($item, $extend, true, $callback, $flags));
+        }
+    }
+    return $array;
+}
+
+
+
+
+
 function file_list($basepath, $extends = '')
 {
     $basepath = rtrim($basepath, '/');
@@ -213,7 +258,7 @@ $stderr = fopen('php://stderr', 'w');
 
 $input = file_get_contents('php://input');
 
-//例子
+//例子: 输出字符串
 $message = 'sdf';
 $stream = @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
 @fwrite($stream, $message);
@@ -416,19 +461,24 @@ if (@ini_get("session.use_cookies")) {
 session_destroy();
 ```
 
-## array_map改造
+## 对数组中的每个成员执行回调
 
 ```php
-public function map(array $array, callable $callback)
-{
-    $arguments = array_slice(func_get_args(), 2);
-    $return = array();
-    foreach ($array as $item)
+    /**
+     * 对数组中的每个成员执行回调
+     * @param array $array
+     * @param callable $callback
+     * @return array
+     */
+    public function map(array $array, callable $callback)
     {
-        $return[] = call_user_func_array($callback, array_merge((array) $item, $arguments));
+        $arguments = array_slice(func_get_args(), 2);
+        foreach ($array as &$item)
+        {
+            $item = call_user_func_array($callback, array_merge([$item], $arguments));
+        }
+        return $array;
     }
-    return $return;
-}
 ```
 
 ## 通过反射访问类的私有方法
@@ -500,6 +550,57 @@ function sortByKey($array, $keys)
         return $ak > $bk ? 1 : -1;
     });
     return $array;
+}
+```
+
+## 匿名函数调用自身
+
+```php
+$test = NULL;
+$test = function ($a) use (&$test) {
+    echo $a;
+    $a --;
+
+    if ($a > 0) {
+        return $test($a);
+    }
+};
+
+$test(10);
+```
+
+## 反引用一个引用字符串 
+
+```php
+$str = "Is your name O\'reilly?";
+// 输出: Is your name O'reilly?
+echo stripslashes($str);
+
+$str = '\\\\';
+//输出 \
+echo stripslashes($str);
+```
+
+## 获取当前用户
+
+```php
+exec('whoami');
+```
+
+## 判断数组是否含有某个键, 如果有, 检测其值
+
+```php
+/**
+ * 判断数组是否含有某个键, 如果有, 检测其值
+ * @param array $array
+ * @param string $key
+ * @param array $rule
+ * @return bool
+ */
+function array_has(array $array, $key, array $rule=null)
+{
+    $rule = is_null($rule) ? ['', null, array()] : $rule;
+    return isset($array[$key]) && (!in_array($array[$key], $rule, true));
 }
 ```
 

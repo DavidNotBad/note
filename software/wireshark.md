@@ -74,3 +74,10 @@ ip.dst==124.250.88.172 && ssl
 点击包详情->复制->as printable text
 ```
 
+## 抓包
+
+```
+traceroute
+tcptraceroute
+```
+

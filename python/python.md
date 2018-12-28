@@ -911,6 +911,16 @@ https://regex101.com/#python
 
 http://www.yczlf.com
 
+## 手册
+
+```python
+# 退出命令行
+ctrl + d	#ctrl+d
+ctrl + z	#ctrl+z
+quit()		#通用
+
+```
+
 
 
 

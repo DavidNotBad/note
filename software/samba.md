@@ -25,7 +25,8 @@ C:\Windows\System32\cmd.exe
 # 查看是否监听端口
 netstat -antp tcp|findstr LISTENING|findstr 445
 # 端口转发
-netsh interface portproxy add v4tov4 listenport=445 listenaddress=127.0.0.1 connectport=4450 connectaddress=132.232.177.144
+netsh interface portproxy add v4tov4 listenport=445 listenaddress=0.0.0.0 connectport=4450 connectaddress=132.232.177.144
+netsh interface portproxy add v4tov4 listenport=10022 connectaddress=192.168.2.53 connectport=22 listenaddress=* protocol=tcp
 # 查看转发的端口
 netsh interface portproxy show all
 # 重置网络
