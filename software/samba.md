@@ -4,6 +4,15 @@ https://xz.aliyun.com/t/2068
 
 https://blog.csdn.net/jsd2honey/article/details/79473689
 
+```shell
+# 苹果系统连接samba
+command + k
+smb://主机IP或主机名:端口号/共享名
+提示：输入samba地址之后可以点击旁边的＋按钮收藏，下次就不用再输入了。
+共享目录会自动打开，自动挂载
+提示：如果finder不小心关闭后，不需要重新连接，可以再“共享的”列表里找到。
+```
+
 
 
 

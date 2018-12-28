@@ -2,6 +2,8 @@
 
 [官方文档](http://docs.pythontab.com/python/python3.4/appetite.html#)
 
+[极客学院](http://wiki.jikexueyuan.com/project/python3-cookbook/iterators-and-generators.html)
+
 [requests](http://cn.python-requests.org/zh_CN/latest/)
 
 [Beautiful Soup 4.2.0](https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html)
@@ -44,6 +46,12 @@
 * 打印
 
   ```python
+  
+  ```
+
+
+
+  ```python
   #!/usr/bin/python
   # -*- coding: UTF-8 -*-
   
@@ -51,6 +59,7 @@
   ```
 
 ## 字符串
+
  ```python
 #字符串函数
 message = 'i love ada wang'
@@ -920,6 +929,33 @@ ctrl + z	#ctrl+z
 quit()		#通用
 
 ```
+
+
+
+## 单例模式
+
+```python
+def singleton(cls):
+    instance = cls()
+    instance.__call__ = lambda: instance
+    return instance
+
+@singleton
+class Highlander:
+    x = 100
+
+print(Highlander)
+print(Highlander)
+print(Highlander)
+```
+
+## flask目录规范
+
+```python
+https://blog.csdn.net/xingyunlost/article/details/77155584
+```
+
+
 
 
 
