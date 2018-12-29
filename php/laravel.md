@@ -47,6 +47,7 @@ use Jialeo\LaravelSchemaExtend\Schema;
 ### illuminate database
 
   ```php
+# 上packigist查看composer包说明
 composer require illuminate/database
 composer require illuminate/events
   ```
@@ -344,10 +345,10 @@ class Model extends BaseModel
 	// -- Test.php  辅助类
 //修改composer.json, 在autoload上加上 
 "files": [
-    "helpers/helpers.php"
+    "support/helpers.php"
 ]
 //修改composer.json, 在autoload上的psr-4里面加上
-"Helpers\\": "helpers/"
+"Support\\": "support/"
 //执行
 composer dump-autoload
 ```
@@ -355,7 +356,7 @@ composer dump-autoload
 ## 生成json
 
 ```php
-\Illuminate\Support\Facades\Response::json(['数据'])->getContent()
+\Illuminate\Support\Facades\Response::json(['数据'])
 //直接return这个对象即可
 //@see index.php -> $response->send();
 ```
@@ -549,6 +550,191 @@ class Model extends BaseModel
 }
 
 
+```
+
+## 资源类禁止/设置包装最外层资源
+
+```php
+<?php
+namespace App\Providers;
+use Illuminate\Http\Resources\Json\Resource;
+
+class AppServiceProvider extends ServiceProvider
+{
+    //设置默认的最外层资源
+    public static $wrap = '_data';
+    
+    public function boot()
+    {
+        //禁止包装最外层资源
+        Resource::withoutWrapping();
+    }
+}
+
+
+//设置默认的最外层资源
+JsonResource::wrap('_data');
+```
+
+## 扩展resources
+
+```php
+//新建文件\App\Http\Resources\Collection
+<?php
+namespace App\Http\Resources;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class Collection extends ResourceCollection
+{
+    public static $wrap = '___data';
+
+    public function with($request)
+    {
+        static::wrap(false);
+        return [
+
+        ];
+    }
+}
+
+//新建文件\App\Http\Resources\Resource
+<?php
+namespace App\Http\Resources;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class Resource extends JsonResource
+{
+    public static $wrap = '______reqData';
+
+    public function with($request)
+    {
+        static::wrap(false);
+        return [
+
+        ];
+    }
+}
+
+//修改artisan命令的模板文件
+//vendor\laravel\framework\src\Illuminate\Foundation\Console\stubs\resource.stub
+<?php
+namespace DummyNamespace;
+
+class DummyClass extends Resource
+{
+   /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return parent::toArray($request);
+    }
+}
+
+//修改artisan命令的模板文件
+//vendor\laravel\framework\src\Illuminate\Foundation\Console\stubs\resource-collection.stub
+<?php
+namespace DummyNamespace;
+
+class DummyClass extends Collection
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+        return parent::toArray($request);
+    }
+}
+
+```
+
+## 指定目录生成控制器
+
+```shell
+php artisan make:controller Test/TestController
+```
+
+## 运行时动态设置环境变量
+
+```bat
+:: 运行时动态设置环境变量
+set PATH=E:\\phpstudy\PHPTutorial\php\php-7.2.1-nts;%PATH%
+```
+
+## user模型改变位置后, 使用auth时做的修改
+
+```php
+//config\auth.php
+'model' => App\Models\User::class,
+
+//app\Http\Controllers\Auth\RegisterController.php
+use App\Models\User;
+```
+
+## 服务容器添加绑定
+
+```php
+//\App\Providers\AppServiceProvider的register方法注册
+$this->app->bind(URLInfo::class, function ($app) {
+    return new URLInfo($app->make(User::class), 2);
+});
+//使用
+public function index(URLInfo $URLInfo){}
+
+//其它使用方式
+#绑定
+App::bind('类名',function(){
+  return new '类名'(参数);
+});
+#使用实例(app函数会自动注入依赖,避免多次重复实例化依赖的类)
+app()->make(自定义名)->方法名();
+app()['自定义名']->方法名();
+app('自定义名')->方法名();
+```
+
+## reponsitory模式
+
+```php
+//1. 公共控制器添加: \App\Http\Controllers\Controller
+/**
+ *
+ * @param string $method
+ * @param array $parameters
+ * @return mixed
+ */
+public function __call($method, $parameters)
+{
+    $this->callRepository($method, $parameters);
+    return parent::__call($method, $parameters);
+}
+
+/**
+ * 动态获取respository
+ * @param $method
+ * @param $parameters
+ * @return bool
+ */
+private function callRepository($method, $parameters)
+{
+    $class = str_replace(['Controllers', 'Controller'], ['Repositories', 'Repository'], static::class);
+    if(class_exists($class)) {
+        $instance = app($class);
+        if(method_exists($instance, $method)) {
+            return $instance->{$method}(...$parameters);
+        }
+    }
+    return false;
+}
+
+//2. 新建目录: \app\Http\Repositories, 存放repository文件
+//例如: TestRepository.php
 ```
 
 
