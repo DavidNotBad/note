@@ -9,12 +9,12 @@
 ### 爬虫类
 
   ```php
-  [
-      'symfony/css-selector',   //css 选择器
-      'symfony/dom-crawler',	 //爬虫
-      'fabpot/goutte',		//表单提交
-      'guzzlehttp/guzzle',	//http
-  ]
+[
+    'symfony/css-selector',   //css 选择器
+    'symfony/dom-crawler',	 //爬虫
+    'fabpot/goutte',		//表单提交
+    'guzzlehttp/guzzle',	//http
+]
   ```
 
 ### 表注释
@@ -42,7 +42,7 @@ use Jialeo\LaravelSchemaExtend\Schema;
 ### collection
 
   ```php
-  composer require tightenco/collect
+composer require tightenco/collect
   ```
 ### illuminate database
 
@@ -54,8 +54,28 @@ composer require illuminate/events
 
 ### debug包
 
-```php
+```shell
+# 安装
 composer require barryvdh/laravel-debugbar
+
+# 配置.env
+DEBUGBAR_ENABLED=true
+
+# routes\web.php
+Route::get('/', function () {
+    $data = ServiceProviderModel::select(['id', 'user_id'])->with(['users'=>function($query){
+        return $query->select(['id']);
+    }])->where(function(Builder $query){
+        return $query->whereNotNull('user_id')
+            ->where('user_id', '!=', '')
+            ->where('user_id', '!=', 0);
+    })->get();
+
+    return view('test', ['data' => $data]);
+}
+
+# 新建 resources\views\test.blade.php
+{{$data}}
 ```
 
 ## 打印sql日志
@@ -345,10 +365,10 @@ class Model extends BaseModel
 	// -- Test.php  辅助类
 //修改composer.json, 在autoload上加上 
 "files": [
-    "support/helpers.php"
+    "supports/helpers.php"
 ]
 //修改composer.json, 在autoload上的psr-4里面加上
-"Support\\": "support/"
+"Supports\\": "supports/"
 //执行
 composer dump-autoload
 ```
@@ -444,17 +464,17 @@ OrdUser::getUser($orduserSelect, $userSelect);
 
 ```php
 # 1.扩展Eloquent\Collection
-//在app下新建Eloquent\Collection.php
+//在app下新建Supports\Collection.php
 <?php
 namespace App\Eloquent;
-use \Support\Collection as SupportCollection;
+use \Supports\Collection as SupportCollection;
 use Illuminate\Database\Eloquent\Collection as BaseCollection;
 
 class Collection extends BaseCollection
 {
     /**
      * 设置base集合
-     * @return \Support\Collection
+     * @return \Supports\Collection
      */
     public function toBase()
     {
@@ -463,7 +483,7 @@ class Collection extends BaseCollection
 
     /**
      * 获取当前对象的 collection 集合
-     * @return \Support\Collection
+     * @return \Supports\Collection
      */
     public function toCollection()
     {
@@ -483,34 +503,36 @@ use \Illuminate\Support\Collection as BaseCollection;
 class Collection extends BaseCollection
 {
     /**
-     * @param $column
-     * @param null $key
+     * 获取数组中重复的值
      * @return static
      */
-    public function column($column, $key=null)
+    public function repeat()
     {
-        return new static(array_column($this->items, $column, $key));
+        return $this->diffKeys($this->unique())->unique()->values();
     }
+    
 }
 
 
 # 3.support/helpers.php添加方法
-use Support\Collection as SupportCollection;
+use \Illuminate\Support\Collection as IlluminateCollection;
 /**
- * 添加一个自定义的collection集合
- *
- * @param  mixed  $value
- * @return \Support\Collection
+ * 获取集合
+ * @param \Illuminate\Support\Collection $collection
+ * @return \Illuminate\Support\Collection
  */
-function collection($value = null)
+function toCollection(IlluminateCollection $collection)
 {
-    return new SupportCollection($value);
+    return $collection->map(function($item, $key){
+        return $item->toCollection();
+    });
 }
+
 
 # 4. 模型基类添加
 <?php
 namespace App\Models;
-use \App\Eloquent\Collection;
+use \App\Supports\Collection;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 
 /**
@@ -530,7 +552,7 @@ class Model extends BaseModel
 
     /**
      * 获取当前对象的 collection 集合
-     * @return \App\Eloquent\Collection
+     * @return \App\Supports\Collection
      */
     public function toCollection()
     {
@@ -541,7 +563,7 @@ class Model extends BaseModel
      * 自定义集合类型
      *
      * @param  array  $models
-     * @return \App\Eloquent\Collection
+     * @return \App\Supports\Collection
      */
     public function newCollection(array $models = [])
     {
@@ -549,7 +571,26 @@ class Model extends BaseModel
     }
 }
 
+# 5. public/index.php
+# 新建bootstrap/init.php
+require_once __DIR__.'/../bootstrap/init.php';
+require __DIR__.'/../vendor/autoload.php';
 
+# 6. 在init.php加上
+use Supports\Collection;
+/**
+ * 重写collect方法
+ * @param null $value
+ * @return \Supports\Collection
+ */
+function collect($value = null)
+{
+    return new Collection($value);
+}
+
+# 7. 在 /artisan 加上
+require_once __DIR__.'/../bootstrap/init.php';
+require __DIR__.'/../vendor/autoload.php';
 ```
 
 ## 资源类禁止/设置包装最外层资源
@@ -737,5 +778,5 @@ private function callRepository($method, $parameters)
 //例如: TestRepository.php
 ```
 
-
+## 
 
