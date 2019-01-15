@@ -604,6 +604,16 @@ function array_has(array $array, $key, array $rule=null)
 }
 ```
 
+## 待查看
+
+```php
+        if (\function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } elseif (!\in_array(\PHP_SAPI, array('cli', 'phpdbg'), true)) {
+            static::closeOutputBuffers(0, true);
+        }
+```
+
 
 
 
