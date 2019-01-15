@@ -115,7 +115,7 @@ conda config --set show_channel_urls yes
 ## 安装虚拟环境到指定目录下
 
 ```python
-conda create --prefix=D:\python36\py36 python=3.6
+conda create --prefix=D:\python36\py36 --name scrapy python=3.6
 # 激活
 activate D:\python36\py36
 # 退出

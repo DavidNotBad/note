@@ -271,3 +271,4 @@ response.css('div[id*=image] a::text').extract()
 response.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
 ```
 
+https://blog.csdn.net/m0_37057274/article/details/68935846
