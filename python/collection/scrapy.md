@@ -2,6 +2,8 @@
 
 [示例网站]()
 
+[文档](https://scrapy-chs.readthedocs.io/zh_CN/1.0/intro/overview.html)
+
 ## 目录结构
 
 ```
@@ -226,6 +228,12 @@ if __name__ == "__main__":
     print myjoin("http://www.baidu.com", "/../../abc.html")
     print myjoin("http://www.baidu.com/xxx", "./../../abc.html")
     print myjoin("http://www.baidu.com", "abc.html?key=value&m=x")
+    
+# 同时运行多个爬虫
+# https://blog.csdn.net/m0_37057274/article/details/68935846
+# spider执行指定的pipeline
+# https://github.com/kakaok/scrapy_multi_pipeline
+# https://www.cnblogs.com/wcwnina/p/9463919.html
 ```
 
 ## 选择器
@@ -269,6 +277,14 @@ response.css('div[id*=image] a::text').extract()
 
 # 正则
 response.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
+
+# 第二个元素后面的所有元素
+response.css('div:nth-of-type(n+2)')
 ```
 
-https://blog.csdn.net/m0_37057274/article/details/68935846
+## 下载文件
+
+```python
+https://www.jianshu.com/p/a412c0277f8a
+```
+

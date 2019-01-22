@@ -13,13 +13,25 @@
   ## 前端助手
 
   ```
-  web前端助手
+  web前端助手(FeHelper)
   ```
 
   ## 翻墙
 
   ```
   谷歌访问助手
+  ```
+
+  ## xpath
+
+  ```shell
+  ChroPath
+  ```
+
+  ## json
+
+  ```php
+  JSON Viewer
   ```
 
   

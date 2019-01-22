@@ -371,6 +371,9 @@ a.popitem()  # 随机弹出结果, 形如: ('one': '1'), a字典剩下 {'two': '
 # 拼接填充字典
 a = {'one': 'applie', 'two': 'banana'}
 a.update({'three':  'cat'}) # a为{'one': 'applie', 'two': 'banana', 'three': 'cat'}
+
+# 元祖合并成字典
+dict(map(lambda x, y: [x, y], keys, row))
 ```
 
 ### 集合
@@ -659,6 +662,28 @@ class CapStr(str):
         return str.__new__(cls, string)
 a = Capstr('I love Apple.com!')
 a # 'I LOVE APPLE.COM!'
+
+
+# 抽象类
+from abc import ABC, abstractmethod
+
+# 获取代理
+class Crawler(ABC):
+    @abstractmethod
+    def get_ip_address(self):
+        pass
+
+class Daili66(Crawler):
+    pass
+
+
+daili66 = Daili66()
+
+# 私有方法
+__foo__: 定义的是特殊方法，一般是系统定义名字 ，类似 __init__() 之类的。
+_foo: 以单下划线开头的表示的是 protected 类型的变量，即保护类型只能允许其本身与子类进行访问，不能用于 from module import *
+__foo: 双下划线的表示的是私有类型(private)的变量, 只能是允许这个类本身进行访问了。
+foo:就是public方法
 ```
 
 ### 类的算术运算
@@ -724,7 +749,7 @@ my_list2 = pickle.load(pickle_file)
 
 
 
-### 异常
+## 异常
 
 ```python
 #接收异常
