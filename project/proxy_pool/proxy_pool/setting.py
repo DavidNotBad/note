@@ -21,7 +21,7 @@ API_PORT = '8885'
 # 是否运行爬虫
 IS_RUN_CRAWLER = True
 # 是否运行api
-IS_RUN_API = True
+IS_RUN_API = False
 # 是否运行测试器
 IS_RUN_TESTER = True
 # 代理数量上限

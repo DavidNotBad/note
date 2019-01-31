@@ -96,6 +96,8 @@ def is_number(s):
         return True
     except ValueError:
         pass
+    except TypeError:
+        return False
 
     try:
         import unicodedata
@@ -107,7 +109,7 @@ def is_number(s):
     return False
 
 
-def time():
+def get_now_time():
     """
     获取当前的时间
     :return:
@@ -115,3 +117,12 @@ def time():
     import datetime
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+
+def get_time(seconds=0):
+    """
+    获取seconds秒后的时间
+    :param seconds:
+    :return:
+    """
+    import time
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + seconds))

@@ -3,7 +3,7 @@ import sqlite3
 import threading
 from abc import ABC, abstractmethod
 from sqlite3 import ProgrammingError
-from proxy_pool.utils import env, time, is_number
+from proxy_pool.utils import env, get_now_time, is_number
 
 lock = threading.Lock()
 
@@ -120,7 +120,7 @@ class SQLite(DB):
             yield dict(map(lambda x, y: [x, y], keys, row))
 
     def update(self, table_name, ip, port, protocol_type, request_time):
-        updated_at = time()
+        updated_at = get_now_time()
         sql = "UPDATE {table_name} set 'updated_at' = '{updated_at}', 'request_time'='{request_time}' "
         sql += "where ip='{ip}' and port='{port}' and protocol_type='{protocol_type}'"
         sql = sql.format(ip=ip, table_name=table_name, updated_at=updated_at, request_time=request_time, port=port, protocol_type=protocol_type)

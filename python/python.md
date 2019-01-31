@@ -1159,19 +1159,26 @@ print isLinuxSystem()
 
 ```python
 def is_number(s):
+    """
+    判断是否为数字字符串
+    :param s:
+    :return:
+    """
     try:
         float(s)
         return True
     except ValueError:
         pass
- 
+    except TypeError:
+        return False
+
     try:
         import unicodedata
         unicodedata.numeric(s)
         return True
     except (TypeError, ValueError):
         pass
- 
+
     return False
 ```
 
@@ -1256,7 +1263,7 @@ if __name__ == '__main__':
         tester_process.join()
     except KeyboardInterrupt:
         print('停止了进程')
-        
+
 # https://www.jianshu.com/p/bd3c29dd8072
 ```
 
@@ -1289,6 +1296,15 @@ def get_proxy(table):
 if __name__ == '__main__':
     app.run()
 
+```
+
+## 获取时间
+
+```python
+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()+1))
+
+# 获取当前时间
+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 ```
 
 

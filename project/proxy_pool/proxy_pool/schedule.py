@@ -4,7 +4,7 @@ from time import sleep
 from requests import Request, Session
 from proxy_pool.api import app
 import threading
-from proxy_pool.utils import subgroup, log, env, new_instance, is_number, time, get_user_agent
+from proxy_pool.utils import subgroup, log, env, new_instance, is_number, get_now_time, get_user_agent, get_time
 
 
 class ScheduleGetter:
@@ -112,34 +112,6 @@ class ScheduleGetter:
             if isinstance(data, dict):
                 yield data
 
-    def crawler_tester(self, item, name):
-        """
-        测试抓取的代理
-        :param item:
-        :param name:
-        :return:
-        """
-        # 一直等待到创建一个进程, 否则不断等待和重试
-        while True:
-            # 判断代理池数量是否溢出
-            if not self.is_overflow():
-                # 限制最大的线程数
-                if threading.activeCount() >= env('MAX_THREAD_COUNT'):
-                    # log('超过最大的线程数, 等待其它线程完成工作...')
-                    sleep(env('OVER_MAX_THREAD_TIME'))
-                    continue
-                else:
-                    # 测试代理
-                    new_thread = threading.Thread(target=self.tester.test_crawler, kwargs={'datas': item, 'name': name})
-                    new_thread.setDaemon(True)
-                    new_thread.start()
-
-                    # log('创建了一个新的进程, 进程总数: {}个'.format(threading.activeCount()))
-                    return True
-            else:
-                # 代理池数量溢出就不再抓取了
-                return False
-
     def crawler(self, name):
         """
         采集并测试代理
@@ -148,22 +120,7 @@ class ScheduleGetter:
         """
         # 获取代理
         data = self._get()
-
-        # 创建测试代理线程
-        for item in subgroup(data):
-            result = self.crawler_tester(item, name)
-            if result is False:
-                break
-
-        try:
-            # 等待线程完成
-            for tt in threading.enumerate():
-                if tt is not threading.current_thread():
-                    tt.join()
-        except KeyboardInterrupt:
-            pass
-        
-        log('测试代理结束...')
+        self.tester.tester(name=name, data=data)
 
     def count(self, table_name):
         """
@@ -196,7 +153,7 @@ class ScheduleGetter:
         判断代理池是否溢出
         :return:
         """
-        return bool(self.total_count > env('PROXY_MAX_COUNT'))
+        return bool(self.total_count >= env('PROXY_MAX_COUNT'))
 
 
 class ScheduleTester:
@@ -209,9 +166,61 @@ class ScheduleTester:
         self.db = new_instance('proxy_pool.db', env('db.type'))
         self.db.create_table(name)
 
-    def test_crawler(self, datas, name):
+    def tester(self, name, data, count=None):
         """
-        测试采集的代理
+        测试器入口
+        :param name:
+        :param data:
+        :param count:
+        :return:
+        """
+        # 创建测试代理线程
+        for item in subgroup(data, count):
+            result = self._tester_threads(item, name)
+            if result is False:
+                break
+
+        try:
+            # 等待线程完成
+            for tt in threading.enumerate():
+                if tt is not threading.current_thread():
+                    tt.join()
+        except KeyboardInterrupt:
+            pass
+
+        log('测试代理结束...')
+
+    def _tester_threads(self, item, name):
+        """
+        创建测试进程
+        :param item:
+        :param name:
+        :return:
+        """
+        # 一直等待到创建一个进程, 否则不断等待和重试
+        while True:
+            # 判断代理池数量是否溢出
+            if (self.getter is None) or (isinstance(self.getter, ScheduleGetter) and (not self.getter.is_overflow())):
+                # 限制最大的线程数
+                if threading.activeCount() >= env('MAX_THREAD_COUNT'):
+                    # log('超过最大的线程数, 等待其它线程完成工作...')
+                    sleep(env('OVER_MAX_THREAD_TIME'))
+                    continue
+                else:
+                    # 测试代理
+                    new_thread = threading.Thread(target=self._test_crawler, kwargs={'datas': item, 'name': name})
+                    new_thread.setDaemon(True)
+                    new_thread.start()
+
+                    # log('创建了一个新的进程, 进程总数: {}个'.format(threading.activeCount()))
+                    return True
+            else:
+                # 代理池数量溢出就不再抓取了
+                return False
+
+    def _test_crawler(self, datas, name):
+        """
+        测试逻辑
         :param datas:
         :param name:
         :return:
@@ -236,13 +245,11 @@ class ScheduleTester:
             # 保存测试的结果
             if (protocol_type == 'http') or (protocol_type is None):
                 http_time = tester_result.get('http')
-                if http_time:
-                    self._save(ip=ip, port=port, request_time=http_time, protocol_type='http')
+                self._save(ip=ip, port=port, request_time=http_time, protocol_type='http')
 
             if (protocol_type == 'https') or (protocol_type is None):
                 https_time = tester_result.get('https')
-                if https_time:
-                    self._save(ip=ip, port=port, request_time=https_time, protocol_type='https')
+                self._save(ip=ip, port=port, request_time=https_time, protocol_type='https')
 
     def _save(self, **kwargs):
         """
@@ -256,37 +263,12 @@ class ScheduleTester:
             'port': str(kwargs.get('port')),
             'request_time': str(request_time) if is_number(request_time) else False,
             'protocol_type': str(kwargs.get('protocol_type')),
-            'created_at': str(time())
+            'created_at': str(get_now_time())
         }
         insert_callback = self.getter.add_count if self.getter else None
         delete_callback = self.getter.sub_count if self.getter else None
         self.db.save(table_name=self.name, data=insert_data, insert_callback=insert_callback,
                      delete_callback=delete_callback)
-
-    def tester(self, name):
-        """
-        测试数据库中的代理
-        :param name:
-        :return:
-        """
-        datas = self.db.select(name)
-        total_count = int(self.db.count(name))
-        count = total_count if total_count < int(env('THREAD_COUNT')) else int(env('THREAD_COUNT'))
-
-        for data in subgroup(datas, count):
-            # 测试代理
-            new_thread = threading.Thread(target=self.test_crawler, kwargs={'datas': data, 'name': name})
-            new_thread.setDaemon(True)
-            new_thread.start()
-
-        try:
-            for tt in threading.enumerate():
-                if tt is not threading.current_thread():
-                    tt.join()
-        except KeyboardInterrupt:
-            pass
-
-        log('测试代理结束, 等待下次运行中...')
 
 
 class Schedule:
@@ -304,8 +286,15 @@ class Schedule:
             tester = ScheduleTester(name=name)
             while True:
                 log('测试器开始运行...')
-                tester.tester(name)
-                log('测试器等待下次运行中...')
+
+                datas = tester.db.select(name)
+                total_count = int(tester.db.count(name))
+                count = total_count if total_count < int(env('THREAD_COUNT')) else int(env('THREAD_COUNT'))
+
+                # 运行测试器
+                tester.tester(name=name, data=datas, count=count)
+
+                log('测试器等待下次运行中, 下次运行时间({})...'.format(get_time(env('TESTER_CYCLE'))))
                 sleep(env('TESTER_CYCLE'))
         except KeyboardInterrupt:
             pass
@@ -327,7 +316,7 @@ class Schedule:
             else:
                 log('代理池数量已经达到上限, 采集停止')
 
-            log('抓取器等待下次运行中...')
+            log('抓取器等待下次运行中, 下次运行时间({})...'.format(get_time(env('CRAWLER_CYCLE'))))
             # 等待下次抓取
             sleep(env('CRAWLER_CYCLE'))
             # 递归尝试重新抓取
