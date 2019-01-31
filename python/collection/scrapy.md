@@ -280,6 +280,9 @@ response.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
 
 # 第二个元素后面的所有元素
 response.css('div:nth-of-type(n+2)')
+
+# 前3个元素
+response.css('nth-child(-n+3)')
 ```
 
 ## 下载文件

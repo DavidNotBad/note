@@ -2,6 +2,8 @@
 
 [官方文档](http://docs.pythontab.com/python/python3.4/appetite.html#)
 
+[中文手册](https://yiyibooks.cn/xx/python_352/index.html)
+
 [极客学院](http://wiki.jikexueyuan.com/project/python3-cookbook/iterators-and-generators.html)
 
 [requests](http://cn.python-requests.org/zh_CN/latest/)
@@ -960,6 +962,7 @@ quit()		#通用
 ## 单例模式
 
 ```python
+# 废弃
 def singleton(cls):
     instance = cls()
     instance.__call__ = lambda: instance
@@ -972,12 +975,318 @@ class Highlander:
 print(Highlander)
 print(Highlander)
 print(Highlander)
+
+
+
+# 推荐
+import threading
+class Singleton(object):
+    _instance_lock = threading.Lock()
+
+    def __init__(self):
+        pass
+
+
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(Singleton, "_instance"):
+            with Singleton._instance_lock:
+                if not hasattr(Singleton, "_instance"):
+                    Singleton._instance = object.__new__(cls)  
+        return Singleton._instance
+
+obj1 = Singleton()
+obj2 = Singleton()
+print(obj1,obj2)
+
+def task(arg):
+    obj = Singleton()
+    print(obj)
+
+for i in range(10):
+    t = threading.Thread(target=task,args=[i,])
+    t.start()
 ```
 
 ## flask目录规范
 
 ```python
 https://blog.csdn.net/xingyunlost/article/details/77155584
+```
+
+## 对迭代器按照指定的大小进行分组
+
+```python
+def subgroup(iter_in, size):
+    from itertools import groupby
+    for _, group in groupby(enumerate(iter_in), key=lambda e: e[0] // size):
+        yield list(zip(*group))[1]
+```
+
+## 多线程线程锁
+
+```python
+# 创建一个锁
+lock = threading.Lock()
+ 
+def Func(host,cursor,db):
+    try:
+        # 锁定该资源
+        lock.acquire(True)
+        # do something
+    finally:
+        # 释放锁
+        lock.release()
+
+# python的sqlite3使用多线程的参数check_same_thread是需要的：
+self.conn = sqlite3.connect(dbname, check_same_thread=False)
+```
+
+## 等待线程结束
+
+```python
+data = (1, 2, 3)
+# 创建多个线程
+for item in data:
+    new_thread = threading.Thread(target=self._test_crawler, kwargs={'datas': item})
+    new_thread.start()
+
+# 等待线程完成
+for tt in threading.enumerate():
+	if tt is not threading.current_thread():
+	tt.join()
+```
+
+## 获取线程数
+
+```python
+threading.activeCount()
+```
+
+
+
+## 反射实例化一个类
+
+```python
+def new_instance(module_name: str, class_name=None, is_new=True, *args, **kwargs):
+    """
+    动态导入模块
+    :param module_name:
+    :param class_name:
+    :param is_new:
+    :return:
+    """
+    import importlib
+    if class_name is None:
+        module_name, class_name = module_name.rsplit('.', 1)
+    instance = getattr(importlib.import_module(module_name), class_name)
+    return instance(*args, **kwargs) if is_new else instance
+```
+
+## 动态获取配置
+
+```python
+# units
+def env(key: str, default=None):
+    """
+    获取配置
+    :param key:
+    :param default:
+    :return:
+    """
+    datas = key.split('.')
+
+    import importlib
+    setting = importlib.import_module('proxy_pool.setting')
+
+    result = getattr(setting, datas.pop(0))
+    for item in datas:
+        if isinstance(result, dict):
+            result = result.get(item, default)
+        elif isinstance(result, list):
+            result = result[int(item)] if len(result) > int(item) else default
+    return result
+
+
+# setting
+TIME_OUT = 6
+config = {
+    "a": "aa"
+}
+```
+
+## 修改字符编码
+
+```python
+# 改变标准输出的默认编码
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+# 修改文件编码
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+```
+
+## 判断是否window平台
+
+```python
+import platform
+ 
+def isWindowsSystem():
+    return 'Windows' in platform.system()
+ 
+def isLinuxSystem():
+    return 'Linux' in platform.system()
+ 
+print isWindowsSystem()
+print isLinuxSystem()
+```
+
+## 设置环境变量
+
+```python
+# https://www.cnblogs.com/sunny3312/articles/6690879.html
+一、设置系统环境变量
+1、os.environ['环境变量名称']='环境变量值' #其中key和value均为string类型
+2、os.putenv('环境变量名称', '环境变量值')
+
+二、获取系统环境变量
+1、os.environ['环境变量名称']
+2、os.getenv('环境变量名称')
+```
+
+## 判断是否为数字字符串
+
+```python
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+ 
+    try:
+        import unicodedata
+        unicodedata.numeric(s)
+        return True
+    except (TypeError, ValueError):
+        pass
+ 
+    return False
+```
+
+## 随机抽取元素
+
+```python
+#1.使用python random模块的choice方法随机选择某个元素
+import random
+foo = ['a', 'b', 'c', 'd', 'e']
+from random import choice
+print choice(foo)
+
+#2.使用python random模块的sample函数从列表中随机选择一组元素
+list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] 
+#设置种子使得每次抽样结果相同
+random.seed(10)
+slice = random.sample(list, 5)  #从list中随机获取5个元素，作为一个片断返回  
+print slice  
+print list #原有序列并没有改变
+```
+
+## 对象拷贝
+
+```python
+import copy
+a = [1, 2, 3, 4, ['a', 'b']]  #原始对象
+
+e = a[:] 		#利用分片操作进行拷贝（浅拷贝）
+b = a  		#赋值。传对象的引用
+c = copy.copy(a)  	#对象拷贝，浅拷贝
+d = copy.deepcopy(a)  	#对象拷贝，深拷贝
+
+a.append(5)  		#改动对象a
+a[4].append('c') 	#改动对象a中的['a', 'b']列表子对象
+
+print 'a = ', a
+print 'b = ', b
+print 'c = ', c
+print 'd = ', d
+执行结果：
+a =  [1, 2, 3, 4, ['a', 'b', 'c'], 5]
+b =  [1, 2, 3, 4, ['a', 'b', 'c'], 5]
+c =  [1, 2, 3, 4, ['a', 'b', 'c']]
+d =  [1, 2, 3, 4, ['a', 'b']]
+e =  [1, 2, 3, 4, ['a', 'b', 'c']]
+```
+
+## 生成器GeneratorExit异常
+
+```python
+# RuntimeError: generator ignored GeneratorExit
+def myGenerator():
+    try:
+        yield 1
+        yield 2
+    except GeneratorExit: # 报错原因: 接收到生成器退出异常
+        yield 3 # 报错解释: 生成器已经销毁, 再次yield会报错, 解决: 不要捕获GeneratorExit异常
+        print ("aa")
+gen = myGenerator()
+print (next(gen))
+print (next(gen))
+del gen #销毁生成器
+print ('bb')
+```
+
+## 多进程不显示KeyboardInterrupt异常
+
+```python
+def test():
+    try:
+        time.sleep(100)
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == '__main__':
+    try:
+        print('按下ctrl+c停止进程')
+
+        tester_process = Process(target=test)
+        tester_process.start()
+        tester_process.join()
+    except KeyboardInterrupt:
+        print('停止了进程')
+```
+
+## flask基本使用
+
+```python
+import json
+from flask import Flask, g, abort
+
+__all__ = ['app']
+app = Flask(__name__)
+
+def get_conn():
+    if not hasattr(g, 'db'):
+        g.db = new_instance('proxy_pool.db', env('db.type'))
+    return g.db
+
+@app.route('/<table>')
+def get_proxy(table):
+    # 连接数据库
+    conn = get_conn()
+    # 抛出错误
+    if table not in ['abc']:
+        abort(404)
+	# 返回json字符串
+	datas = []
+    return json.dumps(data)
+
+
+if __name__ == '__main__':
+    app.run()
+
 ```
 
 
