@@ -131,6 +131,7 @@ class ScheduleGetter:
                 else:
                     # 测试代理
                     new_thread = threading.Thread(target=self.tester.test_crawler, kwargs={'datas': item, 'name': name})
+                    new_thread.setDaemon(True)
                     new_thread.start()
 
                     # log('创建了一个新的进程, 进程总数: {}个'.format(threading.activeCount()))
@@ -154,11 +155,14 @@ class ScheduleGetter:
             if result is False:
                 break
 
-        # 等待线程完成
-        for tt in threading.enumerate():
-            if tt is not threading.current_thread():
-                tt.join()
-
+        try:
+            # 等待线程完成
+            for tt in threading.enumerate():
+                if tt is not threading.current_thread():
+                    tt.join()
+        except KeyboardInterrupt:
+            pass
+        
         log('测试代理结束...')
 
     def count(self, table_name):
@@ -222,7 +226,7 @@ class ScheduleTester:
             ip = data.get('ip')
             port = data.get('port')
             protocol_type = data.get('protocol_type', None)
-            log('测试代理{}://{}:{}'.format(protocol_type, ip, port))
+            log('测试代理{}{}:{}'.format('' if protocol_type is None else protocol_type + '://', ip, port))
 
             # 测试代理
             tester_class = env('config.{}.tester'.format(name), 'proxy_pool.tester.BaiduTester')
@@ -272,11 +276,15 @@ class ScheduleTester:
         for data in subgroup(datas, count):
             # 测试代理
             new_thread = threading.Thread(target=self.test_crawler, kwargs={'datas': data, 'name': name})
+            new_thread.setDaemon(True)
             new_thread.start()
 
-        for tt in threading.enumerate():
-            if tt is not threading.current_thread():
-                tt.join()
+        try:
+            for tt in threading.enumerate():
+                if tt is not threading.current_thread():
+                    tt.join()
+        except KeyboardInterrupt:
+            pass
 
         log('测试代理结束, 等待下次运行中...')
 

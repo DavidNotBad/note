@@ -19,13 +19,13 @@ API_ADDRESS = '127.0.0.1'
 # api端口
 API_PORT = '8885'
 # 是否运行爬虫
-IS_RUN_CRAWLER = False
+IS_RUN_CRAWLER = True
 # 是否运行api
 IS_RUN_API = True
 # 是否运行测试器
-IS_RUN_TESTER = False
+IS_RUN_TESTER = True
 # 代理数量上限
-PROXY_MAX_COUNT = 1000
+PROXY_MAX_COUNT = 5
 # 抓取失败重试次数
 RETRY_COUNT = 20
 # 抓取代理时每一组负责的页数

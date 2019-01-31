@@ -1256,6 +1256,8 @@ if __name__ == '__main__':
         tester_process.join()
     except KeyboardInterrupt:
         print('停止了进程')
+        
+# https://www.jianshu.com/p/bd3c29dd8072
 ```
 
 ## flask基本使用
