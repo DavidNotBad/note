@@ -126,3 +126,14 @@ def get_time(seconds=0):
     """
     import time
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + seconds))
+
+
+def threads_exit():
+    """
+    等待线程结束
+    :return:
+    """
+    import threading
+    for tt in threading.enumerate():
+        if tt is not threading.current_thread():
+            tt.join()

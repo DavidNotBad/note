@@ -21,11 +21,11 @@ API_PORT = '8885'
 # 是否运行爬虫
 IS_RUN_CRAWLER = True
 # 是否运行api
-IS_RUN_API = False
+IS_RUN_API = True
 # 是否运行测试器
 IS_RUN_TESTER = True
 # 代理数量上限
-PROXY_MAX_COUNT = 5
+PROXY_MAX_COUNT = 10
 # 抓取失败重试次数
 RETRY_COUNT = 20
 # 抓取代理时每一组负责的页数
@@ -40,8 +40,8 @@ config = {
 
 # 配置抓取的代理源
 crawler = [
-    'Ip3366',
     'Daili66',
+    'Ip3366',
     'Kuaidaili',
     'Xicidaili',
 ]

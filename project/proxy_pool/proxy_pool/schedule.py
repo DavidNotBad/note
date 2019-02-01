@@ -1,10 +1,10 @@
 import copy
 from multiprocessing import Process
 from time import sleep
-from requests import Request, Session
+from requests import Request, Session, RequestException
 from proxy_pool.api import app
 import threading
-from proxy_pool.utils import subgroup, log, env, new_instance, is_number, get_now_time, get_user_agent, get_time
+from proxy_pool.utils import *
 
 
 class ScheduleGetter:
@@ -106,11 +106,14 @@ class ScheduleGetter:
         request.headers['User-Agent'] = get_user_agent()
 
         # 重新发送请求
-        response = sess.send(request.prepare(), proxies=proxies, timeout=env('TIME_OUT'))
-        for data in crawler_instance.parse(response=response):
-            # 如果是字典, 代表抓取成功
-            if isinstance(data, dict):
-                yield data
+        try:
+            response = sess.send(request.prepare(), proxies=proxies, timeout=env('TIME_OUT'))
+            for data in crawler_instance.parse(response=response):
+                # 如果是字典, 代表抓取成功
+                if isinstance(data, dict):
+                    yield data
+        except RequestException:
+            yield False
 
     def crawler(self, name):
         """
@@ -153,7 +156,7 @@ class ScheduleGetter:
         判断代理池是否溢出
         :return:
         """
-        return bool(self.total_count >= env('PROXY_MAX_COUNT'))
+        return bool(self.total_count > env('PROXY_MAX_COUNT'))
 
 
 class ScheduleTester:
@@ -179,16 +182,6 @@ class ScheduleTester:
             result = self._tester_threads(item, name)
             if result is False:
                 break
-
-        try:
-            # 等待线程完成
-            for tt in threading.enumerate():
-                if tt is not threading.current_thread():
-                    tt.join()
-        except KeyboardInterrupt:
-            pass
-
-        log('测试代理结束...')
 
     def _tester_threads(self, item, name):
         """
@@ -294,10 +287,11 @@ class Schedule:
                 # 运行测试器
                 tester.tester(name=name, data=datas, count=count)
 
+                threads_exit()
                 log('测试器等待下次运行中, 下次运行时间({})...'.format(get_time(env('TESTER_CYCLE'))))
                 sleep(env('TESTER_CYCLE'))
         except KeyboardInterrupt:
-            pass
+            threads_exit()
 
     @staticmethod
     def schedule_crawler(name):
@@ -316,13 +310,15 @@ class Schedule:
             else:
                 log('代理池数量已经达到上限, 采集停止')
 
+            threads_exit()
             log('抓取器等待下次运行中, 下次运行时间({})...'.format(get_time(env('CRAWLER_CYCLE'))))
+
             # 等待下次抓取
             sleep(env('CRAWLER_CYCLE'))
             # 递归尝试重新抓取
             Schedule.schedule_crawler(name)
         except KeyboardInterrupt:
-            pass
+            threads_exit()
 
     @staticmethod
     def schedule_api():
@@ -330,11 +326,8 @@ class Schedule:
         api服务器
         :return:
         """
-        try:
-            log('api开始运行...')
-            app.run(env('API_ADDRESS'), env('API_PORT'))
-        except KeyboardInterrupt:
-            pass
+        log('api开始运行...')
+        app.run(env('API_ADDRESS'), env('API_PORT'))
 
     def run(self, name):
         """
@@ -342,20 +335,35 @@ class Schedule:
         :param name:
         :return:
         """
-        # 采集代理
-        if env('IS_RUN_CRAWLER'):
-            tester_process = Process(target=self.schedule_crawler, kwargs={'name': name})
-            tester_process.start()
-            tester_process.join()
+        pro_list = list()
 
-        # 测试已存在的代理
-        if env('IS_RUN_TESTER'):
-            tester_process = Process(target=self.schedule_tester, kwargs={'name': name})
-            tester_process.start()
-            tester_process.join()
+        try:
+            # 采集代理
+            if env('IS_RUN_CRAWLER'):
+                process = Process(target=self.schedule_crawler, kwargs={'name': name})
+                process.start()
+                pro_list.append(process)
+                process.join()
+                log('抓取代理结束')
 
-        # 开放api
-        if env('IS_RUN_API'):
-            tester_process = Process(target=self.schedule_api)
-            tester_process.start()
-            tester_process.join()
+            # 测试已存在的代理
+            if env('IS_RUN_TESTER'):
+                process = Process(target=self.schedule_tester, kwargs={'name': name})
+                process.start()
+                pro_list.append(process)
+                process.join()
+                log('测试代理结束')
+
+            # 开放api
+            if env('IS_RUN_API'):
+                process = Process(target=self.schedule_api)
+                process.start()
+                pro_list.append(process)
+                process.join()
+
+        except KeyboardInterrupt:
+            # 结束进程
+            for pro in pro_list:
+                if pro.is_alive():
+                    pro.terminate()
+            raise

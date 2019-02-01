@@ -15,7 +15,7 @@ source ~/.bashrc
 # 查看当前系统下的环境
 conda info -e
 # 创建一个名为python34的环境，指定Python版本是3.4（不用管是3.4.x，conda会为我们自动寻找3.4.x中的最新版本）
-conda create --name python34 python=3.4
+conda create --name python36 python=3.6
 
 # 安装好后，使用activate激活某个环境
 activate python34 # for Windows
@@ -162,7 +162,10 @@ conda install -prefix=D:\pyenv\py36 anaconda
 ```python
 # 1. Tools -> Terminal
 # 2. shell path 修改为
+# window
 cmd.exe "/k" activate "F:\www\python\proxy_pool\venv" 
+
+
 ```
 
 ## 安装依赖文件中的内容

@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+from multiprocessing import Process
+
 from proxy_pool.schedule import Schedule
 import sys
 import io
@@ -19,7 +21,7 @@ def main():
         schedule = Schedule()
         schedule.run(name)
     except KeyboardInterrupt:
-        print('程序已终止')
+        print('程序已结束')
         exit()
     except:
         print('程序已中断, 尝试重新运行...')

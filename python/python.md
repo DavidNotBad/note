@@ -1248,10 +1248,7 @@ print ('bb')
 
 ```python
 def test():
-    try:
-        time.sleep(100)
-    except KeyboardInterrupt:
-        pass
+    time.sleep(100)
 
 
 if __name__ == '__main__':
@@ -1262,6 +1259,8 @@ if __name__ == '__main__':
         tester_process.start()
         tester_process.join()
     except KeyboardInterrupt:
+        if tester_process.is_alive():
+            tester_process.terminate()
         print('停止了进程')
 
 # https://www.jianshu.com/p/bd3c29dd8072
@@ -1305,6 +1304,16 @@ time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()+1))
 
 # 获取当前时间
 datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+```
+
+## 生成和安装requirements.txt
+
+```python
+# 生成requirements.txt文件
+pip freeze > requirements.txt
+
+# 安装requirements.txt依赖
+pip install -r requirements.txt
 ```
 
 
