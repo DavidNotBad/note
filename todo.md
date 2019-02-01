@@ -1,3 +1,13 @@
+## 待办事项
+
+```php
+# 表结构比较差异, 生成sql语句
+```
+
+
+
+
+
 1. 后端接收PUT过来的数据
 
    file_get_contents('php://input');

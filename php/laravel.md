@@ -9,12 +9,12 @@
 ### 爬虫类
 
   ```php
-  [
-      'symfony/css-selector',   //css 选择器
-      'symfony/dom-crawler',	 //爬虫
-      'fabpot/goutte',		//表单提交
-      'guzzlehttp/guzzle',	//http
-  ]
+[
+    'symfony/css-selector',   //css 选择器
+    'symfony/dom-crawler',	 //爬虫
+    'fabpot/goutte',		//表单提交
+    'guzzlehttp/guzzle',	//http
+]
   ```
 
 ### 表注释
@@ -37,12 +37,16 @@ use Jialeo\LaravelSchemaExtend\Schema;
 
 # migrate使用文档
 //https://laravelacademy.org/post/9580.html
+
+//解决不同类型的字段不能修改的问题
+composer require doctrine/dbal
+    
   ```
 
 ### collection
 
   ```php
-  composer require tightenco/collect
+composer require tightenco/collect
   ```
 ### illuminate database
 
@@ -54,9 +58,44 @@ composer require illuminate/events
 
 ### debug包
 
-```php
+```shell
+# 安装
 composer require barryvdh/laravel-debugbar
+
+# 配置.env
+DEBUGBAR_ENABLED=true
+
+# routes\web.php
+Route::get('/', function () {
+    $data = ServiceProviderModel::select(['id', 'user_id'])->with(['users'=>function($query){
+        return $query->select(['id']);
+    }])->where(function(Builder $query){
+        return $query->whereNotNull('user_id')
+            ->where('user_id', '!=', '')
+            ->where('user_id', '!=', 0);
+    })->get();
+
+    return view('test', ['data' => $data]);
+}
+
+# 新建 resources\views\test.blade.php
+{{$data}}
 ```
+
+### 将 Markdown 转化为 HTML 
+
+```shell
+composer require michelf/php-markdown 
+composer require michelf/php-smartypants
+```
+
+### repository
+
+```shell
+bosnadev/repositories
+```
+
+
 
 ## 打印sql日志
 
@@ -228,7 +267,7 @@ public function boot()
 }
 ```
 
-## 步骤
+## 安装步骤
 
 ```php
 # 1: 安装并开启php扩展/权限等
@@ -277,19 +316,13 @@ protected function getDefaultNamespace($rootNamespace)
 {
     return $rootNamespace . '\Models';
 }
-//添加文件: app\Models\Model.php
-<?php
-namespace App\Models;
-use Illuminate\Database\Eloquent\Model as BaseModel;
-
-//添加公共模型
+//添加文件: app\Models\Model.php, 详见 <<添加公共模型>>
 ```
 
 ## 添加公共模型
 
 ```php
 <?php
-
 namespace App\Models;
 
 use \Illuminate\Database\Eloquent\Collection;
@@ -321,7 +354,7 @@ class Model extends BaseModel
     }
 
     /**
-     * 自定义集合类型
+     * 自定义集合类型 - 用于扩展系统的Eloquent\Collection
      *
      * @param  array  $models
      * @return \Illuminate\Database\Eloquent\Collection
@@ -345,10 +378,10 @@ class Model extends BaseModel
 	// -- Test.php  辅助类
 //修改composer.json, 在autoload上加上 
 "files": [
-    "support/helpers.php"
+    "supports/helpers.php"
 ]
 //修改composer.json, 在autoload上的psr-4里面加上
-"Support\\": "support/"
+"Supports\\": "supports/"
 //执行
 composer dump-autoload
 ```
@@ -412,12 +445,11 @@ OrdUser::with(['user'=>function($query){
 //https://blog.csdn.net/u013032345/article/details/82772938
 ```
 
-## 本地作用域
+## 本地作用域 - 关联表
 
 ```php
 //模型
 
-use Illuminate\Database\Eloquent\Builder;
 /**
  * 查询自身和关联用户的数据
  * @param $query
@@ -425,18 +457,19 @@ use Illuminate\Database\Eloquent\Builder;
  * @param array $userSelect
  * @return mixed
  */
-public function scopeGetUser(Builder $query, array $orduserSelect, array $userSelect)
+public function scopeGetUser($query, array $serviceSelect=null, array $userSelect=null)
 {
-    return $query->select($orduserSelect)->with([
-        'user' => function($builder)use($userSelect){
-            return $builder->select($userSelect);
-    	}, 
-    ]);
+    $serviceSelect = is_null($serviceSelect) ? '*' : array_unique(array_merge($serviceSelect, ['id', 'user_id']));
+    $userSelect = is_null($userSelect) ? '*' : array_unique(array_merge($userSelect, ['id']));
+
+    return $query->select($serviceSelect)->with(['users' => function($item)use($userSelect){
+        return $item->select($userSelect);
+    }, ]);
 }
 
 //客户端
-$orduserSelect = ['id', 'phone', 'user_id'];
-$userSelect = ['id', 'phone'];
+$orduserSelect = ['phone'];
+$userSelect = ['phone'];
 OrdUser::getUser($orduserSelect, $userSelect);
 ```
 
@@ -444,17 +477,17 @@ OrdUser::getUser($orduserSelect, $userSelect);
 
 ```php
 # 1.扩展Eloquent\Collection
-//在app下新建Eloquent\Collection.php
+//在app下新建Supports\Collection.php
 <?php
 namespace App\Eloquent;
-use \Support\Collection as SupportCollection;
+use \Supports\Collection as SupportCollection;
 use Illuminate\Database\Eloquent\Collection as BaseCollection;
 
 class Collection extends BaseCollection
 {
     /**
      * 设置base集合
-     * @return \Support\Collection
+     * @return \Supports\Collection
      */
     public function toBase()
     {
@@ -463,7 +496,7 @@ class Collection extends BaseCollection
 
     /**
      * 获取当前对象的 collection 集合
-     * @return \Support\Collection
+     * @return \Supports\Collection
      */
     public function toCollection()
     {
@@ -483,34 +516,36 @@ use \Illuminate\Support\Collection as BaseCollection;
 class Collection extends BaseCollection
 {
     /**
-     * @param $column
-     * @param null $key
+     * 获取数组中重复的值
      * @return static
      */
-    public function column($column, $key=null)
+    public function repeat()
     {
-        return new static(array_column($this->items, $column, $key));
+        return $this->diffKeys($this->unique())->unique()->values();
     }
+    
 }
 
 
 # 3.support/helpers.php添加方法
-use Support\Collection as SupportCollection;
+use \Illuminate\Support\Collection as IlluminateCollection;
 /**
- * 添加一个自定义的collection集合
- *
- * @param  mixed  $value
- * @return \Support\Collection
+ * 获取集合
+ * @param \Illuminate\Support\Collection $collection
+ * @return \Illuminate\Support\Collection
  */
-function collection($value = null)
+function toCollection(IlluminateCollection $collection)
 {
-    return new SupportCollection($value);
+    return $collection->map(function($item, $key){
+        return $item->toCollection();
+    });
 }
+
 
 # 4. 模型基类添加
 <?php
 namespace App\Models;
-use \App\Eloquent\Collection;
+use \App\Supports\Collection;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 
 /**
@@ -530,7 +565,7 @@ class Model extends BaseModel
 
     /**
      * 获取当前对象的 collection 集合
-     * @return \App\Eloquent\Collection
+     * @return \App\Supports\Collection
      */
     public function toCollection()
     {
@@ -541,7 +576,7 @@ class Model extends BaseModel
      * 自定义集合类型
      *
      * @param  array  $models
-     * @return \App\Eloquent\Collection
+     * @return \App\Supports\Collection
      */
     public function newCollection(array $models = [])
     {
@@ -549,7 +584,26 @@ class Model extends BaseModel
     }
 }
 
+# 5. public/index.php
+# 新建bootstrap/init.php
+require_once __DIR__.'/../bootstrap/init.php';
+require __DIR__.'/../vendor/autoload.php';
 
+# 6. 在init.php加上
+use Supports\Collection;
+/**
+ * 重写collect方法
+ * @param null $value
+ * @return \Supports\Collection
+ */
+function collect($value = null)
+{
+    return new Collection($value);
+}
+
+# 7. 在 /artisan 加上
+require_once __DIR__.'/../bootstrap/init.php';
+require __DIR__.'/../vendor/autoload.php';
 ```
 
 ## 资源类禁止/设置包装最外层资源
@@ -586,16 +640,53 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class Collection extends ResourceCollection
 {
-    public static $wrap = '___data';
+    /**
+     * @var string 设置数据的字段名
+     */
+    public static $wrap = 'data';
 
+    /**
+     * 转义数据
+     * @param \Illuminate\Http\Request $request
+     * @return array|\Illuminate\Support\Collection
+     */
+    public function toArray($request)
+    {
+        //static::wrap(false);
+        //return [];
+        //return $this->collection;
+        return parent::toArray($request);
+    }
+
+    /**
+     * 添加附加字段
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
     public function with($request)
     {
-        static::wrap(false);
         return [
-
         ];
     }
+
+    /**
+     * 设置返回格式
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toResponse($request)
+    {
+        $response = parent::toResponse($request);
+        $data = $response->getData();
+        //改变数据的格式
+        //......
+        return $response->setData($data);
+    }
+
 }
+
+
 
 //新建文件\App\Http\Resources\Resource
 <?php
@@ -604,16 +695,40 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class Resource extends JsonResource
 {
-    public static $wrap = '______reqData';
+    /**
+     * @var string 设置数据的字段名
+     */
+    public static $wrap = 'data';
 
+    /**
+     * 附加内容
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
     public function with($request)
     {
-        static::wrap(false);
+        //static::wrap(false);
         return [
-
         ];
     }
+    
+    /**
+     * 设置返回格式
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toResponse($request)
+    {
+        $response = parent::toResponse($request);
+        $data = $response->getData();
+        //改变数据的格式
+        //......
+        return $response->setData($data);
+    }
+
 }
+
 
 //修改artisan命令的模板文件
 //vendor\laravel\framework\src\Illuminate\Foundation\Console\stubs\resource.stub
@@ -653,6 +768,51 @@ class DummyClass extends Collection
     }
 }
 
+
+//使用示例
+//编写\App\Http\Resources\UserResource的toArray方法, \App\Http\Resources\UserCollection可选
+//php artisan make:resource Users --collection
+//php artisan make:resource UserCollection
+return new UserResource(User::first());
+return UserResource::collection(User::paginate()); //没有UserCollection类时使用
+return new UserCollection(User::get());
+
+//便捷式使用resource
+//在控制器\App\Http\Controllers\Controller添加方法
+use \Illuminate\Database\Eloquent\Model;
+use \Illuminate\Support\Facades\Response;
+
+public function succ($data, $isTran=true)
+{
+    $model = $this->getModel();
+
+    //返回对象的模型
+    $resourceClassName = sprintf('\App\Http\Resources\%sResource', $model);
+    if($data instanceof Model) {
+        if($isTran && class_exists($resourceClassName)) {
+            return new $resourceClassName($data);
+        }
+        return $data;
+    }
+
+    //Collection类存在
+    $collectionClassName = sprintf('\App\Http\Resources\%sCollection', $model);
+    if($isTran && class_exists($collectionClassName)) {
+        return new $collectionClassName($data);
+    }
+
+    //Collection类不存在
+    if($isTran && class_exists($resourceClassName)) {
+        return $resourceClassName::collection($data);
+    }
+
+    return $data;
+}
+
+public function err($data)
+{
+    return Response::json($data);
+}
 ```
 
 ## 指定目录生成控制器
@@ -697,11 +857,14 @@ App::bind('类名',function(){
 app()->make(自定义名)->方法名();
 app()['自定义名']->方法名();
 app('自定义名')->方法名();
+Container::getInstance()->make('request')
 ```
 
 ## reponsitory模式
 
 ```php
+# 推荐 bosnadev/repositories
+
 //1. 公共控制器添加: \App\Http\Controllers\Controller
 /**
  *
@@ -711,31 +874,108 @@ app('自定义名')->方法名();
  */
 public function __call($method, $parameters)
 {
-    $this->callRepository($method, $parameters);
-    return parent::__call($method, $parameters);
-}
-
-/**
- * 动态获取respository
- * @param $method
- * @param $parameters
- * @return bool
- */
-private function callRepository($method, $parameters)
-{
-    $class = str_replace(['Controllers', 'Controller'], ['Repositories', 'Repository'], static::class);
+	$class = str_replace(['Controllers', 'Controller'], ['Repositories', 'Repository'], static::class);
     if(class_exists($class)) {
         $instance = app($class);
         if(method_exists($instance, $method)) {
             return $instance->{$method}(...$parameters);
         }
     }
-    return false;
 }
 
+
 //2. 新建目录: \app\Http\Repositories, 存放repository文件
-//例如: TestRepository.php
+//例如: UserRepository.php
+<?php
+namespace App\Http\Repositories;
+class UserRepository extends Repository
+{
+    public function test()
+    {
+        
+    }
+}
+
+//3. 新建公共Reponsitory文件
+<?php
+namespace App\Http\Repositories;
+class Repository
+{
+
+}
 ```
+
+## 搜索写法
+
+```php
+//1. 基础写法
+$limit = 2;
+$data = ServiceProvider::when($limit, function($query)use($limit){
+    return $query->where('id', '>', 2)->take($limit);
+})->get();
+
+//2. 配合scope
+$search = [
+    'ctime' => '1533627650',
+];
+$data = ServiceProvider::search($search)->get();
+
+/**
+ * 添加搜索
+ * @param Builder $query
+ * @param $search
+ * @return Builder|mixed
+ */
+public function scopeSearch($query, $search)
+{
+    $search = collect($search);
+    return $query->when($search->get('ctime'), function($query)use($search){
+        /** @var Builder $query */
+        return $query->where('ctime', $search->get('ctime'));
+    });
+}
+```
+
+## 自定义辅助方法
+
+```php
+/**
+ * 获取表字段名
+ * 
+ * @param $table
+ * @param null $prefix
+ * @param null $db
+ * @return mixed
+ */
+function get_fields($table, $prefix=null, $db=null)
+{
+    $db = is_null($db) ? env('DB_DATABASE') : $db;
+    $prefix = is_null($prefix) ? env('DB_PREFIX') : $prefix;
+    $sql = "SELECT COLUMN_NAME AS 'column' FROM INFORMATION_SCHEMA. COLUMNS WHERE table_schema = '{$db}' AND table_name = '{$prefix}{$table}'";
+
+    return collect(\Illuminate\Support\Facades\DB::select($sql))->map(function($item){
+        return (array) $item;
+    })->pluck('column')->toArray();
+}
+```
+
+## 修改env后无效
+
+```php
+# 使用php自带的服务器, 修改env后无效. 解决: 重启服务器
+php artisan serve
+```
+
+## 流程 - 查
+
+```php
+# 创建控制器
+php artisan make:controller UserController
+```
+
+
+
+
 
 
 
