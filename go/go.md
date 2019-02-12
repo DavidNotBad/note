@@ -1,12 +1,21 @@
 ## 搭建go环境
-```go
+```shell
 # 下载地址： https://www.golangtc.com/download
 
-# 配置环境变量
+# 配置环境变量(win)
 GOROOT -> GO的安装路径
 Path -> 添加sdk的bin目录（;%GOROOT%\bin）
 GOPATH -> 项目目录
 
+# 配置环境变量(shell的形式)
+#GO安装目录
+$GOROOT=/usr/local/go
+#GO工作目录
+$GOPATH=/usr/local/var/www/go
+#GO可执行文件目录
+$GOBIN=$GOPATH/bin
+#将GO可执行文件加入PATH中，使GO指令与我们编写的GO应用可以全局调用
+$PATH=$PATH:$GOBIN:$GOROOT/bin  
 
 ```
 ## 目录结构
@@ -17,6 +26,33 @@ goproject(GOPATH配置的内容）
             project01(项目名）
                 main
                 package
+
+//手册中介绍的结构
+bin/
+	streak                         # 可执行命令
+	todo                           # 可执行命令
+pkg/
+	linux_amd64/
+		code.google.com/p/goauth2/
+			oauth.a                # 包对象
+		github.com/nf/todo/
+			task.a                 # 包对象
+src/
+	code.google.com/p/goauth2/
+		.hg/                       # mercurial 代码库元数据
+		oauth/
+			oauth.go               # 包源码
+			oauth_test.go          # 测试源码
+	github.com/nf/
+		streak/
+		.git/                      # git 代码库元数据
+			oauth.go               # 命令源码
+			streak.go              # 命令源码
+		todo/
+		.git/                      # git 代码库元数据
+			task/
+				task.go            # 包源码
+			todo.go                # 命令源码
 ```
 ## 编译执行
 ```go
@@ -325,6 +361,26 @@ strconv.Itoa(值)
 b, _ = strconv.ParseBool(变量)
 strconv.ParseInt(变量, 进制, 位数)
 strconv.ParseFloat(...)
+```
+
+## gofmt
+
+```shell
+# 命令解释
+usage: gofmt [flags] [path ...]
+  -cpuprofile string
+        write cpu profile to this file
+  -d    display diffs instead of rewriting files
+  -e    report all errors (not just the first 10 on different lines)
+  -l    list files whose formatting differs from gofmt's
+  -r string
+        rewrite rule (e.g., 'a[b:len(a)] -> a[b:]')
+  -s    simplify code
+  -w    write result to (source) file instead of stdout
+
+goland中配置gofmt
+Goland是JetBrains公司推出的Go语言IDE，是一款功能强大，使用便捷的产品。
+在Goland中，可以通过添加一个File Watcher来在文件发生变化的时候调用gofmt进行代码格式化，具体方法是，点击Preferences -> Tools -> File Watchers，点加号添加一个go fmt模版，Goland中预置的go fmt模版使用的是go fmt命令，将其替换为gofmt，然后在参数中增加-l -w -s参数，启用代码简化功能。添加配置后，保存源码时，goland就会执行代码格式化了。
 ```
 
 
