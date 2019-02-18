@@ -628,6 +628,8 @@ func fbn(n int) []uint64 {
 //map的声明是不会分配内存的, 初始化需要make, 分配内存后才能赋值和使用
 //goland中的map是无序的
 
+//make(类型, 长度, 容量)
+
 //使用方式一
 //先声明, 分配内存空间
 var a = map[string]string
@@ -657,7 +659,7 @@ var heroes = map[string] string{
 delete(heroes, "hero1")
 
 //清空map
-//方式一: 遍历map, 逐个shanc
+//方式一: 遍历map, 逐个删除
 //方式二: 给该map重新赋值一个空的map
 var cities = map[string] string {
     "a": "aa",
@@ -666,8 +668,11 @@ var cities = map[string] string {
 cities = make(map[string] string)
 
 //判断键是否存在
-//ok为true时, 键存在, 值为val
+//1. ok为true时, 键存在, 值为val
 var val, ok = cities["a"]
+if ok {}
+//2. 判断是否为nil
+if cities["a"] != nil {}
 
 //遍历(不能用for循环, 只能用for-range)
 var cities = make(map[string] string)
@@ -678,6 +683,28 @@ for var val, key = range cities {
     fmt.Println(val)
     fmt.Println(key)
 }
+
+//map的长度
+len(变量)
+
+//map切片
+//创建一个map切片
+var mapSlice = make([]map[string]string, 2)
+//第一种方式给map切片的第一个元素赋值
+mapSlice[0] = make(map[string] string, 2)
+mapSlice[0]["name"] = "a"
+mapSlice[0]["age"] = "10"
+//第二种方式给map切片的第二个元素赋值
+mapSlice[1] = map[string]string{
+    "name": "b",
+    "age": "20",
+}
+//切片追加元素
+mapSlice = append(mapSlice, map[string]string{
+    "name": "c",
+    "age": "30",
+})
+fmt.Println(mapSlice)
 ```
 
 
