@@ -2,11 +2,13 @@ package main
 
 import "fmt"
 
-type T struct {
-	name  string // 对象名
-	value int    // 对象值
-}
-
 func main() {
-	fmt.Printf("Hello, 111.\n")
+	var cities = make(map[string] string)
+	cities["a"] = "aa"
+	cities["b"] = "bb"
+
+	for val, key := range cities {
+		fmt.Println(val)
+		fmt.Println(key)
+	}
 }

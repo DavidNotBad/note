@@ -34,3 +34,9 @@ https://www.ctolib.com/docs/sfile/vbird-linux-server-3e/index.html
 https://www.shiyanlou.com/
 ```
 
+## IntelliJ IDEA激活码
+
+```shell
+http://idea.lanyus.com/
+```
+

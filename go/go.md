@@ -60,14 +60,33 @@ go build hello.go
 go build -o myhello.go
 
 hello.exe
-# 调试go run hello.go
+// 调试
+go run hello.go
+go run .
 ```
 ## 手册地址
 ```go
 //标准文档
 https://studygolang.com/pkgdoc
 ```
+## 导入包
+
+```go
+//1. 同一个包
+//不用import, 直接使用, 编译时类似
+go run .
+go build .
+
+//2. 不同包
+//从环境变量GOPATH开始(不需要写src目录), 直到包名
+import "$GOPATH/包路径"
+
+```
+
+
+
 ## 变量的声明
+
 ```go
 var i int
 i = 10
@@ -175,7 +194,7 @@ func getSum(n1 int, n2 int) int {
 
 myFun(getSum myFunType, 11, 22)
 ```
-## 字符串系统函数
+## 字符串
 ```go
 //按字节获取字符串的长度
 len(str)
@@ -187,37 +206,71 @@ for i := 0; i < len(str2); i++ {
     str2[i]
 }
 
-//字符串转整数
-import "strconv"
-//等价于： n, err := strconv.ParseInt(str, 10, 0)
-n, err := strconv.Atoi(str)
-if err != nil {
-    //转换错误
-}
-
 //整数转字符串
-import "strconv"
-strconv.Itoa(int)
+strconv.Itoa(整数)
 
-//字符串转[]byte
-var bytes = []byte(str)
+//字符串转其它整数
+n, err := strconv.Atoi(字符串)
+strconv.ParseInt(变量, 进制, 位数)
 
-//[]byte转字符串
-var str = string([]byte{97, 98, 99})
+//字符串整布尔型
+b, _ = strconv.ParseBool(变量)
 
-//字符串查找
-import "strings"
-strings.Contains('被查找的字符串'， '查找的字符串')
+//字符串转浮点型
+strconv.ParseFloat(...)
 
-//统计一个字符串中含有几个指定的子串
-strings.Count("cheesssseee", "e")
+//字符串转byte
+[] byte(字符串)
+//byte转字符串
+str = string([]byte{97,98, 99})
 
-//不区分大小写比较字符串（==是区分大小写的）
-strings.EqualFold("abc", "ABC")
+//查找子串是否在指定的字符串中
+strings.Contains("查找的字符串", "子串")
 
-//返回子串在字符串中第一次出现的index值，如果没有返回-1
-strings.Index("abcd", "c")
+//统计一个字符串中含有几个子串
+strings.Count("查找的字符串", "子串")
 
+//不区分大小写的字符串比较
+strings.EqualFold("字符串1", "字符串2")
+
+//查找子串在字符串中第一次出现的位置
+strings.Index("字符串", "要查找的子串")
+//查找子串在字符串中最后一次出现的位置
+strings.LastIndex("字符串", "要查找的字符串")
+
+//字符串替换
+strings.Replace("字符串", "查找的字符串", "替换的字符串", "替换次数(-1无限制)")
+
+//分割字符串
+strings.Split("字符串", "分割的标志")
+
+//字符串大小写转换
+strings.ToLower("字符串")
+strings.ToUpper("字符串")
+
+//去掉两端的空格
+strings.TrimSpace("字符串")
+//去掉两端的字符
+strings.Trim("字符串", "去掉字符串")
+//去掉左边的字符
+strings.TrimLeft("字符串", "去掉字符串")
+//去掉右边的字符
+strings.TrimRight("字符串", "去掉的字符串")
+
+//判断字符串是否以指定的字符开头
+strings.HasPrefix("字符串", "指定的字符")
+//判断字符串是否以指定的字符串结束
+strings.HasSuffix("字符串", "指定的字符")
+
+//用切片的方式操作字符串
+//string底层是一个byte数组, 因此string也可以进行切片处理
+str := "hello@google.com"
+slice := str[5:] //@
+//string是不可变的, 因此通过 slice[0] = 'a', 会编译错误
+//可以通过将string转成[]byte或[]rune来修改, 然后再转成string来实现
+arr1 := []byte(str) //如果有中文, 需要转成[]rune类型
+arr1[0] = 'z'
+str = string(arr1)
 ```
 
 ## 随机数
@@ -298,7 +351,7 @@ fmt.Printf("%v", ptr)
 ## 输入/输出流
 
 ```go
-fmt.ScanIn()
+fmt.Scanln()
 fmt.Scanf()
 //例子:
 var name string
@@ -349,20 +402,6 @@ n1 := 1
 fmt.Printf("类型: %T, 字节数: %d", n1, unsafe.Sizeof(n1))
 ```
 
-## 字符串的数据类型转换
-
-```go
-//转string
-strconv.FormatInt(变量, 进制)
-strconv.FormatFloat(变量, 格式, 小数位, 字位数)
-strconv.Itoa(值)
-
-//string转其它数据类型
-b, _ = strconv.ParseBool(变量)
-strconv.ParseInt(变量, 进制, 位数)
-strconv.ParseFloat(...)
-```
-
 ## gofmt
 
 ```shell
@@ -379,24 +418,267 @@ usage: gofmt [flags] [path ...]
   -w    write result to (source) file instead of stdout
 
 goland中配置gofmt
-Goland是JetBrains公司推出的Go语言IDE，是一款功能强大，使用便捷的产品。
 在Goland中，可以通过添加一个File Watcher来在文件发生变化的时候调用gofmt进行代码格式化，具体方法是，点击Preferences -> Tools -> File Watchers，点加号添加一个go fmt模版，Goland中预置的go fmt模版使用的是go fmt命令，将其替换为gofmt，然后在参数中增加-l -w -s参数，启用代码简化功能。添加配置后，保存源码时，goland就会执行代码格式化了。
 ```
 
+## 日期时间函数
 
+```go
+//导入包
+import "time"
 
+//获取当前时间
+now := time.Now()
 
+//通过now获取到年月日 
+//年
+now.Year()
+//月
+now.Month()
+//日
+int(now.Day())
+//时
+now.Hour()
+//分
+now.Minute()
+//秒
+now.Second()
 
+//使用格式化获取时间
+const (
+	Datetimeformat    = "2006-01-02 15:04:02"
+)
+time.Format(Datetimeformat)
 
+//时间常量
+const (
+	Nanosecond Duration = 1 //1纳秒
+    Microsend = 1000 * Nanosecond //1微妙
+    Millisecond = 1000 * Microsecond //1毫秒
+    Second = 1000 * Millisecond //1秒
+    Minute = 60 * Second //分钟
+    Hour = 60 * Minute //小时
+)
 
+//休眠100毫秒
+time.Sleep(100 * time.Microsend)
 
+//时间戳
+time.Unix() //秒
+time.UnixNano() //纳秒
+```
 
+## 内置函数
 
+```go
+//求长度
+len(变量)
 
+//new: 用来分配内存(创建指针), 主要用来分配值类型, 比如int/float32/struct,返回的是指针
+num = new(int)
+//结果(类型: *int, 值: 地址, 地址: 地址)
+fmt.Printf("num的类型%T, num的值%v, num的地址, 指向的值%v", num2, num2, &num2, *num2)
 
+//make: 用来分配内存, 主要用来分配引用类型, 比如channel, map, slice
+```
 
+## 错误处理
 
+```go
+import "fmt"
+//使用defer + recover来捕获和处理异常
+func test() {
+    defer func() {
+        err := recover()
+        if err != nil { //说明捕获到异常
+            fmt.Println("err=", err)
+        }
+    }()
+    num1 := 10
+    num2 := 0
+    res := num1 / num2
+    fmt.Println("res=", res)
+}
 
+func main() {
+    //测试
+    test()
+    //下面的代码
+}
+
+//自定义错误
+import "errors"
+func readConf(name string) (err error) {
+    if name == "config.ini" {
+        return nil
+    }else{ 
+        return errors.New("读取文件错误")
+    }
+}
+func test() {
+    err := readConf("config.ini")
+    if err != nil {
+        //如果读取文件发送错误, 就输出这个错误, 并终止程序
+        panic(err)
+    }
+    
+    fmt.Println("程序继续执行...")
+}
+```
+
+## 数组
+
+```go
+//1. 定义一个数组
+var arr [6]float64
+//2. 给数组的每个元素赋值
+arr[0] = 0.0
+arr[1] = 0.1
+
+//数组的初始化方式
+var arr1 = [3]int {1, 2, 3}
+var arr2 = [3]int {1, 2, 3}
+var arr3 = [...]int {1, 2, 3}
+//可以指定元素值对应的下标
+var arr4 = [3]string {1: "aa", 0: "--", 2: "bb"}
+
+//数组的遍历
+for i := 0; i < len(arr); i++ {
+    arr[i]
+}
+for index, value := range arr {
+    index, value
+}
+
+//数组默认值传递, 如果想要使用引用传递
+func test(arr *[3]int) {
+    (*arr)[0] = 11
+}
+```
+
+## 生成随机数
+
+```go
+//生成随机数种子
+rand.Seed(time.Now().UnixNano())
+rand.Intn("数字") 
+```
+
+## slice切片
+
+```go
+//切片是一个数组的引用, 因此切片是引用类型, 在进行传递时, 遵守引用传递的机制
+
+//len(): 求切片的长度
+//cap(): 求切片的容量
+
+//定义方式一: 引用一个定义好的数组
+var intArr = [...]int {1, 2, 3, 4, 5}
+slice := intArr[1:3]	//2, 3
+//定义方式二: 通过make来创建切片
+var slice = make([]int, 4) //make([]切片的类型, 切片的长度, [容量])
+//定义方式三: 直接指定具体数组
+var slice = []string{"tom", "jack", "mary"}
+
+//遍历
+var arr = [...]int{10, 20, 30, 40}
+slice := arr[1:4]
+//for
+for i := 0; i < len(slice); i++ {
+    fmt.Printf("slice[%v]=%v", i, slice[i])
+}
+//for range
+for i, v := range slice {
+    fmt.Printf("i=%v v=%v", i, v)
+}
+
+//初始化切片
+var arr = [...]int{0, 1, 2, 3}
+var slice = arr[:2] //var slice = arr[0:2]
+var slice = arr[1:3] //var slice = arr[1:]
+var slice = arr[:] //var slice = arr[0:3]
+
+//追加新元素
+var slice = []string{"tom", "jack", "mary"}
+slice = append(slice3, "aa", "bb")
+
+//切片的拷贝操作
+var a = []int {1, 2, 3}
+var slice = make([]int, 10)
+copy(slice, a)
+```
+
+## 使用切片完成斐波那契数列
+
+```go
+func fbn(n int) []uint64 {
+    var fbnSlice = make([]uint64, n)
+    fbnSlice[0] = 1
+    fbnSlice[1] = 1
+    for i := 2; i < n; i++ {
+        fbnSlice[i] = fbnSlice[i - 1] + fbnSlice[i - 2]
+    }
+    return fbnSlice
+}
+```
+
+## map
+
+```go
+//map的声明是不会分配内存的, 初始化需要make, 分配内存后才能赋值和使用
+//goland中的map是无序的
+
+//使用方式一
+//先声明, 分配内存空间
+var a = map[string]string
+a = make(map[string]string, 10)
+a["no1"] = "tom"
+
+//使用方式二
+//声明时直接分配内存空间
+var a = make(map[string] string, 10)
+a["no1"] = "tom"
+
+//使用方式三
+//声明时直接赋值
+var heroes = map[string] string{
+    "hero1": "宋江",
+    "hero2": "卢俊义"
+}
+
+//map增加和更新
+map["key"] = value //可以已经存在就是更新, 否则是新增
+
+//删除键
+var heroes = map[string] string{
+    "hero1": "宋江",
+    "hero2": "卢俊义",
+}
+delete(heroes, "hero1")
+
+//清空map
+//方式一: 遍历map, 逐个shanc
+//方式二: 给该map重新赋值一个空的map
+var cities = map[string] string {
+    "a": "aa",
+    "b": "bb",
+}
+cities = make(map[string] string)
+
+//判断键是否存在
+//ok为true时, 键存在, 值为val
+var val, ok = cities["a"]
+
+//遍历(不能用for循环, 只能用for-range)
+var cities = make(map[string] string)
+cities["a"] = "aa"
+cities["b"] = "bb"
+
+for var val, key = range cities {
+    fmt.Println(val)
+    fmt.Println(key)
+}
+```
 
 
 
