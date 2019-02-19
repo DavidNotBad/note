@@ -707,6 +707,78 @@ mapSlice = append(mapSlice, map[string]string{
 fmt.Println(mapSlice)
 ```
 
+## 结构体
 
+```go
+//声明结构体
+type Cat struct {
+	Name string
+	age int
+}
 
+//获取对象, 方式一
+var cat1 Cat
+//获取对象, 方式二
+var cat1 = Cat{}
+//赋值(适合方式一和二)
+cat1.Name = "aa"
+cat1.age = 10
+
+//获取对象, 方式三
+var cat *Cat = new(Cat)
+//获取对象, 方式四
+var cat *Cat = &Cat{"dd", 20}
+//赋值, 方式一
+(*cat).Name = "bb"
+//赋值, 方式二
+cat.Name = "cc"
+
+//标签
+import "encoding/json"
+type Monster struct {
+    Name string `json:"name"`
+    Age int `json:"age"`
+    Skill string `json:"skill"`
+}
+var monster = Monster{"张三", 10, "芭蕉扇"}
+//序列化为json字符串
+jsonStr, err = json.Marshal(monster)
+if err != nil {
+    fmt.Println(err)
+}
+fmt.Println(jsonStr)
+
+//方法
+type Person struct{
+    Name string
+}
+//这里也可以把*去掉, 去掉后就是值传递
+func (p *Person) test() {
+    fmt.Println(p.Name)
+}
+var p Person
+p.test()
+
+//方法不一定要跟结构体, 所有的类型都可以加方法
+type integer int
+func (i integer) print() {
+    fmt.Println(i)
+}
+var i integer = 10
+i.print()
+
+//一个类型中如果自定义了String方法, 则执行fmt.Println时会默认执行该方法
+type Student struct{
+    Name string
+    Age int
+}
+func (stu *Student) String() string{
+    var str = fmt.Println("Name=[%v] Age=[%v]", stu.Name, stu.Age)
+}
+var stu = Student{
+    Name: "tom",
+    Age: 29,
+}
+fmt.Println(&stu)
+```
 
