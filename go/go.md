@@ -378,6 +378,15 @@ for i < 10 {
 for {
     
 }
+
+switch operator {
+    case '+':
+    	//表达式
+    case '-':
+    	//表达式
+    default:
+    	//表达式
+}
 ```
 
 ## 数据类型
@@ -606,6 +615,9 @@ slice = append(slice3, "aa", "bb")
 var a = []int {1, 2, 3}
 var slice = make([]int, 10)
 copy(slice, a)
+
+//删除切片
+slice = append(slice[:index], slice[index+1:]...)
 ```
 
 ## 使用切片完成斐波那契数列
@@ -733,21 +745,6 @@ var cat *Cat = &Cat{"dd", 20}
 //赋值, 方式二
 cat.Name = "cc"
 
-//标签
-import "encoding/json"
-type Monster struct {
-    Name string `json:"name"`
-    Age int `json:"age"`
-    Skill string `json:"skill"`
-}
-var monster = Monster{"张三", 10, "芭蕉扇"}
-//序列化为json字符串
-jsonStr, err = json.Marshal(monster)
-if err != nil {
-    fmt.Println(err)
-}
-fmt.Println(jsonStr)
-
 //方法
 type Person struct{
     Name string
@@ -780,5 +777,316 @@ var stu = Student{
     Age: 29,
 }
 fmt.Println(&stu)
+
+//继承
+type Goods struct {
+    Name string
+    Prince int
+}
+type Book struct {
+    Goods //继承
+    Writer string
+}
+var book Book
+book.Goods.Name //完整格式
+book.Name //简单格式
+
+//组合
+type Goods struct {
+    Name string
+    Prince int
+}
+type Book struct {
+    goods Goods //组合
+    Writer string
+}
+book.goods.Name
+```
+
+## 工厂模式
+
+```go
+package main
+//首字母小写的student
+type student struct {
+	Name string
+	//首字母小写的score
+	score float64
+}
+func NewStudent(n string, s float64) *student {
+	return &student{
+		Name: n,
+		score: s,
+	}
+}
+func (student *student) GetScore() float64 {
+	return student.score
+}
+```
+
+## 接口
+
+```go
+package main
+
+import "fmt"
+
+//声明一个接口
+type Usb interface{
+	Start()
+	Stop()
+}
+//实现接口的方法1
+type Phone struct{}
+func (p Phone) Start() {
+	fmt.Println("Start")
+}
+func (p Phone) Stop() {
+	fmt.Println("Stop")
+}
+//使用接口
+type Computer struct{}
+//多态
+func (c Computer) Working(usb Usb){
+	usb.Start()
+	usb.Stop()
+}
+
+func main() {
+	//调用
+	var computer Computer
+	var phone Phone
+	computer.Working(phone)
+}
+
+//空接口没有任何方法, 所以所有类型都实现了空接口
+```
+
+## 对结构体切片进行排序
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"sort"
+)
+
+//1. 声明Hero结构体
+type Hero struct {
+	Name string
+	Age int
+}
+//2. 声明一个Hero结构体切片类型
+type HeroSlice []Hero
+//3. 实现Interface接口
+func (hs HeroSlice) Len() int {
+	return len(hs)
+}
+func(hs HeroSlice) Less(i, j int) bool {
+	return hs[i].Age < hs[j].Age
+}
+func(hs HeroSlice) Swap(i, j int) {
+    hs[i], hs[j] = hs[j], hs[i]
+}
+//主函数
+func main() {
+    //创建结构体切片
+	var heros HeroSlice
+	for i := 0; i < 10; i++ {
+		var hero = Hero{
+			Name: fmt.Sprintf("英雄%d", rand.Intn(100)),
+			Age: rand.Intn(100),
+		}
+		heros = append(heros, hero)
+	}
+
+	println("排序前的切片")
+	for _, val := range heros {
+		fmt.Println(val)
+	}
+
+    //结构体切片排序
+	sort.Sort(heros)
+
+	println("排序后的切片")
+	for _, val := range heros {
+		fmt.Println(val)
+	}
+}
+```
+
+## 断言
+
+```go
+//案例一
+type Point struct{
+    x int
+    y int
+}
+
+var a interface{}
+var point = Point{1, 2}
+a = point
+var b Point
+//断言a是Point类型
+b = a.(Point)
+
+//案例二
+var t float32
+var x interface{}
+x = t
+var y, ok = x.(float32)
+if ok {}else{}
+
+//案例三
+//声明一个接口
+type Usb interface{
+	Start()
+	Stop()
+}
+//实现接口的方法1
+type Phone struct{}
+func (p Phone) Start() {
+	fmt.Println("Start")
+}
+func (p Phone) Stop() {
+	fmt.Println("Stop")
+}
+func (p Phone) Call() {
+    fmt.Println("call")
+}
+//使用接口
+type Computer struct{}
+//多态
+func (c Computer) Working(usb Usb){
+	usb.Start()
+    //类型断言
+    if phone, ok := usb.(Phone); ok {
+        phone.Call()
+    }
+	usb.Stop()
+}
+func main() {
+	//调用
+	var computer Computer
+	var phone Phone
+	computer.Working(phone)
+}
+
+//案例四
+//写一个函数, 循环判断传入参数的类型
+func TypeJudge(items ...interface{}) {
+    for index, x := range items {
+        switch x.(type) {
+            case bool:
+            	fmt.Printf("%v - %v", index, x)
+            //case ...
+        }
+    }
+}
+```
+
+## 文件操作
+
+```go
+import "os"
+
+//打开文件
+file, err := os.Open("文件名")
+//关闭文件
+defer file.Close(file)
+
+import "bufio"
+import "io "
+//带缓冲的读取文件的内容(不是一次读完, 每次读取4096字节)
+reader := bufio.NewReader(file)
+//循环的读取文件的内容
+for {
+    str, err := reader.ReadString('\n')
+    if err == io.EOF {
+        break
+    }
+}
+
+//直接获取文件的内容, 免打开和关闭
+import "ioutil"
+content, err := ioutil.ReadFile("")
+content = string(content)
+
+
+//写文件
+O_RDONLY //只读的方式
+O_WRONLY //只写的方式
+O_RDWR //读写的方式打开
+O_APPEND //写操作时, 将数据附加到文件尾部
+O_CREATE //如果不存在将创建一个新文件
+//...
+file = os.OpenFile("filePath", os.O_WRONLY | os.O_CREATE, 0666) 
+defer file.Close()
+//使用带缓存的 *Writer
+writer := bufio.NewWriter(file)
+writer.WriteString("写入的字符串")
+//把缓存中的文件信息写入到文件中
+writer.Flush()
+```
+
+## 命令行参数
+
+```go
+//获取命令行参数
+os.Args
+for i, v := range os.Args {}
+
+//解析命令行参数
+var user string
+var port int
+flag.StringVar(&user, "参数名", "默认值", "备注")
+flag.IntVar(&port, "参数名", "默认值", "备注")
+```
+
+## json
+
+```go
+//序列化
+import "encoding/json"
+type Monster struct {
+    Name string `json:"name"`
+    Age int `json:"age"`
+    Skill string `json:"skill"`
+}
+var monster = Monster{"张三", 10, "芭蕉扇"}
+//序列化为json字符串
+jsonStr, err = json.Marshal(monster)
+if err != nil {
+    fmt.Println(err)
+}
+fmt.Println(jsonStr)
+
+//反序列化
+import "encoding/json"
+type Monster struct {
+    Name string `json:"name"`
+    Age int `json:"age"`
+    Skill string `json:"skill"`
+}
+var monster Monster
+err := json.Unmarshal([]byte("json字符串", &monster))
+
+var a map[string]interface{} //不需要make, 反序列化已经封装好了
+err := json.Unmarshal([]byte("json字符串"), &a)
+```
+
+## 线程和协程
+
+```go
+//线程(其他语言称进程)
+//协程(类似其他语言的线程), 拥有独立的栈空间, 共享堆空间, 由程序员控制, 优化后的线程
+
+//1. 启动一个协程
+go 函数名()
+
+
 ```
 

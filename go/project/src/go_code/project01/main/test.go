@@ -1,11 +1,16 @@
 package main
-
-import "fmt"
-
-func init	() {
-	fmt.Println("aaaa")
+//首字母小写的student
+type student struct {
+	Name string
+	//首字母小写的score
+	score float64
 }
-
-func Test() {
-	fmt.Println("sds")
+func NewStudent(n string, s float64) *student {
+	return &student{
+		Name: n,
+		score: s,
+	}
+}
+func (student *student) GetScore() float64 {
+	return student.score
 }
