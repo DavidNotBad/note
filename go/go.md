@@ -1087,6 +1087,368 @@ err := json.Unmarshal([]byte("json字符串"), &a)
 //1. 启动一个协程
 go 函数名()
 
+//MPG
+//M代表主线程
+//P代表上下文
+//G代表协程
+//运行状态:
+//1. 主线程中上下文可以根据实际情况在运行中开启协程
+//2. 主线程可以有多个, 如果都在一个CPU叫并发, 否则叫并行
+//3. 当协程阻塞时, go语言有一种各个协程间来回切换的机制, 
+//   这种机制既能够让主线程执行, 同时也能让排队的协程得到执行的机会
 
+//设置运行的cpu数
+import "runtime"
+num := runtime.NumCPU()  //获取当前的系统cpu数量
+runtime.GOMAXPROCS(num - 1)  //设置num-1的cpu运行go程序
+//go1.8后, 默认让程序运行在多个核上, 可以不用设置了
+```
+
+## channel管道
+
+```go
+//1. 创建一个可以存放三个int类型的管道
+var intChan chan int
+//2. 向管道写入数据
+intChan<- 10
+//3. 读取数据
+var num int = <-intChan
+//4. 关闭管道, 只能读, 不能写了
+close(intChan)
+
+//5. 遍历管道, 如果没有关闭管道, go程序会认为管道还可能会有数据进来, 
+//   会不断遍历, 当遍历了管道最后一个数据后, 再次尝试遍历, 
+//   这时拿不到数据时, 会报deadlock错误
+//   正确的做法是在遍历前把管道关闭
+close(intChan)
+for v := range intChan {}
+```
+
+## 管道 - 互斥锁
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var myMap = make(map[int]int, 10)
+//声明一个全局的互斥锁
+var lock sync.Mutex
+
+func test(n int) {
+	res := 1
+	for i := 1; i <= n; i++ {
+		res *= i
+	}
+
+	lock.Lock()
+	myMap[n] = res
+	lock.Unlock()
+}
+
+func main() {
+	for i := 1; i <= 200; i++ {
+		go test(i)
+	}
+
+	time.Sleep(time.Second * 10)
+
+	lock.Lock()
+	for i, v := range myMap {
+		fmt.Printf("map[%d]=%d\n", i, v)
+	}
+	lock.Unlock()
+}
+
+```
+
+## 管道读写
+
+```go
+//只读管道
+var char1 char<- int
+char1 = make(char int, 3)
+//只写管道
+var char1 <-char int
+char1 = make(char int, 3)
+//只读管道和只写管道可以作为 函数参数 进行传递
+
+
+//读写例子
+package main
+
+func writeData(intChan chan int)  {
+	for i := 1; i <= 50; i++ {
+		intChan <- i
+	}
+	close(intChan)
+}
+
+func readData(intChan chan int, exitChan chan bool) {
+	for v := range intChan {
+		println(v)
+	}
+	exitChan <- true
+	close(exitChan)
+}
+
+func main() {
+	var intChan = make(chan int, 50)
+	var exitChan = make(chan bool, 1)
+
+	go writeData(intChan)
+	go readData(intChan, exitChan)
+
+	for {
+		_, ok := <- exitChan
+		if ok {
+			break
+		}
+	}
+}
+```
+
+
+## 管道 - 求素数
+
+```go
+package main
+import "fmt"
+
+func putNum(intChan chan int)  {
+	for i := 1; i <= 8000; i++ {
+		intChan <- i
+	}
+	close(intChan)
+}
+
+func primeNum(intChan chan int, primeChan chan int, exitChan chan bool)  {
+	var flag bool
+	for num := range intChan {
+		flag = true
+		for i := 2; i < num; i++ {
+			if num % i == 0 {
+				flag = false
+				break
+			}
+		}
+		if flag {
+			primeChan <- num
+		}
+	}
+	exitChan <- true
+}
+
+
+func main() {
+	//需求：求素数
+	intChan := make(chan int, 1000)
+	primeChan := make(chan int, 2000)
+	exitChan := make(chan bool, 4)
+
+	//将数据放入intChan
+	go putNum(intChan)
+
+	//从intChan取出数据, 得到的结果放入primeChan, 完成后添加标记到exitChan
+	for i := 0; i < 4; i++ {
+		go primeNum(intChan, primeChan, exitChan)
+	}
+
+	go func() {
+		//等待协程结束
+		for i := 0; i < 4; i++ {
+			<- exitChan
+		}
+		//关闭primeChan
+		close(primeChan)
+	}()
+
+	for res := range primeChan {
+		fmt.Println(res)
+	}
+
+}
+
+```
+
+## 不关闭管道取数据
+
+```go
+package main
+
+import "fmt"
+
+func forChan(intChan chan int, stringChan chan string)  {
+	//传统的方法遍历管道时， 如果不关闭会阻塞导致deallock
+	//在实际开发中， 我们可能不好确定什么时候关闭该管道
+	//可以使用select方式解决
+	for {
+		select {
+		case v := <- intChan :
+			fmt.Println(v)
+		case v := <- stringChan :
+			fmt.Println(v)
+		default:
+			fmt.Println("都取不到了")
+			return
+		}
+	}
+}
+
+func main() {
+	//使用select可以解决从管道取数据的阻塞问题
+
+	//1. 定义一个管道
+	intChan := make(chan int, 10)
+	for i := 0; i < 10; i++ {
+		intChan <- i
+	}
+	//2. 定义一个管道
+	stringChan := make(chan string, 5)
+	for i := 0; i < 5; i++ {
+		stringChan <- "hello" + fmt.Sprintf("%d", i)
+	}
+
+	forChan(intChan, stringChan)
+}
+```
+
+## goroutine错误处理
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func sayHello()  {
+	for i := 0; i < 10; i++ {
+		time.Sleep(time.Second)
+		fmt.Println("hello", i)
+	}
+}
+
+func test()  {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("error: ", err)
+		}
+	}()
+
+	var myMap map[int] string
+	myMap[0] = "string" //error
+}
+
+func main() {
+	go sayHello() //sayHello得不到执行的机会
+	go test() //test中报错
+
+	for i := 0; i < 10; i++ {
+		fmt.Println(i)
+	}
+}
+```
+
+## tcp/ip协议书籍
+
+```go
+//TCP/IP Illustrated
+```
+
+## socket示例
+
+```go
+//server.go
+package main
+import (
+	"fmt"
+	"io"
+	"net"
+)
+func process(conn net.Conn)  {
+	defer conn.Close()
+
+	for {
+		buf := make([]byte, 1024)
+		fmt.Printf("等待%v输入。。。", conn.RemoteAddr().String())
+		//等待客户端发送数据
+		n, err := conn.Read(buf)
+		if err == io.EOF {
+			println("客户端已退出", err)
+			return
+		}
+		fmt.Print(string(buf[:n]))
+	}
+}
+
+func main() {
+	fmt.Println("服务器开始监听了。。。")
+	listen, err := net.Listen("tcp", "0.0.0.0:8888")
+	if err != nil {
+		return
+	}
+
+	defer listen.Close()
+
+	for {
+		conn, err := listen.Accept()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		println(conn)
+
+		go process(conn)
+	}
+}
+
+
+//client.go
+package main
+import (
+	"bufio"
+	"fmt"
+	"net"
+	"os"
+)
+
+func main()  {
+	//连接服务器
+	conn, err := net.Dial("tcp", "0.0.0.0:8888")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("conn=", conn)
+
+	//获取命令行输入的信息
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		//获取客户端的单行信息
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			println(err)
+		}
+		//退出客户端
+		if line == "exit\n" {
+			println("exit succ")
+			break
+		}
+
+		//发送数据到服务器
+		n, err := conn.Write([]byte(line))
+		if err != nil {
+			println(err)
+		}
+		fmt.Println("发送成功", n)
+	}
+}
 ```
 
