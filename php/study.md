@@ -614,6 +614,93 @@ function array_has(array $array, $key, array $rule=null)
         }
 ```
 
+## 获取类的共有属性
+
+```php
+trait Utils
+{
+    public function publics()
+    {
+        $closure = function ($obj) {
+            return get_object_vars($obj);
+        };
+        $closure = $closure->bindTo(null, null);
+        return $closure($this);
+    }
+}
+
+
+class User
+{
+    use Utils;
+    
+    public $name = "kingmax";
+    private $_age = 30;
+}
+
+$User = new User();
+$data = $User->publics();
+print_r($data);
+```
+
+## 获取文件后缀
+
+```php
+function ext($filename)
+{
+	return ltrim(strrchr($filename, '.'), '.');
+}
+```
+
+## 正则表达式小括号的多义性
+
+```php
+https://www.cnblogs.com/snandy/p/3650309.html
+```
+
+## 获取目录下的文件名
+
+```php
+function my_scandir($dir)
+{
+    $files=array();
+    if(is_dir($dir))
+    {
+        if($handle=opendir($dir))
+        {
+            while(($file=readdir($handle))!==false)
+            {
+                if($file!="."&& $file!="..")
+                {
+                    if(is_dir($dir."/".$file))
+                    {
+                        $files[$file]=my_scandir($dir."/".$file);
+                    }
+                    else
+                    {
+                        $files[]=$dir."/".$file;
+                    }
+                }
+            }
+            closedir($handle);
+            return $files;
+        }
+    }
+}
+```
+
+## 获取url的后缀名
+
+```php
+pathinfo(parse_url($str, PHP_URL_PATH), PATHINFO_EXTENSION)
+```
+
+## 正则验证
+
+```php
+https://www.cnblogs.com/dreamysky/p/5920247.html
+```
+
 
 
 

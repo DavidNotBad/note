@@ -9,13 +9,13 @@ GOPATH -> 项目目录
 
 # 配置环境变量(shell的形式)
 #GO安装目录
-$GOROOT=/usr/local/go
+export GOROOT=/usr/local/go
 #GO工作目录
-$GOPATH=/usr/local/var/www/go
+export GOPATH=/usr/local/var/www/go
 #GO可执行文件目录
-$GOBIN=$GOPATH/bin
+export GOBIN=${GOPATH}/bin
 #将GO可执行文件加入PATH中，使GO指令与我们编写的GO应用可以全局调用
-$PATH=$PATH:$GOBIN:$GOROOT/bin  
+export PATH=${PATH}:$GOBIN:$GOROOT/bin  
 
 ```
 ## 目录结构
@@ -58,6 +58,10 @@ src/
 ```go
 go build hello.go
 go build -o myhello.go
+//go get
+//1. 从远程下载需要用到的包
+//2. 执行go install
+//go install 会生成可执行文件直接放到bin目录下
 
 hello.exe
 // 调试
@@ -357,6 +361,12 @@ fmt.Scanf()
 var name string
 fmt.ScanIn(name)
 fmt.Scanf("%s", &name)
+
+
+var key int
+stdin := bufio.NewReader(os.Stdin)
+fmt.Fscan(stdin, &key)
+stdin.ReadString('\n')
 ```
 
 ## 流程控制
@@ -1444,11 +1454,94 @@ func main()  {
 
 		//发送数据到服务器
 		n, err := conn.Write([]byte(line))
-		if err != nil {
+		if n != 4 || err != nil {
 			println(err)
 		}
 		fmt.Println("发送成功", n)
 	}
+}
+```
+
+## go-redis
+
+```go
+//配置环境变量GOPATH, 安装git
+go get github.com/garyburd/redigo/redis
+
+//连接
+package main
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis"
+)
+func main() {
+	//1. 连接到redis
+	conn, err := redis.Dial("tcp", "0.0.0.0:6379")
+	if err != nil {
+		fmt.Println("redis.Dial err: ", err)
+		return
+	}
+	defer conn.Close()
+}
+
+//操作字符串
+_, err = conn.Do("set", "name", "tomjerry")
+if err != nil {
+    fmt.Println("set err: ", err)
+}
+res, err := redis.String(conn.Do("get", "name"))
+if err != nil {
+    fmt.Println("get err: ", err)
+}
+println(res)
+
+//操作hash(一组键值对)
+_, err := conn.Do("hset", "user01", "name", "汤姆")
+res, err := redis.String(conn.Do("hget", "user01", "name"))
+//批量操作hash
+res, err := redis.Strings(conn.Do("hmget", "user02", "name", "age"))
+if err != nil {
+    fmt.Println("hget err=", err)
+}
+for i, v := range res {
+    //...
+}
+
+//list(有序管道)
+//lpush/rpush/lranges/lpop/rpop/del
+
+//set(无序唯一)
+//sadd
+//smembers取出所有值
+//sismember判断是否值成员
+//srem删除指定值
+```
+
+## redis连接池
+
+```go
+package main
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis"
+)
+var pool *redis.Pool
+func init()  {
+	//构建redis连接池
+	pool = &redis.Pool{
+		MaxIdle: 8, //最大空闲连接数
+		MaxActive: 0, //表示和数据库的最大链接数，0表示没有限制
+		IdleTimeout: 300, //最大空闲时间
+		Dial: func() (conn redis.Conn, e error) {
+			return redis.Dial("tcp", "0.0.0.0:6379")
+		},
+	}
+}
+func main() {
+	conn := pool.Get()
+	defer conn.Close()
+	_, err := conn.Do("set", "name", "zhiangsan")
+	fmt.Println(err)
 }
 ```
 
