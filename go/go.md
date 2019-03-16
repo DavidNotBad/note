@@ -1,4 +1,16 @@
+## 周边
+
+```go
+//Go语言图形界面开发：Go版GTK
+https://blog.csdn.net/u010133338/article/details/82784409
+//go语言项目优化
+https://cloud.tencent.com/developer/article/1374180
+```
+
+
+
 ## 搭建go环境
+
 ```shell
 # 下载地址： https://www.golangtc.com/download
 

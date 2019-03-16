@@ -20,3 +20,9 @@ https://open.weixin.qq.com/
 https://laravelacademy.org/post/9450.html
 ```
 
+## api规范
+
+```php
+https://laravelacademy.org/post/5449.html	
+```
+

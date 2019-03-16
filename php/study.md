@@ -268,7 +268,6 @@ fflush($stream);
 [官网手册](http://php.net/manual/zh/wrappers.php.php)
 
 
-
 ## xml操作
 
 ```php
@@ -699,6 +698,18 @@ pathinfo(parse_url($str, PHP_URL_PATH), PATHINFO_EXTENSION)
 
 ```php
 https://www.cnblogs.com/dreamysky/p/5920247.html
+```
+
+## 替换数组的标志值
+
+```php
+$response = ['error'=>':error', 'msg'=>':msg'];
+$replacements = [':error'=>'haha', ':msg'=>'mmmmmm'];
+array_walk_recursive($response, function (&$value, $key) use ($replacements) {
+    if (starts_with($value, ':') && isset($replacements[$value])) {
+        $value = $replacements[$value];
+    }
+});
 ```
 
 
