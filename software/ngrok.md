@@ -180,3 +180,13 @@ systemctl stop ngrokd
  126     resolver 8.8.8.8;
 ```
 
+## 错误及解决	
+
+```shell
+# 出现错误
+Proxy url scheme must be 'http' or 'https', got
+# 检查环境变量是否有 http_proxy 或 https_proxy
+```
+
+
+
