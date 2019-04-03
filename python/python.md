@@ -20,9 +20,14 @@
 
 * 问题
 
-  ```
+  ```python
   命名空间
   异常中except使用exception基类
+  
+  from PIL import Image
+  img = Image.open('./captcha1.png')
+  pixel = img.load()
+  print(pixel[0, 2])
   ```
 
 * 命令行工具

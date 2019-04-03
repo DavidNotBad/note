@@ -20,6 +20,9 @@ http.request.method == "GET"
 
 # 逻辑运算符
 AND / OR
+
+http and ip.dst == 219.133.104.111 and tcp.port == 80
+ip.dst==124.250.88.172 && ssl && http
 ```
 
 ## 握手
@@ -44,12 +47,7 @@ AND / OR
 ## 3: 数据段放写ISN的+1
 ```
 
-## 规则
 
-```python
-http and ip.dst == 219.133.104.111 and tcp.port == 80
-ip.dst==124.250.88.172 && ssl && http
-```
 
 ## https
 

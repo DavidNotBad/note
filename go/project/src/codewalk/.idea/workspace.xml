@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5bd07ca4-2a5e-41e1-9cec-47d574fbafc7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/markov.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pig.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pig1.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../api.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../api.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../go.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../go.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../php/laravel.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/laravel.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../php/composer.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/composer.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../../php/study.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/study.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../python/selenium.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../python/selenium.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../software/wireshark.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../software/wireshark.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../url.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../url.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,11 +15,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pig1.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="423">
+            <state relative-caret-position="3213">
               <caret line="123" selection-start-line="123" selection-end-line="123" />
             </state>
           </provider>
@@ -32,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/markov.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="378">
-              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+              <caret line="15" selection-start-line="15" selection-end-line="15" />
             </state>
           </provider>
         </entry>
@@ -78,6 +75,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -89,7 +87,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -116,10 +113,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49918962" visible="true" weight="0.17596567" />
+      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49918962" visible="true" weight="0.17811158" />
       <window_info x="796" y="231" width="328" height="617" id="Structure" order="2" sideWeight="0.5008104" weight="0.17596567" />
       <window_info active="true" anchor="bottom" id="Terminal" order="0" visible="true" weight="0.46410516" />
       <window_info anchor="bottom" id="Database Changes" order="1" />
@@ -155,7 +151,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pig1.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
+        <state relative-caret-position="3213">
           <caret line="123" selection-start-line="123" selection-end-line="123" />
         </state>
       </provider>
@@ -163,7 +159,7 @@
     <entry file="file://$PROJECT_DIR$/markov.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
         </state>
       </provider>
     </entry>

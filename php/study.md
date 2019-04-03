@@ -723,6 +723,34 @@ array_walk_recursive($response, function (&$value, $key) use ($replacements) {
 });
 ```
 
+## 系统函数链式操作
+
+```php
+class Str {
+    public $string;
+
+    public function __construct($str)
+    {
+        return $this->string = $str;
+    }
+
+    public function __call($name, $arguments)
+    {
+        array_unshift($arguments, $this->string);
+
+        $this->string = call_user_func_array($name, $arguments);
+        return $this;
+    }
+}
+
+function str($string) {
+    return new Str($string);
+}
+
+$res = str(' dfsfs  @')->trim('@')->trim();
+var_dump($res);exit;
+```
+
 
 
 

@@ -11,6 +11,8 @@
 
 [composer 中文文档](https://docs.phpcomposer.com/04-schema.html)
 
+[使用中国镜像](https://pkg.phpcomposer.com/#how-to-use-packagist-mirror)
+
 ## 库
 
 ### phpexcel
