@@ -34,4 +34,10 @@
   JSON Viewer
   ```
 
+  ## 商店插件离线版
+
+  ```php
+  https://extfans.com/
+  ```
+
   

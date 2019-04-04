@@ -217,12 +217,34 @@ myFun(getSum myFunType, 11, 22)
 //按字节获取字符串的长度
 len(str)
 
-//含有中文的字符串的遍历
-str1 := 'hello中文'
-str2 := []rune(str1)
-for i := 0; i < len(str2); i++ {
-    str2[i]
+//求出中文字符串的长度
+//	1. golang中的unicode/utf8包提供了用utf-8获取长度的方法
+import "unicode/utf8"
+fmt.Println("RuneCountInString:", utf8.RuneCountInString(str))
+//	2. 通过rune类型处理unicode字符
+fmt.Println("rune:", len([]rune(str)))
+
+
+//遍历字符串
+//1: 按照字节进行遍历
+var str string = "hello, world! 北京"
+for i := 0; i < len(str); i++ {
+    fmt.Printf("%c", str[i])
 }
+//2: 按照字符集进行遍历
+var str string = "hello, world! 北京"
+str2 := []rune(str)
+for i := 0; i < len(str2); i++ {
+    fmt.Printf("%c", str2[i])
+}
+//3: 遍历键值对
+str1 := "hello中文"
+for _, v := range []rune(str1) {
+    value := string(v)
+    fmt.Println(reflect.TypeOf(value))
+    fmt.Println(value)
+}
+
 
 //整数转字符串
 strconv.Itoa(整数)
@@ -240,7 +262,7 @@ strconv.ParseFloat(...)
 //字符串转byte
 [] byte(字符串)
 //byte转字符串
-str = string([]byte{97,98, 99})
+str = string([]byte{97,98,99})
 
 //查找子串是否在指定的字符串中
 strings.Contains("查找的字符串", "子串")
@@ -283,7 +305,7 @@ strings.HasSuffix("字符串", "指定的字符")
 //用切片的方式操作字符串
 //string底层是一个byte数组, 因此string也可以进行切片处理
 str := "hello@google.com"
-slice := str[5:] //@
+slice := str[5:] //@google.com
 //string是不可变的, 因此通过 slice[0] = 'a', 会编译错误
 //可以通过将string转成[]byte或[]rune来修改, 然后再转成string来实现
 arr1 := []byte(str) //如果有中文, 需要转成[]rune类型
@@ -335,29 +357,6 @@ for i := 0; i < 4; i++ {
 }
 ```
 
-## 遍历字符串
-
-```go
-//1: 按照字节进行遍历
-var str string = "hello, world! 北京"
-for i := 0; i < len(str); i++ {
-    fmt.Printf("%c", str[i])
-}
-
-//2: 按照字符集进行遍历
-var str string = "hello, world! 北京"
-str2 := []rune(str)
-for i := 0; i < len(str2); i++ {
-    fmt.Printf("%c", str2[i])
-}
-
-//3: 遍历键值对
-str := "abc_ok"
-for index, val := range str {
-    fmt.Printf("str[%d]=%c\n", index, val)
-}
-```
-
 ## 指针
 
 ```go
@@ -376,7 +375,7 @@ var name string
 fmt.ScanIn(name)
 fmt.Scanf("%s", &name)
 
-
+//建议使用
 var key int
 stdin := bufio.NewReader(os.Stdin)
 fmt.Fscan(stdin, &key)
@@ -433,6 +432,8 @@ import "fmt"
 import "unsafe"
 n1 := 1
 fmt.Printf("类型: %T, 字节数: %d", n1, unsafe.Sizeof(n1))
+//通过反射查看变量的类型
+reflect.TypeOf(value)
 ```
 
 ## gofmt
@@ -499,6 +500,9 @@ time.Sleep(100 * time.Microsend)
 //时间戳
 time.Unix() //秒
 time.UnixNano() //纳秒
+
+//5秒后
+time.After(5 * time.Second)
 ```
 
 ## 内置函数
@@ -628,8 +632,8 @@ for i, v := range slice {
 //初始化切片
 var arr = [...]int{0, 1, 2, 3}
 var slice = arr[:2] //var slice = arr[0:2]
-var slice = arr[1:3] //var slice = arr[1:]
-var slice = arr[:] //var slice = arr[0:3]
+var slice = arr[1:4] //var slice = arr[1:]
+var slice = arr[:] //var slice = arr[0:4]
 
 //追加新元素
 var slice = []string{"tom", "jack", "mary"}
@@ -668,7 +672,7 @@ func fbn(n int) []uint64 {
 
 //使用方式一
 //先声明, 分配内存空间
-var a = map[string]string
+var a map[string]string
 a = make(map[string]string, 10)
 a["no1"] = "tom"
 
@@ -715,7 +719,7 @@ var cities = make(map[string] string)
 cities["a"] = "aa"
 cities["b"] = "bb"
 
-for var val, key = range cities {
+for val, key := range cities {
     fmt.Println(val)
     fmt.Println(key)
 }
@@ -793,8 +797,8 @@ type Student struct{
     Name string
     Age int
 }
-func (stu *Student) String() string{
-    var str = fmt.Println("Name=[%v] Age=[%v]", stu.Name, stu.Age)
+func (stu *Student) String() string {
+	return "Name=[" + stu.Name + "] Age=[" + strconv.Itoa(stu.Age) + "]"
 }
 var stu = Student{
     Name: "tom",
@@ -961,8 +965,10 @@ b = a.(Point)
 var t float32
 var x interface{}
 x = t
-var y, ok = x.(float32)
+var value, ok = x.(float32)
 if ok {}else{}
+//或
+if value, ok := x.(float32); ok {}else{}
 
 //案例三
 //声明一个接口
@@ -1018,6 +1024,7 @@ func TypeJudge(items ...interface{}) {
 import "os"
 
 //打开文件
+//打开一个需要被读取的文件，如果成功读取，返回的文件对象将可用被读取，该函数默认的权限为O_RDONLY，也就是只对文件有只读权限。如果有错误，将返回*PathError类型
 file, err := os.Open("文件名")
 //关闭文件
 defer file.Close(file)
@@ -1047,6 +1054,7 @@ O_RDWR //读写的方式打开
 O_APPEND //写操作时, 将数据附加到文件尾部
 O_CREATE //如果不存在将创建一个新文件
 //...
+//大部分用户会选择该函数来代替Open or Create函数。该函数主要用来指定参数(os.O_APPEND|os.O_CREATE|os.O_WRONLY)以及文件权限(0666)来打开文件，如果打开成功返回的文件对象将被用作I/O操作
 file = os.OpenFile("filePath", os.O_WRONLY | os.O_CREATE, 0666) 
 defer file.Close()
 //使用带缓存的 *Writer
@@ -1068,6 +1076,8 @@ var user string
 var port int
 flag.StringVar(&user, "参数名", "默认值", "备注")
 flag.IntVar(&port, "参数名", "默认值", "备注")
+//必须添加
+flag.Parse()
 ```
 
 ## json
@@ -1082,13 +1092,13 @@ type Monster struct {
 }
 var monster = Monster{"张三", 10, "芭蕉扇"}
 //序列化为json字符串
-jsonStr, err = json.Marshal(monster)
+jsonStr, err := json.Marshal(monster)
 if err != nil {
     fmt.Println(err)
 }
 fmt.Println(jsonStr)
 
-//反序列化
+//反序列化成结构体
 import "encoding/json"
 type Monster struct {
     Name string `json:"name"`
@@ -1098,6 +1108,7 @@ type Monster struct {
 var monster Monster
 err := json.Unmarshal([]byte("json字符串", &monster))
 
+//反序列化成功map
 var a map[string]interface{} //不需要make, 反序列化已经封装好了
 err := json.Unmarshal([]byte("json字符串"), &a)
 ```
@@ -1131,8 +1142,11 @@ runtime.GOMAXPROCS(num - 1)  //设置num-1的cpu运行go程序
 ## channel管道
 
 ```go
+//说明
+//https://www.jianshu.com/p/24ede9e90490
+
 //1. 创建一个可以存放三个int类型的管道
-var intChan chan int
+var intChan = make(chan int, 3)
 //2. 向管道写入数据
 intChan<- 10
 //3. 读取数据
@@ -1146,6 +1160,18 @@ close(intChan)
 //   正确的做法是在遍历前把管道关闭
 close(intChan)
 for v := range intChan {}
+
+//有一些场景中，一些 worker goroutine 需要一直循环处理信息，直到收到 quit 信号
+msgCh := make(chan struct{})
+quitCh := make(chan struct{})
+for {
+    select {
+    case <- msgCh:
+        doWork()
+    case <- quitCh:
+        finish()
+        return
+}
 ```
 
 ## 管道 - 互斥锁
