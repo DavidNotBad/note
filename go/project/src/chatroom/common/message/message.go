@@ -4,6 +4,7 @@ const (
 	LoginMesType = "LoginMes"
 	LoginResMesType = "LoginResMes"
 	RegisterMesType = "RegisterMes"
+	RegisterResMesType = "RegisterResMes"
 )
 
 
@@ -27,5 +28,11 @@ type LoginResMes struct {
 
 //注册
 type RegisterMes struct {
+	User User `json:"user"`
+}
 
+//注册返回
+type RegisterResMes struct {
+	Code int `json:"code"` //返回状态码 400：该用户已经占用，200：注册成功
+	Error string `json:"error"` //返回错误信息
 }

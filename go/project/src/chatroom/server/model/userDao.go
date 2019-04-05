@@ -69,4 +69,34 @@ func (this *UserDao) Login(userId int, userPwd string) (user *User, err error) {
 }
 
 
+//完成注册的校验
+func (this *UserDao) Register(user *User) (err error) {
+	//从连接池中取出连接
+	conn := this.pool.Get()
+	defer conn.Close()
+	_, err = this.getUserById(conn, user.userId)
+
+	//用户已存在
+	if err != nil {
+		err = ERROR_USER_EXISTS
+		return
+	}
+
+	//用户不存在， 入库
+	data, err := json.Marshal(user)
+	if err != nil {
+		return
+	}
+
+	_, err = conn.Do("HSet", "users", user.UserId, string(data))
+	if err != nil {
+		fmt.Println("保存注册用户错误 err=", err)
+	}
+
+	return
+}
+
+
+
+
 

@@ -13,6 +13,26 @@ type UserProcess struct {
 	Conn net.Conn
 }
 
+func (this *UserProcess) ServerProcessRegister(mes *message.Message)(err error) {
+	//1. 从mes中取出mes.Data， 并直接反序列化成RegisterMes
+	var registerMes message.RegisterMes
+	err = json.Unmarshal([]byte(mes.Data), &registerMes)
+	if err != nil {
+		fmt.Println("json.Unmarshal err", err)
+		return
+	}
+
+	//2. 组装一个返回的消息类型
+	var resMes message.Message
+	resMes.Type = message.RegisterResMesType
+	//声明一个LoginResMes
+	var registerResMes message.RegisterResMes
+
+	err = model.MyUserDao.Register()
+
+
+}
+
 //处理登录请求
 func (this *UserProcess) ServerProcessLogin(mes *message.Message)(err error)  {
 	//1. 从mes中取出mes.Data， 并直接反序列化成LoginMes
