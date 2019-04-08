@@ -7,6 +7,10 @@ https://blog.csdn.net/u010133338/article/details/82784409
 https://cloud.tencent.com/developer/article/1374180
 //书籍
 http://www.imooc.com/article/271514
+//文档
+http://docscn.studygolang.com/
+//详细文档
+http://c.biancheng.net/golang/
 ```
 
 
@@ -372,7 +376,7 @@ fmt.Scanln()
 fmt.Scanf()
 //例子:
 var name string
-fmt.ScanIn(name)
+fmt.Scanln(name)
 fmt.Scanf("%s", &name)
 
 //建议使用
@@ -380,6 +384,23 @@ var key int
 stdin := bufio.NewReader(os.Stdin)
 fmt.Fscan(stdin, &key)
 stdin.ReadString('\n')
+
+//读取字符串
+status, err := bufio.NewReader(os.Stdin).ReadString('\n')
+
+
+for {
+    str, err := reader.ReadString('\n')
+    //读取完毕
+    if err == io.EOF {
+        break
+    }
+    //读取失败
+    if err != nil {
+        fmt.Printf("read file failed, err:%v", err)
+        break
+    }
+}
 ```
 
 ## 流程控制
@@ -1427,7 +1448,6 @@ func process(conn net.Conn)  {
 	for {
 		buf := make([]byte, 1024)
 		fmt.Printf("等待%v输入。。。", conn.RemoteAddr().String())
-		//等待客户端发送数据
 		n, err := conn.Read(buf)
 		if err == io.EOF {
 			println("客户端已退出", err)
@@ -1447,6 +1467,7 @@ func main() {
 	defer listen.Close()
 
 	for {
+		//等待客户端发送数据
 		conn, err := listen.Accept()
 		if err != nil {
 			fmt.Println(err)
