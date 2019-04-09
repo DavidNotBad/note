@@ -13,7 +13,14 @@ http://docscn.studygolang.com/
 http://c.biancheng.net/golang/
 ```
 
+项目思路
 
+```go
+项目名称: 场景聊天系统
+自定义场景
+切换场景
+内网文件共享
+```
 
 ## 搭建go环境
 
@@ -1604,5 +1611,12 @@ func main() {
 	_, err := conn.Do("set", "name", "zhiangsan")
 	fmt.Println(err)
 }
+```
+
+## 坑
+
+```go
+//1. 除法
+10 / 12.0 = 0
 ```
 
