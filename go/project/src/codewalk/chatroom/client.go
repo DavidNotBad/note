@@ -8,19 +8,18 @@ import (
 
 
 
-
-
 func main() {
+	//test()
 	conn, _ := net.Dial("tcp", "0.0.0.0:8812")
 
-	mess := "哈哈水电费"
-	n, err := SendPkg(conn, mess)
+	message := Message{}
+	data, err := message.Marshal(SayHelloMessType, SayHelloMess{
+		WhoAmI: "尼尔",
+		Content: "hello world!",
+	})
+	n, err := SendPkg(conn, data)
 
 	fmt.Println(n, err)
-
-	//buffer := make([]byte, 1024)
-	//n, _ = conn.Read(buffer)
-	//fmt.Println(string(buffer[:n]))
 }
 
 

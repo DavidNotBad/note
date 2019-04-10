@@ -23,6 +23,11 @@ AND / OR
 
 http and ip.dst == 219.133.104.111 and tcp.port == 80
 ip.dst==124.250.88.172 && ssl && http
+
+
+//host
+//src
+//dst
 ```
 
 ## 握手

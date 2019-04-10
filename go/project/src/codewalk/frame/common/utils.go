@@ -1,7 +1,9 @@
-package main
+package common
 
 import (
 	"bytes"
+	"codewalk/frame/common/message"
+	"encoding/json"
 	"net"
 	"strconv"
 )
@@ -70,6 +72,26 @@ func SendPkg(conn net.Conn, mess []byte)(n int, err error)  {
 
 	return
 }
+
+
+//组装Message, 序列化为切片
+func MessageMarshal(messType string, messageContent interface{})(mess []byte, err error)  {
+	//序列化消息的内容
+	data, err := json.Marshal(messageContent)
+	if err != nil {
+		return
+	}
+
+	msg := message.Message{}
+	//拼接并序列化总消息
+	msg.Type = messType
+	msg.Content = string(data)
+
+	//序列化总消息
+	mess, err = json.Marshal(&msg)
+	return
+}
+
 
 
 

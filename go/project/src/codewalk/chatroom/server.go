@@ -1,10 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"net"
-	"os"
 )
 
 type server struct {
@@ -32,15 +31,18 @@ func (server *server) listen()(err error) {
 			break
 		}
 
-		//后面加上协程
-		//读取包
-		clientMess, err := ReadPkg(conn)//修改. 返回切片
-		//序列化包, 解析内容WhoAmI  Content
-		fmt.Println(clientMess)
+		//后面加上协程process
+		//读取包, 如果出现错误, 则丢包
+		mess, err := ReadPkg(conn)
+		if err != nil {
+			continue
+		}
 
-		os.Exit(0)
-		//业务处理
-		err = server.accept(conn, clientMess)
+		message := Message{}
+		err = message.UnMarshal(mess)
+
+		//业务处理, 调用各种process, 如userProcess, 使用switch语句??, 使用route??, message也可以使用route?
+		err = server.accept(conn, message)
 	}
 
 	return
@@ -50,17 +52,33 @@ func (server *server) listen()(err error) {
 
 
 //客户端发送消息过来, 进行业务处理
-func (server *server) accept(conn net.Conn, mess string)(err error) {
-	fmt.Println("收到客户端", conn.RemoteAddr(),"发送的消息", mess)
-	n, err := conn.Write([]byte("你好啊"))
-	fmt.Println(err == io.EOF)
-	fmt.Println(n, err)
+func (server *server) accept(conn net.Conn, message Message)(err error) {
+	fmt.Println("收到客户端", conn.RemoteAddr(),"发送的消息", message)
+	fmt.Println(message.Content)
+
+	var sayHelloMess SayHelloMess
+	err = json.Unmarshal([]byte(message.Content), &sayHelloMess)
+	if err != nil {
+		return
+	}
+
+	//messageContent, _ := message.UnMarshalContent()
+	//messageContent.(SayHelloMess)
+
+	//fmt.Println(mess.WhoAmI)
+	//fmt.Println(mess.Content)
 	return
 }
 
 
 
 func main()  {
+	//sayHelloMess := &SayHelloMess{}
+	//mess := "{\"whoAmI\":\"尼尔\",\"content\":\"hello world!\"}"
+	//err := json.Unmarshal([]byte(mess), sayHelloMess)
+	//fmt.Println(err)
+	//os.Exit(0)
+
 	//监听端口
 	server := server{
 		"tcp", "0.0.0.0:8812",
