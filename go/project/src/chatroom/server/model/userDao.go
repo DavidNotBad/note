@@ -1,6 +1,7 @@
 package model
 
 import (
+	"chatroom/common/message"
 	"encoding/json"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
@@ -28,7 +29,7 @@ func NewUserDao(pool *redis.Pool)(userDao *UserDao) {
 
 
 //根据用户id，返回一个User实例+err
-func (this *UserDao) getUserById(conn redis.Conn, id int) (user *User, err error) {
+func (this *UserDao) getUserById(conn redis.Conn, id int) (user *message.User, err error) {
 	res, err := redis.String(conn.Do("HGet", "users", id))
 	if err != nil {
 		if err == redis.ErrNil {
@@ -38,7 +39,7 @@ func (this *UserDao) getUserById(conn redis.Conn, id int) (user *User, err error
 		return
 	}
 
-	user = &User{}
+	user = &message.User{}
 
 	//反序列化User实例
 	err = json.Unmarshal([]byte(res), &user)
@@ -51,7 +52,7 @@ func (this *UserDao) getUserById(conn redis.Conn, id int) (user *User, err error
 
 
 //完成登录的校验
-func (this *UserDao) Login(userId int, userPwd string) (user *User, err error) {
+func (this *UserDao) Login(userId int, userPwd string) (user *message.User, err error) {
 	//从连接池中取出连接
 	conn := this.pool.Get()
 	defer conn.Close()
@@ -70,14 +71,15 @@ func (this *UserDao) Login(userId int, userPwd string) (user *User, err error) {
 
 
 //完成注册的校验
-func (this *UserDao) Register(user *User) (err error) {
+func (this *UserDao) Register(user *message.User) (err error) {
 	//从连接池中取出连接
 	conn := this.pool.Get()
 	defer conn.Close()
-	_, err = this.getUserById(conn, user.userId)
+	_, err = this.getUserById(conn, user.UserId)
 
+	fmt.Println("resiger err", err)
 	//用户已存在
-	if err != nil {
+	if err != ERROR_USER_NOTEXISTS {
 		err = ERROR_USER_EXISTS
 		return
 	}

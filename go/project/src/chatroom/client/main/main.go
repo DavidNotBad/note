@@ -55,6 +55,8 @@ func main()  {
 			stdin.ReadString('\n')
 
 			//注册
+			up := &process.UserProcess{}
+			up.Register(userId, userPwd, userName)
 		case 3:
 			fmt.Println("退出系统成功")
 			os.Exit(0)

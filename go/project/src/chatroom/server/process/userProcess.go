@@ -11,6 +11,7 @@ import (
 
 type UserProcess struct {
 	Conn net.Conn
+	UserId int
 }
 
 func (this *UserProcess) ServerProcessRegister(mes *message.Message)(err error) {
@@ -25,12 +26,48 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message)(err error) 
 	//2. 组装一个返回的消息类型
 	var resMes message.Message
 	resMes.Type = message.RegisterResMesType
-	//声明一个LoginResMes
+	//声明一个RegisterResMes
 	var registerResMes message.RegisterResMes
 
-	err = model.MyUserDao.Register()
+	err = model.MyUserDao.Register(&registerMes.User)
 
+	if err != nil {
+		fmt.Println("register err = ", err)
+		if err == model.ERROR_USER_EXISTS {
+			registerResMes.Code = 505
+			registerResMes.Error = model.ERROR_USER_EXISTS.Error()
+		}else{
+			registerResMes.Code = 506
+			registerResMes.Error = "注册发生未知错误"
+		}
+	}else{
+		registerResMes.Code = 200
+	}
 
+	//反序列化返回的消息类型
+	data, err := json.Marshal(registerResMes)
+	if err != nil {
+		fmt.Println("json.Marshal fail, err=", err)
+		return
+	}
+	//将data服务值resMes
+	resMes.Data = string(data)
+
+	//对resMes进行序列化， 准备发送
+	data, err = json.Marshal(resMes)
+	if err != nil {
+		fmt.Println("json.Marshal fail, err=", err)
+		return
+	}
+
+	//发送data， 我们将其封装到writePkg函数
+	//因为使用分成模式（mvc）， 我们先创建一个Transfer实例， 然后读取
+	tf := &utils.Transfer{
+		Conn: this.Conn,
+	}
+	err = tf.WritePkg(data)
+
+	return
 }
 
 //处理登录请求
@@ -63,6 +100,14 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message)(err error)  {
 		loginResMes.Error = "该用户不存在， 请注册后使用..."
 	}else{
 		loginResMes.Code = 200
+
+		//把登录成功的用户放入到userMgr中
+		this.UserId = loginMes.UserId
+		userMgr.AddOnlineUser(this)
+		for id := range userMgr.onlineUsers {
+			loginResMes.UsersId = append(loginResMes.UsersId, id)
+		}
+
 		fmt.Println(user, "登录成功")
 	}
 
