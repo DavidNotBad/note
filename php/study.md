@@ -751,6 +751,13 @@ $res = str(' dfsfs  @')->trim('@')->trim();
 var_dump($res);exit;
 ```
 
+## 获取url参数
+
+```php
+$arguments = [];
+parse_str(parse_url($url, PHP_URL_QUERY), $arguments);
+```
+
 
 
 

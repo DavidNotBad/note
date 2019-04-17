@@ -3,6 +3,9 @@
 ```go
 //Go语言图形界面开发：Go版GTK
 https://blog.csdn.net/u010133338/article/details/82784409
+//安卓,ios
+https://blog.gokit.info/post/go-mobile/
+https://juejin.im/entry/59104f2d128fe1005857f534
 //go语言项目优化
 https://cloud.tencent.com/developer/article/1374180
 //书籍

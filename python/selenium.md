@@ -269,3 +269,15 @@ if __name__ == '__main__':
             pass
 ```
 
+## selenium+python配置chrome浏览器的选项
+
+```php
+https://blog.csdn.net/zwq912318834/article/details/78933910
+```
+
+## 获取network的内容
+
+```php
+https://www.jianshu.com/p/615e3c0140a5
+```
+
