@@ -1,3 +1,5 @@
+## apache重写
+
 ```shell
 TP的url模式分为四种，
 
@@ -43,5 +45,28 @@ OK了，可以实现伪静态咯
 3：有些服务器版本问题并不支持pathinfo
 
 那开启3模式就OK了
+```
+
+## git 拉取
+
+```shell
+@echo off
+
+cd F:\www\box
+F:
+git fetch --all
+git pull origin master
+```
+
+```php
+// 输出 shell 命令 "ls" 的返回结果
+// 并且将输出的最后一样内容返回到 $last_line。
+// 将命令的返回值保存到 $retval。
+$output = [];
+$returnVar = [];
+$last_line = exec('gitpullbox', $output, $returnVar);
+
+// 打印更多信息
+echo (implode('<br>', $output));
 ```
 
