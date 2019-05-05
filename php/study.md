@@ -758,6 +758,78 @@ $arguments = [];
 parse_str(parse_url($url, PHP_URL_QUERY), $arguments);
 ```
 
+## 根据键名截取数组
+
+```php
+/**
+ *  根据键名截取数组
+ *
+ * @param array $array      操作的数组
+ * @param string $key       截取的键名
+ * @param bool $left        是否从左边开始截取
+ * @param bool $belong      结果中是否包含键名
+ * @return array            截取后的数组
+ */
+function array_slice_key(array $array, $key, $left=true, $belong=true)
+{
+    $searchKey = array_search($key, array_keys($array));
+
+    if($searchKey === false) {
+        return $array;
+    }
+
+    $pos = $belong ? 0 : -1;
+    if($left) {
+        array_splice($array,0, $searchKey + $pos);
+    }else{
+        array_splice($array, $searchKey + 1 + $pos);
+    }
+    return $array;
+}
+```
+
+## 字符串脱敏处理
+
+```php
+/**
+ * 替换字符串中的一部分
+ * 例如替换身份证:
+ *      474921199511256534(替换前) ->
+ *      substr_repeat_replace('474921199511256534', 4, -4) ->
+ *      4749**********6534(替换后)
+ *
+ * @param string $str 要替换的字符串
+ * @param int $start 替换开始位置
+ * @param null|int $length 替换长度
+ * @param int $maxReplace  最大替换字符数
+ * @param string $separator 要替换的字符串
+ * @param string $encoding 字体编码
+ * @return string 替换后的字符串
+ */
+function substr_repeat_replace($str, $start, $length=null, $maxReplace=null, $separator='*', $encoding = 'UTF-8')
+{
+    $maxReplace = ($maxReplace < 0) ? null : $maxReplace;
+    //针对数字进行优化
+    if(is_numeric($str)) {
+        $replacement = str_repeat($separator, strlen(substr($str, $start, $length)));
+        $replacement = empty($maxReplace) ? $replacement : substr($replacement, 0, $maxReplace);
+        return substr_replace($str, $replacement, $start, $length);
+    }
+
+    $replacement = str_repeat($separator, mb_strlen(mb_substr($str, $start, $length, $encoding), $encoding));
+    $replacement = empty($maxReplace) ? $replacement : mb_substr($replacement, 0, $maxReplace, $encoding);
+    $begin = mb_substr($str, 0, $start, $encoding);
+    if(empty($length)) {
+        $end = '';
+    }elseif($length > 0){
+        $end = mb_substr($str, $start+(int)$length, null, $encoding);
+    }else{
+        $end = mb_substr($str, $length, null, $encoding);
+    }
+    return $begin . $replacement . $end;
+}
+```
+
 
 
 
