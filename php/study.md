@@ -477,10 +477,10 @@ session_destroy();
     /**
      * 对数组中的每个成员执行回调
      * @param array $array
-     * @param callable $callback
+     * @param callable|array|string $callback
      * @return array
      */
-    public function map(array $array, callable $callback)
+    public function map(array $array, $callback)
     {
         $arguments = array_slice(func_get_args(), 2);
         foreach ($array as &$item)
@@ -612,16 +612,6 @@ function array_has(array $array, $key, array $rule=null)
     $rule = is_null($rule) ? ['', null, array()] : $rule;
     return isset($array[$key]) && (!in_array($array[$key], $rule, true));
 }
-```
-
-## 待查看
-
-```php
-        if (\function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
-        } elseif (!\in_array(\PHP_SAPI, array('cli', 'phpdbg'), true)) {
-            static::closeOutputBuffers(0, true);
-        }
 ```
 
 ## 获取类的共有属性
