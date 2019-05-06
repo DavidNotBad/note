@@ -44,3 +44,15 @@ func BenchmarkAll(b *testing.B) {
 //go test -bench=.
 ```
 
+## 视频种类
+
+```go
+//静态视频, 非RTMP
+```
+
+## 流控
+
+```go
+bucket
+```
+
