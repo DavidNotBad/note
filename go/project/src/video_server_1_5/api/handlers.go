@@ -4,24 +4,15 @@ import (
 	"io"
 	"encoding/json"
 	"net/http"
-<<<<<<< HEAD
 	"io/ioutil"
 	"github.com/julienschmidt/httprouter"
-	"video_server/api/defs"
-	"video_server/api/dbops"
-	"video_server/api/session"
-=======
-    "fmt"
-    "encoding/json"
-    "io/ioutil"
-    "github.com/julienschmidt/httprouter"
-    "github.com/avenssi/video_server/api/defs"
->>>>>>> 3e344f5bc7b4376984a06829d2c44d4b5c7b022f
+	"github.com/avenssi/video_server/api/defs"
+	"github.com/avenssi/video_server/api/dbops"
+	"github.com/avenssi/video_server/api/session"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	res, _ := ioutil.ReadAll(r.Body)
-<<<<<<< HEAD
 	ubody := &defs.UserCredential{}
 
 	if err := json.Unmarshal(res, ubody); err != nil {
@@ -43,16 +34,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	} else {
 		sendNormalResponse(w, string(resp), 201)
 	}
-=======
-    ubody := &defs.UserCredential{}
-
-    if err := json.Unmarshal(res, ubody); err != nil {
-        sendErrorResponse(w, defs.ErrorRequestBodyParseFailed)
-        return 
-    }
-
-    fmt.Println(ubody)
->>>>>>> 3e344f5bc7b4376984a06829d2c44d4b5c7b022f
 }
 
 func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

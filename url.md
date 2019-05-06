@@ -68,3 +68,21 @@ https://tool.lu/coderunner/
 https://we199.com/
 ```
 
+## 代码在线测试
+
+```php
+https://tool.lu/coderunner/
+```
+
+## 工具
+
+```php
+https://tool.lu/
+```
+
+## 自动化测试工具
+
+```php
+https://www.jianshu.com/p/d9b8c32d534e
+```
+
