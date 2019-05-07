@@ -9,7 +9,7 @@ type Runner struct {
 	Data dataChan
 	dataSize int
 	longLived bool
-	Dispatcher fn 
+	Dispatcher fn
 	Executor fn
 }
 

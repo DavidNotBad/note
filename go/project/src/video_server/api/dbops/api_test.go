@@ -11,10 +11,10 @@ import (
 var tempvid string
 
 func clearTables() {
-	dbConn.Exec("truncate users")
-	dbConn.Exec("truncate video_info")
-	dbConn.Exec("truncate comments")
-	dbConn.Exec("truncate sessions")
+	//dbConn.Exec("truncate users")
+	//dbConn.Exec("truncate video_info")
+	//dbConn.Exec("truncate comments")
+	//dbConn.Exec("truncate sessions")
 }
 
 func TestMain(m *testing.M) {
@@ -110,12 +110,12 @@ func TestComments(t *testing.T) {
 func testAddComments(t *testing.T) {
 	vid := "12345"
 	aid := 1
-	content := "I like this video"
+	content := "这是视屏不错，可以分享一下给我吗"
 
 	err := AddNewComments(vid, aid, content)
 
 	if err != nil {
-		t.Errorf("Error of AddComments: %v", err)
+		t.Errorf("添加评论出错: %v", err)
 	}
 }
 
@@ -126,13 +126,13 @@ func testListComments(t *testing.T) {
 
 	res, err := ListComments(vid, from, to)
 	if err != nil {
-		t.Errorf("Error of ListComments: %v", err)
+		t.Errorf("展现评论列表出错: %v", err)
 	}
 
 	for i, ele := range res {
-		fmt.Printf("comment: %d, %v \n", i, ele)
+		fmt.Printf("输出评论: %d, %v \n", i, ele)
 	}
-}	
+}
 
 
 

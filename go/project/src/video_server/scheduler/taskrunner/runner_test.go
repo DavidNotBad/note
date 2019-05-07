@@ -1,8 +1,8 @@
 package taskrunner
 
 import (
-	"testing"
 	"log"
+	"testing"
 	"time"
 	"errors"
 )
@@ -18,15 +18,15 @@ func TestRunner(t *testing.T) {
 	}
 
 	e := func(dc dataChan) error {
-		forloop:
-			for {
-				select {
-				case d :=<- dc:
-					log.Printf("Executor received: %v", d)
-				default:
-					break forloop
-				}
+	forloop:
+		for {
+			select {
+			case d :=<- dc:
+				log.Printf("Executor received: %v", d)
+			default:
+				break forloop
 			}
+		}
 
 		return errors.New("Executor")
 	}

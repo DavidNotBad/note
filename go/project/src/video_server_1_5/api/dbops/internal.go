@@ -5,7 +5,7 @@ import (
 	"sync"
 	"log"
 	"database/sql"
-	"github.com/avenssi/video_server/api/defs"
+	"video_server_1_5/api/defs"
 )
 
 func InsertSession(sid string, ttl int64, uname string) error {

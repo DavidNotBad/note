@@ -1,26 +1,39 @@
-package main 
+package main
 
 import (
-	"io"
 	"encoding/json"
-	"net/http"
-	"io/ioutil"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
-	"github.com/avenssi/video_server/api/defs"
-	"github.com/avenssi/video_server/api/dbops"
-	"github.com/avenssi/video_server/api/session"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"video_server_1_5/api/dbops"
+	"video_server_1_5/api/defs"
+	"video_server_1_5/api/session"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	res, _ := ioutil.ReadAll(r.Body)
 	ubody := &defs.UserCredential{}
 
+	fmt.Println(string(res))
+
 	if err := json.Unmarshal(res, ubody); err != nil {
+		fmt.Println(err)
+		fmt.Println(ubody)
 		sendErrorResponse(w, defs.ErrorRequestBodyParseFailed)
 		return 
 	}
 
+	fmt.Println(ubody)
 	if err := dbops.AddUserCredential(ubody.Username, ubody.Pwd); err != nil {
+		fmt.Println(err)
 		sendErrorResponse(w, defs.ErrorDBError)
 		return
 	}

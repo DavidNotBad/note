@@ -5,8 +5,8 @@ import (
 	"log"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/avenssi/video_server/api/defs"
-	"github.com/avenssi/video_server/api/utils"
+	"video_server_1_5/api/defs"
+	"video_server_1_5/api/utils"
 )
 
 

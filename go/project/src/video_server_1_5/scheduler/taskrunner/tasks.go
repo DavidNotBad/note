@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 	"sync"
-	"github.com/avenssi/video_server/scheduler/dbops"
+	"video_server_1_5/scheduler/dbops"
 )
 
 func deleteVideo(vid string) error {

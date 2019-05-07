@@ -67,23 +67,24 @@ func RetrieveAllSessions() (*sync.Map, error) {
 		var id string
 		var ttlstr string
 		var login_name string
-        if er := rows.Scan(&id, &ttlstr, &login_name); er != nil {
-        	log.Printf("retrive sessions error: %s", er)
-        	break
-        }
+		if er := rows.Scan(&id, &ttlstr, &login_name); er != nil {
+			log.Printf("retrive sessions error: %s", er)
+			break
+		}
 
-        if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err1 == nil{
-        	ss := &defs.SimpleSession{Username: login_name, TTL: ttl}
-        	m.Store(id, ss)
-        	log.Printf(" session id: %s, ttl: %d", id, ss.TTL)
-        }
+		if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err1 == nil{
+			ss := &defs.SimpleSession{Username: login_name, TTL: ttl}
+			m.Store(id, ss)
+			log.Printf(" session id: %s, ttl: %d", id, ss.TTL)
+		}
 
-        
-    }
 
-    return m, nil
+	}
+
+	return m, nil
 }
 
+//删除session
 func DeleteSession(sid string) error {
 	stmtOut, err := dbConn.Prepare("DELETE FROM sessions WHERE session_id = ?")
 	if err != nil {

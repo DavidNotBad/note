@@ -41,24 +41,24 @@ func VideoClearExecutor(dc dataChan) error {
 	errMap := &sync.Map{}
 	var err error
 
-	forloop:
-		for {
-			select {
-			case vid :=<- dc:
-				go func(id interface{}) {
-					if err := deleteVideo(id.(string)); err != nil {
-						errMap.Store(id, err)
-						return
-					}
-					if err := dbops.DelVideoDeletionRecord(id.(string)); err != nil {
-						errMap.Store(id, err)
-						return 
-					}
-				}(vid)
-			default:
-				break forloop
-			}
+forloop:
+	for {
+		select {
+		case vid :=<- dc:
+			go func(id interface{}) {
+				if err := deleteVideo(id.(string)); err != nil {
+					errMap.Store(id, err)
+					return
+				}
+				if err := dbops.DelVideoDeletionRecord(id.(string)); err != nil {
+					errMap.Store(id, err)
+					return
+				}
+			}(vid)
+		default:
+			break forloop
 		}
+	}
 
 	errMap.Range(func(k, v interface{}) bool {
 		err = v.(error)
