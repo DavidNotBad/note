@@ -398,8 +398,7 @@ $data = array(array('id'=>1,'level'=>1,'pid'=>2),array('id'=>2,'level'=>2,'pid'=
 function array_columns(array $array, array $keys)
 {
     return array_map(function($item)use($keys){
-        extract($item);
-        return compact($keys);
+        return array_intersect_key($item, array_flip($keys));
     }, $array);
 }
 
@@ -474,21 +473,21 @@ session_destroy();
 ## 对数组中的每个成员执行回调
 
 ```php
-    /**
-     * 对数组中的每个成员执行回调
-     * @param array $array
-     * @param callable|array|string $callback
-     * @return array
-     */
-    public function map(array $array, $callback)
+/**
+ * 对数组中的每个成员执行回调
+ * @param array $array
+ * @param callable|array|string $callback
+ * @return array
+ */
+public function map(array $array, $callback)
+{
+    $arguments = array_slice(func_get_args(), 2);
+    foreach ($array as &$item)
     {
-        $arguments = array_slice(func_get_args(), 2);
-        foreach ($array as &$item)
-        {
-            $item = call_user_func_array($callback, array_merge([$item], $arguments));
-        }
-        return $array;
+        $item = call_user_func_array($callback, array_merge([$item], $arguments));
     }
+    return $array;
+}
 ```
 
 ## 通过反射访问类的私有方法
@@ -496,16 +495,16 @@ session_destroy();
 ```php
 //通过类名MyClass进行反射
 $ref_class = new ReflectionClass('MyClass');
- 
+
 //通过反射类进行实例化
 $instance  = $ref_class->newInstance();
- 
+
 //通过方法名myFun获取指定方法
 $method = $ref_class->getmethod('myFun');
- 
+
 //设置可访问性
 $method->setAccessible(true);
- 
+
 //执行方法
 $method->invoke($instance);
 ```
@@ -614,7 +613,7 @@ function array_has(array $array, $key, array $rule=null)
 }
 ```
 
-## 获取类的共有属性
+## 获取类的公有属性
 
 ```php
 trait Utils
@@ -641,15 +640,6 @@ class User
 $User = new User();
 $data = $User->publics();
 print_r($data);
-```
-
-## 获取文件后缀
-
-```php
-function ext($filename)
-{
-	return ltrim(strrchr($filename, '.'), '.');
-}
 ```
 
 ## 正则表达式小括号的多义性
@@ -695,6 +685,12 @@ function my_scandir($dir)
 pathinfo(parse_url($str, PHP_URL_PATH), PATHINFO_EXTENSION)
 ```
 
+## 获取url参数
+
+```php
+$arguments = [];
+parse_str(parse_url($url, PHP_URL_QUERY), $arguments);
+```
 ## 正则验证
 
 ```php
@@ -739,13 +735,6 @@ function str($string) {
 
 $res = str(' dfsfs  @')->trim('@')->trim();
 var_dump($res);exit;
-```
-
-## 获取url参数
-
-```php
-$arguments = [];
-parse_str(parse_url($url, PHP_URL_QUERY), $arguments);
 ```
 
 ## 根据键名截取数组
@@ -818,6 +807,73 @@ function substr_repeat_replace($str, $start, $length=null, $maxReplace=null, $se
     }
     return $begin . $replacement . $end;
 }
+```
+
+## uuid
+
+```php
+function guid(){
+    if (function_exists('com_create_guid')){
+        return com_create_guid();
+    }else{
+        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $hyphen = chr(45);// "-"
+        $uuid = chr(123)// "{"
+            .substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12)
+            .chr(125);// "}"
+        return $uuid;
+    }
+}
+```
+
+## flag
+
+```php
+class Flag
+{
+    //flag, 2的n次方依次递增
+    const FLAG_01 = 1;
+    const FLAG_02 = 2;
+    const FLAG_03 = 4;
+    const FLAG_04 = 8;
+
+    protected $flags;
+
+    protected function isFlagSet($flag)
+    {
+        return (($this->flags & $flag) == $flag);
+    }
+
+    public function setFlags($flags)
+    {
+        $this->flags = $flags;
+        return $this;
+    }
+
+    public function handle()
+    {
+        if($this->isFlagSet(self::FLAG_01)) {
+            echo 1;
+        }
+        if($this->isFlagSet(self::FLAG_02)) {
+            echo 2;
+        }
+        if($this->isFlagSet(self::FLAG_03)) {
+            echo 3;
+        }
+        if($this->isFlagSet(self::FLAG_04)) {
+            echo 4;
+        }
+    }
+}
+
+$flag = new Flag();
+$flag->setFlags(Flag::FLAG_02 | Flag::FLAG_04)->handle();
 ```
 
 
