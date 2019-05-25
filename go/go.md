@@ -14,6 +14,8 @@ http://www.imooc.com/article/271514
 http://docscn.studygolang.com/
 //详细文档
 http://c.biancheng.net/golang/
+//路线
+http://www.itcast.cn/course/go.shtml
 ```
 
 项目思路
