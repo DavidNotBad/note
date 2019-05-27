@@ -54,3 +54,12 @@ $表示符号$
 版权声明：本文为博主原创文章，转载请附上博文链接！
 ```
 
+## 替代cmd
+
+```
+# 官网安装包
+https://cmder.net/
+# 配置
+https://blog.csdn.net/mynamepg/article/details/81233120
+```
+
