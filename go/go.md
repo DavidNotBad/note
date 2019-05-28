@@ -48,7 +48,27 @@ export GOBIN=${GOPATH}/bin
 export PATH=${PATH}:$GOBIN:$GOROOT/bin  
 
 ```
+## 打包静态资源
+
+```go
+# 下载库
+go get -v github.com/jteeuwen/go-bindata/...
+go get -v github.com/moxiaomomo/go-bindata-assetfs/...
+
+# 将$GOPATH/bin关联到$PATH中, 可以修改~/.bashrc文件(go-bindata-assetfs命令安装在$GOPATH/bin下)
+export PATH=$PATH:$GOPATH/bin
+
+# cd $GOPATH/<你的工作目录>
+cd $GOPATH/filestore-server
+
+# 将静态文件打包到一个目标文件里
+mkdir assets -p && go-bindata-assetfs -pkg assets -o ./assets/asset.go static/....
+
+# 修改静态文件的处理逻辑
+```
+
 ## 目录结构
+
 ```go
 goproject(GOPATH配置的内容）
     src
