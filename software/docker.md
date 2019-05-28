@@ -54,6 +54,7 @@ error during connect: Get https://192.168.99.100:2376/v1.37/info: dial tcp 1
 vagrant init centos/7
 # 下载虚拟机
 # 下载速度慢: https://www.cnblogs.com/wanghui-garcia/p/10213964.html
+# 配置网络: https://ninghao.net/blog/2079
 vagrant up 虚拟机名
 # ssh连接虚拟机
 vagrant ssh
@@ -239,6 +240,239 @@ DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:5555"
 # service docker restart
 现在本地和远程均可访问docker进程了。
 ```
+
+## 镜像
+
+```shell
+# 官方image: https://github.com/docker-library
+
+# 查看本地镜像
+sudo docker image ls
+
+# image的获取(1) - Build from Dockerfile
+vim ~/Dockerfile
+​```begin
+FROM ubuntu:14.04
+LABEL maintainer="David Yang <davidnotbad@gmail.com>"
+RUN apt-get update && apt-get install -y redis-server
+EXPOSE 6379
+ENTRYPOINT ["/usr/bin/redis-server"]
+​```end
+docker build -t david/redis:latest .
+# image的获取(2) - Pull from Registry - docker hub
+sudo docker pull ubuntu:14.04
+
+# 创建自己的 base image
+cd ~
+mkdir hello-world
+cd hello-world
+vim hello.c
+#include<stdio.h>
+int main()
+{
+	printf("hello docker\n");
+}
+## 安装c环境
+sudo yum install -y gcc
+sudo yum install -y glibc-static
+## 编译安装
+gcc -static hello.c -o hello
+## 编写dockerfile
+vim Dockerfile
+​```begin
+FROM scratch
+ADD hello /
+CMD ["/hello"]
+​```end
+## 创建镜像
+docker build -t david/hello-world .
+## 查看镜像
+docker image ls
+docker images
+## 查看镜像分层
+docker history docker-image-id
+## 运行容器
+docker rum david/hello-world
+## 删除镜像
+docker image rm image-id
+docker rmi image-id
+```
+
+## 容器
+
+```shell
+# 查看容器
+docker container ls
+docker container ls -a
+docker ps -a
+# 创建并运行容器
+docker run centos
+docker run -it centos
+# 删除容器
+docker container rm container-id
+docker rm container-id
+# 批量删除容器
+docker rm $(docker container ls -aq)  # 删除所有容器
+docker rm $(docker container ls -f "status=exited" -q)
+```
+
+## 创建自己的镜像
+
+```shell
+# 方式一: (不提倡)
+## 创建镜像, 修改容器后, 创建自己的image(将container变成自己的image)
+docker container commit a74ae0abdbd5 david/ubuntu-vim
+docker commit a74ae0abdbd5 david/ubuntu-vim
+
+# 方式二: (提倡)
+## 创建Dockerfile
+docker image build -t david/centos-vim-new .
+docker build -t david/centos-vim-new .
+```
+
+## Dockerfile
+
+```shell
+# FROM
+FROM scratch # 制作base image
+FROM centos # 使用base image
+FROM ubuntu:14:04
+# LABEL
+LABEL maintainer="david@gamil.com"
+LABEL version="1.0"
+LABEL description="This is description"
+# RUN
+RUN yum update \
+	&& yum install -y vim python-dev
+RUN apt-get update \
+	&& apt-get install -y perl pwgen --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
+RUN /bin/bash -c 'source $HOME/.bashrc;echo $HOME'
+# WORKDIR
+WORKDIR /root
+WORKDIR /test # 如果没有会自动创建
+# ADD and COPY
+ADD hello /
+ADD test.tar.gz / # 添加到根目录并解压
+COPY hello test/
+# ENV
+ENV MYSQL_VERSION 5.6
+RUN apt-get install -y mysql-server="${MYSQL_VERSION}" \
+	&& rm -rf /var/lib/apt/lists/*
+	
+# RUN: 执行命令并创建新的Image Layer
+# CMD: 设置容器启动后默认执行的命令和参数
+	## 容器启动时默认执行的命令
+	## 如果docker run 指定了其它命令, CMD命令被忽略
+	## 如果定了多个CMD, 只有最后一个会执行
+	## demo:
+		FROM centos
+		ENV name Docker
+		CMD echo "hello $name"
+	docker rum image-id
+	docker rum -it image-id /bin/bash # CMD不会被执行
+# ENTRYPOINT: 设置容器启动时运行的命令
+	## 让容器以应用程序或者服务的形式运行
+	## 不会被忽略, 一定会执行
+	## demo:
+        COPY docker-entrypoint.sh /usr/local/bin/
+        ENTRYPOINT ["docker-entrypoint.sh"]
+        EXPOSE 27017
+        CMD ["mongod"]
+
+# Shell格式
+RUN apt-get install -y vim
+CMD echo "hello docker"
+ENTRYPOINT echo "hello docker"
+# Exec格式
+RUN ["apt-get", "install", "-y", "vim"]
+CMD ["/bin/echo", "hello docker"]
+ENTRYPOINT ["/bin/echo", "hello docker"]
+# Dockerfile1 - Shell格式 - 会替换
+FROM centos
+ENV name Docker
+ENTRYPOINT echo "hello $name"
+# Dockerfile2 - Exec格式 - 不会替换
+FROM centos
+ENV name Docker
+ENTRYPOINT ["/bin/echo", "hello $name"]
+## ENTRYPOINT ["/bin/bash", "-c", "echo hello $name"]
+```
+
+## 镜像的发布
+
+```shell
+# 登录docker hub
+docker login
+
+# 推送镜像到docker hub
+docker image push davidnotbad/hello-world:latest
+docker push davidnotbad/hello-world:latest
+
+# 推送Dockerfile到docker hub
+## 关联到github
+## [用户名] -> Account Setting -> Linked Accounts -> Linked Accounts -> GitHub
+```
+
+## 建立自己私有的docker registry
+
+```shell
+# 文档说明
+# https://hub.docker.com/_/registry
+sudo docker run -d -p 5000:5000 --restart always --name registry registry:2
+sudo docker container ls # 查看端口
+# 条件:
+##	1. 互相能够ping通
+##  2. telnet 能够连上, 安装telnet(sudo yum -y install telnet)
+telnet 192.168.1.174 5000
+docker build -t 192.168.1.174:5000/hello-world .
+sudo vim /etc/docker/daemon.json
+{                                              
+  "registry-mirrors": [                        
+    "https://dockerhub.azk8s.cn",              
+    "https://reg-mirror.qiniu.com"             
+  ],                                           
+  "insecure-registries": ["192.168.1.174:5000"]
+}
+sudo vim /lib/systemd/system/docker.service
+# 在ExecStart下面加上
+EnvironmentFile=/etc/docker/daemon.json
+sudo systemctl daemon-reload
+sudo service docker restart
+docker push 192.168.1.174:5000/hello-world
+# 检查镜像是否提交: (文档: https://docs.docker.com/registry/spec/api/)
+curl -i "http://192.168.1.174:5000/v2/_catalog"
+```
+
+
+
+[https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F3-8%20%E9%95%9C%E5%83%8F%E7%9A%84%E5%8F%91%E5%B8%83%20(2).mp4&t=38](https://pan.baidu.com/play/video#/video?path=%2F学习%2F系统学习Docker 践行DevOps理念%2F3-8 镜像的发布 (2).mp4&t=38)
+
+3-9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
