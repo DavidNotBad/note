@@ -112,7 +112,7 @@ vim /etc/selinux/config
    getenforce
    ```
 
-   ​
+   
 
 
 
@@ -355,5 +355,11 @@ scp -r /root/.ssh/id_rsa.pub root@192.168.1.200:/root
 curl ifconfig.me
 # 或者
 curl ifconfig.me/all
+```
+
+## 后台运行程序
+
+```shell
+nohup command > myout.file 2>&1 &
 ```
 

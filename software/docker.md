@@ -49,6 +49,8 @@ error during connect: Get https://192.168.99.100:2376/v1.37/info: dial tcp 1
 ## 1. vagrant 安装虚拟机
 
 ```shell
+# 教程: https://www.imooc.com/learn/805
+
 # 创建虚拟机配置
 # centos/7 可以变成: https://app.vagrantup.com/boxes/search
 vagrant init centos/7
@@ -308,6 +310,8 @@ docker ps -a
 # 创建并运行容器
 docker run centos
 docker run -it centos
+# 停止运行容器
+docker stop container-id
 # 删除容器
 docker container rm container-id
 docker rm container-id
@@ -397,6 +401,10 @@ FROM centos
 ENV name Docker
 ENTRYPOINT ["/bin/echo", "hello $name"]
 ## ENTRYPOINT ["/bin/bash", "-c", "echo hello $name"]
+
+# 调试
+docker image ls
+docker run -it image-tmp-id /bin/bash
 ```
 
 ## 镜像的发布
@@ -444,11 +452,98 @@ docker push 192.168.1.174:5000/hello-world
 curl -i "http://192.168.1.174:5000/v2/_catalog"
 ```
 
+## Dockerfile实践
+
+```shell
+# 环境准备
+mkdir flask-hello-world
+cd flask-hello-world/
+vim app.py
+from flask import Flask
+app = Flask(__name__)
+@app.route('/')
+def hello():
+    return "hello docker"
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
+
+# 编写Dockerfile
+vim Dockerfile
+FROM python:2.7
+LABEL maintainer="David Yang<davidnotbad@gmail.com>"
+RUN pip install flask
+ADD app.py /app/
+WORKDIR /app
+EXPOSE 5000
+CMD ["python", "app.py"]
+
+# 生成镜像
+docker build -t davidnotbad/flask-hello-world .
+# 生成容器并运行
+## -d: 后台运行程序
+## -p 5000:5000: 将本地主机的5000端口映射到容器的5000端口(格式: -p 主机端口:容器端口)
+docker run -d -p 5000:5000  davidnotbad/flask-hello-world
+# 查看container
+docker container ls
+# 尝试访问
+curl -i "http://192.168.1.193:5000"
+```
+
+## Docker Network
+
+```shell
+# 单机网络
+## Bridge Network
+## Host Network
+## None Network
+# 多机网络
+## Overlay Network
+```
+
+## vagrant 报错及解决
+
+```shell
+# 安装插件慢
+将 C:\HashiCorp\Vagrant\embedded\gems 下所有文件中的 
+https://rubygems.org 
+替换为： 
+https://gems.ruby-china.com
+# Vagrant was unable to mount VirtualBox shared folders.
+vagrant plugin install vagrant-vbguest
+vagrant reload --provision
+# 选择网卡(bridge: 输入ipconfig命令, 描述便是|getmac /v)
+## getmac /v /FO CSV: 输出成csv格式
+config.vm.network "public_network", ip: "", bridge: ""
+```
+
+## 网络命名空间
+
+```shell
+# 网络介绍
+1. ping 查看ip地址的可达性
+2. telnet 验证服务的可用性
+
+# 创建容器
+sudo docker run -d --name test1 busybox /bin/sh -c "while true; do sleep  3600; done"
+# 进入容器
+docker container ls
+# 查看网络命名空间(方式一)
+docker exec -it container-id /bin/sh
+ip a
+# 查看网络命名空间(方式二)
+docker exec container-id ip a
+
+# 查看
+ip netns list
+# 添加
+ip netns add
+# 删除
+ip netns delete netns-name
+```
 
 
-[https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F3-8%20%E9%95%9C%E5%83%8F%E7%9A%84%E5%8F%91%E5%B8%83%20(2).mp4&t=38](https://pan.baidu.com/play/video#/video?path=%2F学习%2F系统学习Docker 践行DevOps理念%2F3-8 镜像的发布 (2).mp4&t=38)
 
-3-9
+[https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F4-3%20Linux%E7%BD%91%E7%BB%9C%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4.mp4&t=43](https://pan.baidu.com/play/video#/video?path=%2F学习%2F系统学习Docker 践行DevOps理念%2F4-3 Linux网络命名空间.mp4&t=43)
 
 
 
