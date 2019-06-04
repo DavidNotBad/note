@@ -44,6 +44,9 @@ docker run -it ubuntu /bin/bash
 error during connect: Get https://192.168.99.100:2376/v1.37/info: dial tcp 1
 # 解决
 重装docker, 路径为默认的C盘
+
+# 调试
+docker logs 容器名
 ```
 
 ## 1. vagrant 安装虚拟机
@@ -71,6 +74,13 @@ vagrant status
 vagrant halt
 # 删除vagrant
 vagrant destroy
+
+# 查看plugin
+vagrant plugin list
+# 安装scp
+vagrant plugin install vagrant-scp
+# 使用scp拷贝文件
+vagrant scp ../chapter5/labs docker-node1:/home/vagrant/labs/
 ```
 
 ## 2.1 centos上安装docker
@@ -161,7 +171,6 @@ Vagrant.configure("2") do |config|
     sudo yum install -y docker-ce
     # 启动docker ce
     sudo systemctl enable docker
-    sudo systemctl start docker
     # 建立docker用户组
     sudo groupadd docker
     sudo usermod -aG docker $USER
@@ -210,7 +219,7 @@ docker-machine create -d aliyunecs --aliyunecs-io-optimized --aliyunecs-instance
 docker-machine ls
 docker-machine ssh 虚拟机名
 # 登录机器(方式: 本地的docker-client)
-docker-machine env
+docker-machine env machine-name
 eval $(docker-machine env 虚拟机名)
 # unset环境变量
 docker-machine env --unset
@@ -250,6 +259,8 @@ DOCKER_OPTS="-H unix:///var/run/docker.sock -H 0.0.0.0:5555"
 
 # 查看本地镜像
 sudo docker image ls
+# 交互式进入镜像
+docker run -it davidnotbad/flask-redis /bin/bash
 
 # image的获取(1) - Build from Dockerfile
 vim ~/Dockerfile
@@ -294,7 +305,7 @@ docker images
 ## 查看镜像分层
 docker history docker-image-id
 ## 运行容器
-docker rum david/hello-world
+docker run david/hello-world
 ## 删除镜像
 docker image rm image-id
 docker rmi image-id
@@ -315,6 +326,8 @@ docker stop container-id
 # 删除容器
 docker container rm container-id
 docker rm container-id
+# 强制删除
+docker rm -f container-id
 # 批量删除容器
 docker rm $(docker container ls -aq)  # 删除所有容器
 docker rm $(docker container ls -f "status=exited" -q)
@@ -536,14 +549,674 @@ docker exec container-id ip a
 # 查看
 ip netns list
 # 添加
-ip netns add
+ip netns add netns-name
 # 删除
 ip netns delete netns-name
+# 查看网络命名空间
+ip netns exec netns-name ip a
+ip netns exec netns-name ip link
+# 开启命名空间的网卡
+ip netns exec netns-name ip link set dev 网卡名 up
+
+# 主机查看网络
+ip link
+# 主机添加网络
+ip link add veth-name1 type veth peer name veth-name2
+## 把主机网络(veth-name)添加到网络命名空间(netns-name)里面
+ip link set veth-name1 netns netns-name
+
+# 让两个网络命名空间能够相互通讯
+# 流程
+## 创建2个netns和2个veth-pair
+## 把veth-pair分配到netns
+## netns添加ip地址
+## 启动netns
+
+### 会增加命名空间: ip netns list
+### 状态为down 没有ip地址: ip netns exec netns-name ip a
+ip netns add netns-test1
+ip netns add netns-test2
+### 查看主机的网卡: ip link
+ip link add veth-test1 type veth peer name veth-test2
+### 主机网卡减少: ip link 
+### 网络命名空间变多: ip netns exec netns-name ip link
+ip link set veth-test1 netns netns-test1
+ip link set veth-test2 netns netns-test2
+### 状态为down 没有ip地址: ip netns exec netns-name ip a
+ip netns exec netns-test1 ip addr add 192.168.1.91/24 dev veth-test1
+ip netns exec netns-test2 ip addr add 192.168.1.92/24 dev veth-test2
+### 状态为up 有ip地址: ip netns exec netns-name ip a
+ip netns exec netns-test1 ip link set dev veth-test1 up
+ip netns exec netns-test2 ip link set dev veth-test2 up
+## 连接性测试
+ip netns exec netns-test1 ping 192.168.1.92
+ip netns exec netns-test2 ping 192.168.1.91
+```
+
+## Bridge
+
+```shell
+docker run -d --name test1 busybox /bin/sh -c "while true; do sleep 3600; done"
+docker run -d --name test2 busybox /bin/sh -c "while true; do sleep 3600; done"
+
+docker exec -it test1 ip a
+docker exec -it test2 ip a
+
+docker exec -it test1 /bin/sh
+ping test2-ip
+
+# 查看docker的网络
+docker network ls
+# 验证test1是在网桥bridge
+## 出现: Containers.*.Name = "test1"
+docker network inspect bridge
+# brctl
+## docker0和veth...网卡
+ip a
+# 验证veth...是连接到docker0
+sudo yum install -y bridge-utils
+brctl show
+```
+
+## 容器之间的link
+
+```shell
+# link
+## test1
+docker run -d --name test1 busybox /bin/sh -c "while true; do sleep 3600; done"
+## test2 link test1
+docker run -d --name test2 --link test1 busybox /bin/sh -c "while true; do sleep 3600; done"
+## test2 -> test1 : 单向的
+docker exec -it test2 /bin/sh
+ping 172.17.0.2
+ping test1
+
+## link解决ip地址变化, 但它是单向的
+## 如果两个容器都连接到自定义的 bridge 里, 则可以使用 (ping 容器名) 的方式, 即容器名可用
+
+# bridge
+## 查看bridge
+docker network ls
+## 新建bridge
+docker network create -d bridge my-bridge
+## 查看bridge
+docker network ls
+brctl show
+
+## 声明bridge
+docker run -d --name test3 --network my-bridge busybox /bin/sh -c "while true; do sleep 3600; done"
+# 验证test3是在网桥bridge
+## 出现: Containers.*.Name = "test3"
+docker network inspect my-bridge
+
+# 把容器test1(属于bridge) link 到my-bridge
+docker network connect my-bridge test1
+```
+
+## 端口映射
+
+```shell
+# 安装nginx
+## -p 容器80:主机80
+docker run --name web -d -p 80:80 nginx
+# 查看ip地址
+docker network inspect bridge
+curl 127.0.0.1
+docker container ls
+```
+
+## HOST和NONE
+
+```shell
+# 创建容器并连接到none网络
+docker run -d --name test4 --network none busybox /bin/sh -c "while true; do sleep 3600; done"
+# 查看网络信息
+docker network inspect none
+# 进入容器里面
+docker exec -it test4 /bin/sh
+ip a
+# 结论: NONE 类型的网络是孤立的, 只能通过docker exec访问容器
+
+# 创建容器并连接到host网络
+docker run -d --name test5 --network host busybox /bin/sh -c "while true; do sleep 3600; done"
+# 查看网络信息
+docker network inspect none
+# 进入容器里面
+docker exec -it test4 /bin/sh
+ip a
+# 结论: 共享主机的网络接口, 容易端口冲突
+```
+
+## 部署实战
+
+```shell
+# app.py
+from flask import Flask
+from redis import Redis
+import os
+import socket
+
+app = Flask(__name__)
+redis = Redis(host=os.environ.get('REDIS_HOST', '127.0.0.1'), port=6379)
+
+
+@app.route('/')
+def hello():
+    redis.incr('hits')
+    return 'Hello Container World! I have been seen %s times and my hostname is %s.\n' % (redis.get('hits'),socket.gethostname())
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
+# .pip/pip.conf
+[global]
+index-url = http://mirrors.aliyun.com/pypi/simple/
+[install]
+trusted-host = mirrors.aliyun.com
+
+# Dockerfile
+FROM python:2.7
+LABEL maintaner="Peng Xiao xiaoquwl@gmail.com"
+
+COPY ./.pip/pip.conf /root/.pip/
+COPY ./app.py /app/
+WORKDIR /app
+RUN pip install flask redis
+EXPOSE 5000
+CMD [ "python", "app.py" ]
+
+# 创建redis容器
+docker run -d --name redis redis
+# 创建flask镜像
+docker build -t davidnotbad/flask-redis .
+# 运行flask容器
+docker run -d -p 5000:5000 --link redis --name flask-redis -e REDIS_HOST=redis davidnotbad/flask-redis
+# 查看环境变量是否设置成功
+docker exec -it flask-redis /bin/bash
+env
+curl 127.0.0.1:5000
+exit
+# 主机访问
+curl 127.0.0.1:5000
+```
+
+## 多机器通信(VXLAN)
+
+```shell
+# Dockerfile
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.require_version ">= 1.6.0"
+
+boxes = [
+    {
+        :name => "docker-node1",
+        :eth1 => "192.168.1.230",
+        :mem => "1024",
+        :cpu => "1"
+    },
+    {
+        :name => "docker-node2",
+        :eth1 => "192.168.1.231",
+        :mem => "1024",
+        :cpu => "1"
+    }
+]
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "centos/7"
+
+  boxes.each do |opts|
+      config.vm.define opts[:name] do |config|
+        config.vm.hostname = opts[:name]
+        config.vm.provider "vmware_fusion" do |v|
+          v.vmx["memsize"] = opts[:mem]
+          v.vmx["numvcpus"] = opts[:cpu]
+        end
+
+        config.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--memory", opts[:mem]]
+          v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
+        end
+
+        # config.vm.network :private_network, ip: opts[:eth1]
+        config.vm.network "public_network", ip: opts[:eth1], bridge: "Realtek PCIe GBE Family Controller"
+      end
+  end
+
+  config.vm.synced_folder "./labs", "/home/vagrant/labs"
+  config.vm.provision "shell", privileged: true, path: "./setup.sh"
+
+end
+
+# setup.sh
+#/bin/sh
+
+sudo yum -y update
+sudo yum makecache fast
+
+sudo yum-config-manager --add-repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+
+# install some tools
+sudo yum install -y git vim gcc glibc-static telnet
+
+# install docker
+curl -fsSL get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# start docker service
+sudo groupadd docker
+sudo gpasswd -a vagrant docker
+
+rm -rf get-docker.sh
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo touch /etc/docker/daemon.json
+echo '{
+    "registry-mirrors": [
+        "https://dockerhub.azk8s.cn",
+        "https://reg-mirror.qiniu.com"
+    ]
+}' | sudo tee /etc/docker/daemon.json
+sudo systemctl enable docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
+
+# overlay | underlay
+
+# node1(192.168.1.230)
+ip a
+ping 192.168.1.231
+
+# node2(192.168.1.231)
+ip a
+ping 192.168.1.230
+
+# 分布式存储(确保node1和node2的IP地址不重复, 且在同一网段)
+# 使用etcd(https://etcd.io/)
+## 安装
+wget https://github.com/coreos/etcd/releases/download/v3.0.12/etcd-v3.0.12-linux-amd64.tar.gz
+tar zxvf etcd-v3.0.12-linux-amd64.tar.gz
+cd etcd-v3.0.12-linux-amd64
+## 运行(docker-node1)
+nohup ./etcd --name docker-node1 --initial-advertise-peer-urls http://192.168.205.10:2380 \
+--listen-peer-urls http://192.168.205.10:2380 \
+--listen-client-urls http://192.168.205.10:2379,http://127.0.0.1:2379 \
+--advertise-client-urls http://192.168.205.10:2379 \
+--initial-cluster-token etcd-cluster \
+--initial-cluster docker-node1=http://192.168.205.10:2380,docker-node2=http://192.168.205.11:2380 \
+--initial-cluster-state new&
+## 运行(docker-node2)
+nohup ./etcd --name docker-node2 --initial-advertise-peer-urls http://192.168.205.11:2380 \
+--listen-peer-urls http://192.168.205.11:2380 \
+--listen-client-urls http://192.168.205.11:2379,http://127.0.0.1:2379 \
+--advertise-client-urls http://192.168.205.11:2379 \
+--initial-cluster-token etcd-cluster \
+--initial-cluster docker-node1=http://192.168.205.10:2380,docker-node2=http://192.168.205.11:2380 \
+--initial-cluster-state new&
+
+## 检查cluster状态
+./etcdctl cluster-health
+
+## 重启docker服务(docker-node1)
+sudo service docker stop
+sudo /usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=etcd://192.168.205.10:2379 --cluster-advertise=192.168.205.10:2375&
+## 重启docker服务(docker-node2)
+sudo service docker stop
+sudo /usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=etcd://192.168.205.11:2379 --cluster-advertise=192.168.205.11:2375&
+
+## 创建overlay network
+### 在docker-node1上创建一个demo的overlay network
+sudo docker network ls
+sudo docker network create -d overlay demo
+sudo docker network ls
+sudo docker network inspect demo
+
+### 我们会看到在node2上，这个demo的overlay network会被同步创建
+sudo docker network ls
+### 通过查看etcd的key-value, 我们获取到，这个demo的network是通过etcd从node1同步到node2的
+./etcdctl ls /docker
+./etcdctl ls /docker/nodes
+./etcdctl ls /docker/network/v1.0/network
+./etcdctl get /docker/network/v1.0/network/3d430f3338a2c3496e9edeccc880f0a7affa06522b4249497ef6c4cd6571eaa9 | jq .
+
+## 创建连接demo网络的容器
+### 在docker-node1上
+sudo docker run -d --name test1 --net demo busybox sh -c "while true; do sleep 3600; done"
+sudo docker ps
+sudo docker exec test1 ifconfig
+### 在docker-node2上
+sudo docker run -d --name test1 --net demo busybox sh -c "while true; do sleep 3600; done"
+sudo docker run -d --name test2 --net demo busybox sh -c "while true; do sleep 3600; done"
+
+## 验证连通性
+sudo docker exec -it test2 ifconfig
+sudo docker exec test1 sh -c "ping 10.0.0.3"
+```
+
+## 数据持久化
+
+```shell
+# 方案
+## 1: 基于本地文件系统的Volume
+## 2: 基于plugin的Volume
+
+# 方案1演示
+## volume的类型
+### 1: 受管理的data volume, 由docker后台自动创建
+### 2: 绑定挂载的Volume(bind Mounting), 具体挂在位置可以由用户指定
+
+# 演示类型1(data volume):
+# 把数据存储到容器的目录下, 
+# 创建volume
+## -v volume名:volume对应的路径
+## mysql的Dockerfile已经声明了VOLUME
+docker run -d -v mysql:/var/lib/mysql --name mysql1 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+# 查看volume
+docker volume ls
+docker volume inspect volume名
+# 删除volume
+docker volume rm volume名
+
+# 验证volume是否生效
+docker exec -it mysql1 /bin/bash
+mysql -u root
+show databases;
+create database docker
+show databases;
+exit
+docker rm -f mysql1
+docker run -d -v mysql:/var/lib/mysql --name mysql2 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql
+docker exec -it mysql2 /bin/bash
+mysql -u root
+show databases;
+
+# 演示类型2:
+docker build -t davidnotbad/my-nginx .
+docker run -d -v $(pwd):/usr/share/nginx/html -p 80:80 --name web davidnotbad/my-nginx
+docker exec -it web /bin/bash
+```
+
+## workpress
+
+```shell
+# 创建mysql-container
+docker run -d --name mysql -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=wordpress mysql
+# 创建wordpress-container
+docker run -d -e WORDPRESS_DB_HOST=mysql:3306 --link mysql -p 8080:80 wordpress
+```
+
+## docker-compose
+
+```yaml
+# 本地开发工具, 不是用于生产环境
+# linux 安装docker-compose
+# https://docs.docker.com/compose/install/
+# 点击获取最新版: Compose repository release page on GitHub
+# 按照文档安装即可
+# 查看当前docker-compose版本
+docker-compose --version
+
+# 初始化/运行docker-compose.yml定义的容器集
+docker-compose up
+docker-compose up -d
+# 查看运行情况
+docker-compose ps
+# 停止
+docker-compose stop
+# 执行命令
+docker-compose exec compose-name bash
+
+# 编译
+# 可以先编译, 后执行up, 
+# dockerfile改变, 需要先build, 然后up
+docker-compose build
+```
+
+## compose安装workpress
+
+```yaml
+# 示例: 
+# docker-compose.yml
+version: '3'
+
+services:
+    wordpress:
+        image: wordpress
+        ports:
+            - 8080:80
+        environment:
+            WORDPRESS_DB_HOST: mysql
+            WORDPRESS_DB_PASSWORD: root
+        networks:
+            - my-bridge
+    mysql:
+        image: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: wordpress
+        volumes:
+            - mysql-data:/var/lib/mysql
+      	    - ./my.cnf:/etc/mysql/conf.d/my.cnf
+        networks:
+            - my-bridge
+volumes:
+    mysql-data:
+networks:
+    my-bridge:
+        driver: bridge
+# my.cnf
+[mysqld]
+user=mysql
+default-storage-engine=INNODB
+character-set-server=utf8
+default_authentication_plugin= mysql_native_password
+[client]
+default-character-set=utf8
+[mysql]
+default-character-set=utf8
+```
+
+## compose安装flask
+
+```yaml
+# docker-compose.yml
+version: "3"
+services:
+  redis:
+    image: redis
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:5000
+    environment:
+      REDIS_HOST: redis
+      
+# Dockfile
+FROM python:2.7
+LABEL maintaner="Peng Xiao xiaoquwl@gmail.com"
+COPY . /app
+WORKDIR /app
+RUN pip install flask redis
+EXPOSE 5000
+CMD [ "python", "app.py" ]
+
+# app.py
+from flask import Flask
+from redis import Redis
+import os
+import socket
+
+app = Flask(__name__)
+redis = Redis(host=os.environ.get('REDIS_HOST', '127.0.0.1'), port=6379)
+
+
+@app.route('/')
+def hello():
+    redis.incr('hits')
+    return 'Hello Container World! I have been seen %s times and my hostname is %s.\n' % (redis.get('hits'),socket.gethostname())
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+```
+
+## 水平扩展和负载均衡
+
+```yaml
+# Dockerfile
+FROM python:2.7
+LABEL maintaner="Peng Xiao xiaoquwl@gmail.com"
+COPY . /app
+WORKDIR /app
+RUN pip install flask redis
+EXPOSE 80
+CMD [ "python", "app.py" ]
+
+# docker-compose.yml
+version: "3"
+services:
+  redis:
+    image: redis
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      REDIS_HOST: redis
+  lb:
+    image: dockercloud/haproxy
+    links:
+      - web
+    ports:
+      - 8080:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+
+# app.py
+from flask import Flask
+from redis import Redis
+import os
+import socket
+
+app = Flask(__name__)
+redis = Redis(host=os.environ.get('REDIS_HOST', '127.0.0.1'), port=6379)
+
+@app.route('/')
+def hello():
+    redis.incr('hits')
+    return 'Hello Container World! I have been seen %s times and my hostname is %s.\n' % (redis.get('hits'),socket.gethostname())
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)
+
+
+
+# haproxy
+docker-compose up --scale web=5 -d
+```
+
+## docker-swarm
+
+```shell
+https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F7-1%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92Swarm%E4%BB%8B%E7%BB%8D.mp4&t=62
 ```
 
 
 
-[https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F4-3%20Linux%E7%BD%91%E7%BB%9C%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4.mp4&t=43](https://pan.baidu.com/play/video#/video?path=%2F学习%2F系统学习Docker 践行DevOps理念%2F4-3 Linux网络命名空间.mp4&t=43)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
