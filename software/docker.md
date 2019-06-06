@@ -3,6 +3,9 @@
 ```json
 https://yeasy.gitbooks.io/docker_practice/
 
+//镜像
+//https://github.com/docker-library
+
 //教程
 https://edu.51cto.com/course/4238.html
 https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=#/all?vmode=list&path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5
@@ -1130,9 +1133,159 @@ docker-compose up --scale web=5 -d
 
 ```shell
 https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F7-1%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92Swarm%E4%BB%8B%E7%BB%8D.mp4&t=62
+
+# 搭建方式
+1. vagrant + virtualBox
+2. docker machine + virtualBox
+3. Paly with docker https://labs.play-with-docker.com/
+
+# 方式一
+# Vagrantfile
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.require_version ">= 1.6.0"
+
+boxes = [
+    {
+        :name => "swarm-manager",
+        :eth1 => "192.168.1.30",
+        :mem => "1024",
+        :cpu => "1"
+    },
+    {
+        :name => "swarm-worker1",
+        :eth1 => "192.168.1.31",
+        :mem => "1024",
+        :cpu => "1"
+    },
+    {
+        :name => "swarm-worker2",
+        :eth1 => "192.168.1.32",
+        :mem => "1024",
+        :cpu => "1"
+    }
+]
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "centos/7"
+
+  boxes.each do |opts|
+      config.vm.define opts[:name] do |config|
+        config.vm.hostname = opts[:name]
+        config.vm.provider "vmware_fusion" do |v|
+          v.vmx["memsize"] = opts[:mem]
+          v.vmx["numvcpus"] = opts[:cpu]
+        end
+
+        config.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--memory", opts[:mem]]
+          v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
+        end
+
+        config.vm.network "public_network", ip: opts[:eth1], bridge: "Realtek PCIe GBE Family Controller"
+      end
+  end
+
+  config.vm.synced_folder "./labs", "/home/vagrant/labs"
+  config.vm.provision "shell", privileged: true, path: "./setup.sh"
+
+end
+
+# setup.sh
+#/bin/sh
+
+sudo yum -y update
+sudo yum makecache fast
+
+sudo yum-config-manager --add-repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+
+
+# install some tools
+sudo yum install -y git vim gcc glibc-static telnet bridge-utils
+
+# install docker
+curl -fsSL get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+sudo touch /etc/docker/daemon.json
+echo '{
+    "registry-mirrors": [
+        "https://dockerhub.azk8s.cn",
+        "https://reg-mirror.qiniu.com"
+    ]
+}' | sudo tee /etc/docker/daemon.json
+
+# start docker service
+sudo groupadd docker
+sudo gpasswd -a vagrant docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
+rm -rf get-docker.sh
+
+# 进入manager
+vagrant ssh swarm-manager
+# 初始化manager, 声明本台机器是manageer
+docker swarm init --advertise-addr=192.168.1.30
+## 会得到结果
+To add a worker to this swarm, run the following command:
+	docker swarm join --token ....... 192.168.1.30:2377
+exit
+# 进入worker, 运行docker swarm join
+vagrant ssh swarm-worker1
+docker swarm join --token SWMTKN-1-486avll7obj9q4fkctmn9ixxot73xdbhore5th4s5bozoa27a6-3gs70f5veilk7sfsfe03g1b35 192.168.1.30:2377
+exit
+vagrant ssh swarm-worker2
+docker swarm join --token SWMTKN-1-486avll7obj9q4fkctmn9ixxot73xdbhore5th4s5bozoa27a6-3gs70f5veilk7sfsfe03g1b35 192.168.1.30:2377
+exit
+# 查看节点状态
+vagrant ssh swarm-manager
+docker node ls
 ```
 
+## docker-service
 
+```shell
+# 创建service
+docker service create --name demo busybox sh -c "while true;do sleep 3600;done"
+# 查看service
+docker service ls
+docker service ps demo
+docker ps
+# 横向扩展(将5个service横向扩展到manager和worker主机上)
+docker service scale demo=5
+# 删除(包括manager和worker)
+docker service rm demo
+```
+
+## swarm部署workpress
+
+```shell
+# 创建overlay网络
+docker network create -d overlay demo
+docker network ls
+
+
+# 创建mysql的service
+# default_authentication_plugin= mysql_native_password
+docker service create --name mysql --env MYSQL_ROOT_PASSWORD=root --env MYSQL_DATABASE=wordpress --network demo --mount type=volume,source=mysql-data,destination=/var/lib/mysql mysql:5.7
+# 查看service是否成功运行
+docker service ls
+# 查看容器在什么地方
+docker service ps mysql
+
+# 创建wordpress的service
+docker service create --name wordpress -p 80:80 --env WORDPRESS_DB_PASSWORD=root --env WORDPRESS_DB_HOST=mysql --network=demo  wordpress
+# 查看service是否成功运行
+docker service ls
+# 查看容器在什么地方
+docker service ps wordpress
+
+```
+
+[[https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F7-5%E9%9B%86%E7%BE%A4%E6%9C%8D%E5%8A%A1%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B9%8BRoutingMesh.mp4&t=66](https://pan.baidu.com/play/video#/video?path=%2F学习%2F系统学习Docker 践行DevOps理念%2F7-5集群服务间通信之RoutingMesh.mp4&t=66)
 
 
 
