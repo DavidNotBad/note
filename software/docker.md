@@ -1285,7 +1285,493 @@ docker service ps wordpress
 
 ```
 
-[[https://pan.baidu.com/play/video#/video?path=%2F%E5%AD%A6%E4%B9%A0%2F%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0Docker%20%E8%B7%B5%E8%A1%8CDevOps%E7%90%86%E5%BF%B5%2F7-5%E9%9B%86%E7%BE%A4%E6%9C%8D%E5%8A%A1%E9%97%B4%E9%80%9A%E4%BF%A1%E4%B9%8BRoutingMesh.mp4&t=66](https://pan.baidu.com/play/video#/video?path=%2F学习%2F系统学习Docker 践行DevOps理念%2F7-5集群服务间通信之RoutingMesh.mp4&t=66)
+## RoutingMesh - internal
+
+```shell
+# 集群服务间通信
+
+# 创建一个driver是overlay的网络
+docker network create -d overlay demo
+
+# 创建一个whoami的包
+docker service create --name whoami -p 8000:8000 --network demo -d jwilder/whoami
+# 查看service
+docker service ls
+
+# 创建一个busybox的包
+docker service create --name client -d --network demo busybox sh -c "while true; do sleep 3600; done"
+# 查看service
+docker service ls
+docker service ps client
+# 进入容器查看
+docker ps
+docker exec -it 容器名 sh
+ping whoami
+# 容器的虚拟ip
+nslookup whoami
+# 容器的真实ip
+nslookup tasks.whoami
+```
+
+## RoutingMesh - ingress network 
+
+```shell
+# swarm-manger和swarm-work2有whoami, swarm-work1没有
+# 但是进入swarm-work1, curl 127.0.0.1:8000, 仍然有结果
+
+# 查看路由转发规则
+sudo iptables -nL -t nat
+## Chain DOCKER-INGRESS
+## tcp dpt:8000 to 172.18.0.2:8000
+
+# 查看172.18.0.2是什么地址
+ip addr
+## docker_gwbridge的inet 172.18.0.1, 他们是相连的网络
+
+# 查看bridge连接的interfaces
+brctl show
+## docker_gwbridge的interfaces有veth.... veth...
+docker network ls
+docker network inspect docker_gwbridge
+## container -> ingress_sbox -> 172.0.0.2/16 (network namespace)
+
+# 进入network namespace
+sudo yum install ipvsadm
+sudo ls /var/run/docker/netns
+sudo nsenter --net=/var/run/docker/netns/ingress_sbox
+# 查看信息
+ip a
+## 172.18.0.2/16
+# 查看防火墙规则
+iptables -nL -t mangle
+## MARK -> tcp dpt:8000 MARK set 101
+ipvsadm -l
+## 10.255.0.8:0
+## 10.255.0.9:0
+# 进入容器2
+docker ps
+docker exec .... ip a
+## 10.255.0.8
+```
+
+## Docker Stack 部署 wordpress
+
+```yaml
+# docker-compose.yml
+version: '3'
+
+services:
+
+  web:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_PASSWORD: root
+    networks:
+      - my-network
+    depends_on:
+      - mysql
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+
+  mysql:
+    image: mysql:5.5
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - my-network
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  mysql-data:
+
+networks:
+  my-network:
+    driver: overlay
+
+# 创建一个wordpress的stack
+docker stack deploy wordpress --compose-file=docker-compose.yml
+# 列举stack
+docker stack ls
+docker stack ps wordpress
+docker stack services wordpress
+```
+
+## app示例
+
+```yaml
+version: "3"
+services:
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379"
+    networks:
+      - frontend
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  db:
+    image: postgres:9.4
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  vote:
+    image: dockersamples/examplevotingapp_vote:before
+    ports:
+      - 5000:80
+    networks:
+      - frontend
+    depends_on:
+      - redis
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
+
+  result:
+    image: dockersamples/examplevotingapp_result:before
+    ports:
+      - 5001:80
+    networks:
+      - backend
+    depends_on:
+      - db
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  worker:
+    image: dockersamples/examplevotingapp_worker
+    networks:
+      - frontend
+      - backend
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels: [APP=VOTING]
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
+      placement:
+        constraints: [node.role == manager]
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db-data:
+```
+
+## DockerSecret管理和使用
+
+```shell
+# 创建一个secret
+
+## 从文件中创建
+vim password
+root
+docker secret create my-pw password
+rm -rf password
+docker secret ls
+
+## 从标准输入中创建
+echo "admin" | docker secret create my-pw -
+
+# 创建secret实例
+docker service create --name client --secret my-pw busybox sh -c "while true; do sleep 3600; done"
+docker exec -it client sh
+cd /run/secrets/
+cat my-pw
+
+# mysql实例
+docker service create --name db --secret my-pw -e MYSQL_ROOT_PASSWORD_FILE=/run/secrets/my-pw mysql
+```
+
+## wordpress中使用secret
+
+```shell
+version: '3'
+
+services:
+
+  web:
+    image: wordpress
+    ports:
+      - 8080:80
+    secrets:
+      - my-pw
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/my-pw
+    networks:
+      - my-network
+    depends_on:
+      - mysql
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+
+  mysql:
+    image: mysql
+    secrets:
+      - my-pw
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/my-pw
+      MYSQL_DATABASE: wordpress
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - my-network
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  mysql-data:
+
+networks:
+  my-network:
+    driver: overlay
+
+# secrets:
+#   my-pw:
+#    file: ./password
+```
+
+## service 更新
+
+```shell
+# 创建一个overlay网络
+docker network create -d overlay demo
+# 创建一个service, 版本为1.0
+docker service create --name web --publish 8080:5000 --network demo xiaopeng163/python-flask-demo:1.0
+# 横向扩展
+docker service scale web=2
+
+## sware-worker2调试
+sh -c "while true; do curl 127.0.0.1:8080 && sleep 1; done"
+
+# swarm-manager更新
+docker service update --image xiaopeng163/python-flask-demo:2.0 web
+
+# 查看
+docker service ps web
+
+# 缺点, 更新时会版本1.0和版本2.0同时存在
+
+# 更新端口
+docker service update --publish-rm 8080:5000 --publish-add 8088:5000 web
+
+
+# deploy 更新
+docker stack deploy wordpress --compose-file=docker-compose.yml
+```
+
+## kubernetes
+
+```yaml
+# 搭建k8s
+## 单节点: kubernetes/minikube
+## 多节点: kubernetes/kubeadm
+## cloud安装集群: kubernetes/kops
+## coreOS: tectonic
+## Play with Kubernetes
+
+# win7安装minikube
+https://blog.csdn.net/yyqq188/article/details/88019467
+
+# 资源地址
+
+## 1. kubectl的下载页面
+## https://kubernetes.io/docs/tasks/tools/install-minikube/#install-kubectl
+
+## 2. minikube的下载页面,下载后要重命名为minikube.exe
+## https://kubernetes.io/docs/tasks/tools/install-minikube/#install-minikube
+
+## 3. 其中阿里云提供了自己的minikube.exe文件
+## https://yq.aliyun.com/articles/221687 （阿里云minikube的介绍）
+## https://github.com/AliyunContainerService/minikube （阿里云minikube.exe的下载网页）
+
+# 命令行进入C盘, 执行以下命令
+# 创建单节点的minikube集群
+minikube start
+# 查看minikube上下文
+kubectl config view
+# 查看当前拥有的contexts
+kubectl config get-contexts
+# 查看当前集群情况
+kubectl cluster-info
+# 进入virtualbox虚拟机
+minikube ssh
+
+# pod
+## k8s最小调度单位
+## 一个pod共享一个namespace
+
+# 一个nginx的pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+# 创建pod
+kubectl create -f pod_nginx.yml
+# 删除pod
+kubectl delete -f pod_nginx.yml
+# 查看pod
+kubectl get pods
+# 查看pod的ip和节点
+kubectl get pods -o wide
+# 进入容器(方式一)
+minikube ssh
+docker ps
+docker network inspect 容器id
+docker exec -it 容器id sh
+# 进入容器(方式二)
+kubectl exec -it nginx sh
+kubectl exec -it -c 容器名 nginx sh
+# 查看pod的详细信息
+kubectl describe pods nginx
+
+# 端口映射
+kubectl port-forward nginx 8080:80
+
+# ReplicaSeta创建多个pod
+## 自动维持数目
+## 推荐使用ReplicationController而不是Pod
+apiVersion: v1
+kind: ReplicationController 
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+# 创建
+kubectl create -f rc_nginx.yml
+# 查看创建了几个
+kubectl get rc
+# 查看pods情况
+kubectl get pods
+
+# 拓展
+kubectl scale rc nginx --replicas=2
+
+
+# ReplicaSet
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx
+  labels:
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      name: nginx
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+# 创建
+kubectl create -f rs_nginx.yml
+# 查看创建了几个
+kubectl get rs
+# 查看pods情况
+kubectl get pods
+# 拓展
+kubectl scale rs nginx --replicas=2
+
+9-5
+```
+
+
+
+
 
 
 
