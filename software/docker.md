@@ -1634,6 +1634,11 @@ docker stack deploy wordpress --compose-file=docker-compose.yml
 ## cloud安装集群: kubernetes/kops
 ## coreOS: tectonic
 ## Play with Kubernetes
+Minikube只能搭建单节点集群，
+kubeadm:可以在本地搭建多节点的集群。
+kops: 一般aws可以用于生产环境，阿里好像目前不支持
+Tectonic：小于10个节点免费
+Pay with Kubernetes: 试玩集群，有时间限制。
 
 # win7安装minikube
 https://blog.csdn.net/yyqq188/article/details/88019467
@@ -1766,10 +1771,72 @@ kubectl get pods
 # 拓展
 kubectl scale rs nginx --replicas=2
 
-9-5
+# Deployments
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.12.2
+        ports:
+        - containerPort: 80
+# 创建deployment
+kubectl create -f deployment_nginx.yml
+# 查看有多少个deployment
+kubectl get deployment
+kubectl get rs
+kubectl get pods
+# 查看deployment信息
+kubectl get deployment
+kubectl get deployment -o wide
+
+# 升级
+kubectl get deployment -o wide
+kubectl set image deployment nginx-deployment nginx=nginx:1.13
+
+# 查看版本记录
+kubectl rollout history deployment nginx-deployment
+# 回退到上一个版本
+kubectl rollout undo deployment nginx-deployment
+
+# 外放端口
+kubectl expose deployment nginx-deployment --port=NodePort
+# 查看外放的端口
+kubectl get svc
+# 访问主机
+curl 192.168.99.100:30541
+
+# service
+## 1. ClusterIP
+## 2. NodePort
+## 3. LoadBalancer
+# 创建service
+kubectl get pods
+kubectl expose pods nginx-pod
+kubectl get svc
+
+kubectl get deployment
+kubectl expose deployment nginx-deployment
+kubectl get svc
+
+# 更新
+kubectl edit deployment service-test
 ```
 
-
+## d
 
 
 

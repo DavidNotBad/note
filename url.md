@@ -98,3 +98,15 @@ https://10beasts.net/best-vpn-china/
 http://ask.dcloud.net.cn/article/715
 ```
 
+## 慕课G盘
+
+```shell
+https://drive.google.com/drive/folders/1vY9eK-LtAubc90MqOTUNX0FtofZOC-qn
+```
+
+## Kubernetes企业容器云平台入门与进阶实战
+
+```shell
+https://edu.51cto.com/course/12537.html?source=so
+```
+
