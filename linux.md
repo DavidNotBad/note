@@ -363,3 +363,29 @@ curl ifconfig.me/all
 nohup command > myout.file 2>&1 &
 ```
 
+## 命令简写
+
+```shell
+# 创建文件并分配权限和组
+sudo touch /opt/etcd/bin/my_etcdctl
+sudo chown vagrant /opt/etcd/bin/my_etcdctl
+sudo chmod 0744 /opt/etcd/bin/my_etcdctl
+# 填充文件内容
+cat > /opt/etcd/bin/my_etcdctl <<EOF
+#!/bin/bash
+/opt/etcd/bin/etcdctl --ca-file=/opt/etcd/ssl/ca.pem --cert-file=/opt/etcd/ssl/server.pem --key-file=/opt/etcd/ssl/server-key.pem --endpoints="https://192.168.1.30:2379,https://192.168.1.31:2379,https://192.168.1.32:2379" \$@
+EOF
+# 执行命令
+sudo /opt/etcd/bin/my_etcdctl cluster-health
+```
+
+## 在shell文件中使用配置文件
+
+```shell
+#!/bin/bash
+source 配置文件
+
+# 配置文件格式
+CONF_NAME="CONF_VAL"
+```
+
