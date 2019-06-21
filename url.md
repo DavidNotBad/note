@@ -101,6 +101,8 @@ http://ask.dcloud.net.cn/article/715
 https://ke.qq.com/course/list/uni-app
 
 http://www.hcoder.net/index/uniapp
+
+https://ke.qq.com/course/379043
 ```
 
 ## 慕课G盘
