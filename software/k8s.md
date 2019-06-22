@@ -212,7 +212,50 @@ ip addr
 sudo /opt/etcd/bin/my_etcdctl ls /coreos.com/network
 ```
 
-<https://edu.51cto.com//center/course/lesson/index?id=235852>
+### 部署master组件
+
+```shell
+# kube-apiserver
+# kube-controller-manager
+# kube-scheduler
+
+## https://github.com/kubernetes/kubernetes/releases
+## 点击 CHANGELOG-1.15.md for details -> server binaries
+
+# master节点运行
+# 下载
+cd ~/soft
+curl -OL https://dl.k8s.io/v1.15.0/kubernetes-server-linux-amd64.tar.gz
+tar -zxvf kubernetes-server-linux-amd64.tar.gz
+# 安装
+sudo mkdir -p /opt/kubernetes/{bin,cfg,ssl}
+cd ~/soft/kubernetes/server/bin
+sudo cp kube-apiserver kube-controller-manager kube-scheduler /opt/kubernetes/bin
+# 部署安装脚本
+cd ~/k8s
+vi apiserver.sh
+## 内容见附录: apiserver.sh
+vi controller-manager.sh
+## 内容见附录: controller-manager.sh
+vi scheduler.sh
+## 内容见附录: scheduler.sh
+chmod a+x apiserver.sh controller-manager.sh scheduler.sh
+
+# 环境准备
+cd /home/vagrant/k8s/k8s-cert
+vi k8s-cert.sh
+## 内容见附录: k8s-cert.sh
+
+# 安装脚本
+sudo mkdir /opt/kubernetes/logs
+sudo ./apiserver.sh 192.168.1.30 https://192.168.1.30:2379,https://192.168.1.31:2379,https://192.168.1.32:2379
+```
+
+### 部署node组件
+
+![WX20190619-201449](../image/k8s/20190622111238.png)
+
+<https://edu.51cto.com//center/course/lesson/index?id=235851>
 
    
 
@@ -602,7 +645,281 @@ systemctl restart docker
 
 ```
 
+## 附录: apiserver.sh
 
+```shell
+#!/bin/bash
+
+MASTER_ADDRESS=$1
+ETCD_SERVERS=$2
+
+cat <<EOF >/opt/kubernetes/cfg/kube-apiserver
+
+KUBE_APISERVER_OPTS="--logtostderr=false \\
+--log-dir=/opt/kubernetes/logs \\
+--v=4 \\
+--etcd-servers=${ETCD_SERVERS} \\
+--bind-address=${MASTER_ADDRESS} \\
+--secure-port=6443 \\
+--advertise-address=${MASTER_ADDRESS} \\
+--allow-privileged=true \\
+--service-cluster-ip-range=10.0.0.0/24 \\
+--enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota,NodeRestriction \\
+--authorization-mode=RBAC,Node \\
+--kubelet-https=true \\
+--enable-bootstrap-token-auth \\
+--token-auth-file=/opt/kubernetes/cfg/token.csv \\
+--service-node-port-range=30000-50000 \\
+--tls-cert-file=/opt/kubernetes/ssl/server.pem  \\
+--tls-private-key-file=/opt/kubernetes/ssl/server-key.pem \\
+--client-ca-file=/opt/kubernetes/ssl/ca.pem \\
+--service-account-key-file=/opt/kubernetes/ssl/ca-key.pem \\
+--etcd-cafile=/opt/etcd/ssl/ca.pem \\
+--etcd-certfile=/opt/etcd/ssl/server.pem \\
+--etcd-keyfile=/opt/etcd/ssl/server-key.pem"
+
+EOF
+
+cat <<EOF >/usr/lib/systemd/system/kube-apiserver.service
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+EnvironmentFile=-/opt/kubernetes/cfg/kube-apiserver
+ExecStart=/opt/kubernetes/bin/kube-apiserver \$KUBE_APISERVER_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kube-apiserver
+systemctl restart kube-apiserver
+
+```
+
+## 附录: controller-manager.sh
+
+```shell
+#!/bin/bash
+
+MASTER_ADDRESS=$1
+
+cat <<EOF >/opt/kubernetes/cfg/kube-controller-manager
+
+
+KUBE_CONTROLLER_MANAGER_OPTS="--logtostderr=true \\
+--v=4 \\
+--master=${MASTER_ADDRESS}:8080 \\
+--leader-elect=true \\
+--address=127.0.0.1 \\
+--service-cluster-ip-range=10.0.0.0/24 \\
+--cluster-name=kubernetes \\
+--cluster-signing-cert-file=/opt/kubernetes/ssl/ca.pem \\
+--cluster-signing-key-file=/opt/kubernetes/ssl/ca-key.pem  \\
+--root-ca-file=/opt/kubernetes/ssl/ca.pem \\
+--service-account-private-key-file=/opt/kubernetes/ssl/ca-key.pem \\
+--experimental-cluster-signing-duration=87600h0m0s"
+
+EOF
+
+cat <<EOF >/usr/lib/systemd/system/kube-controller-manager.service
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+EnvironmentFile=-/opt/kubernetes/cfg/kube-controller-manager
+ExecStart=/opt/kubernetes/bin/kube-controller-manager \$KUBE_CONTROLLER_MANAGER_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kube-controller-manager
+systemctl restart kube-controller-manager
+
+```
+
+## 附录: scheduler.sh
+
+```shell
+#!/bin/bash
+
+MASTER_ADDRESS=$1
+
+cat <<EOF >/opt/kubernetes/cfg/kube-scheduler
+
+KUBE_SCHEDULER_OPTS="--logtostderr=true \\
+--v=4 \\
+--master=${MASTER_ADDRESS}:8080 \\
+--leader-elect"
+
+EOF
+
+cat <<EOF >/usr/lib/systemd/system/kube-scheduler.service
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+EnvironmentFile=-/opt/kubernetes/cfg/kube-scheduler
+ExecStart=/opt/kubernetes/bin/kube-scheduler \$KUBE_SCHEDULER_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kube-scheduler
+systemctl restart kube-scheduler
+
+```
+
+## 附录： k8s-cert.sh
+
+```shell
+cat > ca-config.json <<EOF
+{
+  "signing": {
+    "default": {
+      "expiry": "87600h"
+    },
+    "profiles": {
+      "kubernetes": {
+         "expiry": "87600h",
+         "usages": [
+            "signing",
+            "key encipherment",
+            "server auth",
+            "client auth"
+        ]
+      }
+    }
+  }
+}
+EOF
+
+cat > ca-csr.json <<EOF
+{
+    "CN": "kubernetes",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "L": "Beijing",
+            "ST": "Beijing",
+      	    "O": "k8s",
+            "OU": "System"
+        }
+    ]
+}
+EOF
+
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca -
+
+#-----------------------
+# 要修改10.206开始的ip, 除了node节点不需要添加到ip列表里面，
+# 其它的master、Load Balancer、Registry等都ip都要加上
+
+cat > server-csr.json <<EOF
+{
+    "CN": "kubernetes",
+    "hosts": [
+      "10.0.0.1",
+      "127.0.0.1",
+      "10.206.176.19",
+      "10.206.240.188",
+      "10.206.240.189",
+      "kubernetes",
+      "kubernetes.default",
+      "kubernetes.default.svc",
+      "kubernetes.default.svc.cluster",
+      "kubernetes.default.svc.cluster.local"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "L": "BeiJing",
+            "ST": "BeiJing",
+            "O": "k8s",
+            "OU": "System"
+        }
+    ]
+}
+EOF
+
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes server-csr.json | cfssljson -bare server
+
+#-----------------------
+
+cat > admin-csr.json <<EOF
+{
+  "CN": "admin",
+  "hosts": [],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "CN",
+      "L": "BeiJing",
+      "ST": "BeiJing",
+      "O": "system:masters",
+      "OU": "System"
+    }
+  ]
+}
+EOF
+
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
+
+#-----------------------
+
+cat > kube-proxy-csr.json <<EOF
+{
+  "CN": "system:kube-proxy",
+  "hosts": [],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "CN",
+      "L": "BeiJing",
+      "ST": "BeiJing",
+      "O": "k8s",
+      "OU": "System"
+    }
+  ]
+}
+EOF
+
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-proxy
+
+```
+
+
+
+## 批量分发
+
+```shell
+for i in ops-k8s-master02 ops-k8s-master03 ops-k8s-node01 ops-k8s-node02 ops-k8s-harbor01 ops-k8s-harbor02;do scp /etc/hosts $i:/etc/;done
+```
 
 
 
