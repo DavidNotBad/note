@@ -67,62 +67,55 @@ function base_path($path=null, $returnDomain=false, $isMkdir=false)
 ```php
 /**
  * 获取文件列表
- *
- * @param string $path  源路径
- * @param null|string $extend   文件后缀(例如: md|php)
- * @param bool $recursive   是否递归查找目录
- * @param null $callback    用于筛选的回调函数
- * @param int $flags    参考glob函数的flags参数
- * 
- * @see http://php.net/manual/zh/function.glob.php
- * @return array
+ * @param  string  $path      查找文件的根路径
+ * @param  string|array|null  $extend    文件的后缀名
+ * @param  boolean $recursive 是否递归查找
+ * @param  integer $flags     flag，详情查看系统函数glob
+ * @param  null|callable  $callback  查找的回调函数
+ * @return array             返回文件列表
  */
-function flist($path, $extend=null, $recursive=false, $callback=null, $flags=0)
-{
+function flist($path, $extend=null, $recursive=false, $flags=0, $callback=null) {
     $path = realpath(preg_replace(array('/\/$/', '/\\\\$/'), '', $path)) . DIRECTORY_SEPARATOR;
-    $pattern = is_string($extend) ? $path . '*' . $extend : $path . '*';
+    if(is_array($extend)) {
+        $pattern = $path . '{' . implode(',', $extend) . '}';
+        if(($flags & GLOB_BRACE) != GLOB_BRACE) {
+            $flags = $flags | GLOB_BRACE;
+        }
+    }elseif(is_string($extend)){
+        $pattern = $path . $extend;
+        if((preg_match('/\{.*?\}/', $extend)) && (($flags & GLOB_BRACE) != GLOB_BRACE)) {
+            $flags = $flags | GLOB_BRACE;
+        }
+    }else{
+        $pattern = $path . '*';
+    }
     $array = is_callable($callback) ? array_filter(glob($pattern, $flags), $callback) : glob($pattern, $flags);
 
     if($recursive) {
         $pattern = $path . '*';
         $dirs = glob($pattern, GLOB_ONLYDIR);
         foreach ($dirs as $item) {
-            $array = array_merge($array, (array) flist($item, $extend, true, $callback, $flags));
+            $array = array_merge($array, (array) static::flist($item, $extend, true, $callback, $flags));
         }
     }
     return $array;
 }
 
-
-
-
-
-function file_list($basepath, $extends = '')
-{
-    $basepath = rtrim($basepath, '/');
-    $filetype = $extends ? "/*.{$extends}" : '/*';
-    return glob($basepath.$filetype);
-}
-
-function file_recursive($fileLists = array())
-{
-    static $return = array();
-    foreach ($fileLists as $file)
-    {
-        if(is_dir($file))
-        {
-            $return = array_merge($return, (array) file_recursive(file_list($file)));
-        }else{
-            $return = array_merge($return, (array) $file);
-        }
-    }
-    return $return;
-}
-
-function glob_recursive($basepath)
-{
-    return file_recursive(file_list($basepath));
-}
+//部分示例： 
+//(更多参考： https://www.php.net/manual/zh/function.glob.php)
+flist('./test', '*.php');
+flist('./test', '*.php', true);
+flist('./test', 'a*.php', true);
+flist('./test', ['*.php', '*.txt'], true);
+flist('./test', 'a?.php', true);
+flist('./test', '[ab]*.php', true);
+flist('./test', '[^a]*.php', true);
+flist('./test', '[^asd]*.php', true);
+flist('./test', '{test, b, c}.php', true);
+flist($path, null, true, GLOB_ONLYDIR);
+flist('./test', null, true, 0, function($file){
+    return strpos($file, 'a.txt') === false;
+}));
 ```
 
 ## 将 用下划线组装成一维数组的数组 转成 多维数组

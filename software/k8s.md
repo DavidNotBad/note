@@ -72,6 +72,8 @@
    sudo hostname k8s-master01
    # 同步时间
    sudo yum -y install ntpdate && sudo ntpdate time.windows.com
+   # 安装软件
+   sudo yum -y install net-tools vim
    ```
 
 3. 生成https证书
@@ -219,9 +221,9 @@ sudo /opt/etcd/bin/my_etcdctl ls /coreos.com/network
 # kube-controller-manager
 # kube-scheduler
 
+#----------------------部署kube-apiserver-------------------------
 ## https://github.com/kubernetes/kubernetes/releases
 ## 点击 CHANGELOG-1.15.md for details -> server binaries
-
 # master节点运行
 # 下载
 cd ~/soft
@@ -242,22 +244,84 @@ vi scheduler.sh
 chmod a+x apiserver.sh controller-manager.sh scheduler.sh
 
 # 环境准备
+## 生成证书
 cd /home/vagrant/k8s/k8s-cert
 vi k8s-cert.sh
 ## 内容见附录: k8s-cert.sh
+chmod a+x k8s-cert.sh
+sudo bash k8s-cert.sh
+sudo cp ca.pem ca-key.pem server.pem server-key.pem /opt/kubernetes/ssl/
+
+
+## 生成token文件
+### 创建 TLS Bootstrapping Token
+#BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')
+BOOTSTRAP_TOKEN=0fb61c46f8991b718eb38d27b605b008
+cat > token.csv <<EOF
+${BOOTSTRAP_TOKEN},kubelet-bootstrap,10001,"system:kubelet-bootstrap"
+EOF
+sudo mv token.csv /opt/kubernetes/cfg/
 
 # 安装脚本
 sudo mkdir /opt/kubernetes/logs
 sudo ./apiserver.sh 192.168.1.30 https://192.168.1.30:2379,https://192.168.1.31:2379,https://192.168.1.32:2379
+
+# 查看是否启动
+ps -ef |grep kube
+
+## ps: 如果出现问题, 手动排查问题
+### source /opt/kubernetes/cfg/kube-apiserver
+### /opt/kubernetes/bin/kube-apiserver $KUBE_APISERVER_OPTS
+
+### 更多参数配置：
+### https://feisky.gitbooks.io/kubernetes/components/apiserver.html
+
+#-------------------部署kube-controller-manager-------------------
+sudo ./controller-manager.sh 127.0.0.1
+
+#-------------------部署kube-scheduler-------------------
+sudo ./scheduler.sh 127.0.0.1
+
+#-------------------------查看集群状态------------------------------
+sudo cp ~/soft/kubernetes/server/bin/kubectl /usr/bin/
+kubectl get cs
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### 部署node组件
 
 ![WX20190619-201449](../image/k8s/20190622111238.png)
 
-<https://edu.51cto.com//center/course/lesson/index?id=235851>
 
-   
+
+   <https://edu.51cto.com//center/course/lesson/index?id=235849>
 
 
 
@@ -784,6 +848,7 @@ systemctl restart kube-scheduler
 ## 附录： k8s-cert.sh
 
 ```shell
+export PATH=$PATH:/usr/local/bin
 cat > ca-config.json <<EOF
 {
   "signing": {
@@ -836,9 +901,13 @@ cat > server-csr.json <<EOF
     "hosts": [
       "10.0.0.1",
       "127.0.0.1",
-      "10.206.176.19",
-      "10.206.240.188",
-      "10.206.240.189",
+      "192.168.1.30",
+      "192.168.1.31",
+      "192.168.1.32",
+      "192.168.1.33",
+      "192.168.1.34",
+      "192.168.1.35",
+      "192.168.1.36",
       "kubernetes",
       "kubernetes.default",
       "kubernetes.default.svc",
@@ -913,12 +982,69 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kube
 
 ```
 
-
-
-## 批量分发
+## 附录: kubeconfig.sh
 
 ```shell
-for i in ops-k8s-master02 ops-k8s-master03 ops-k8s-node01 ops-k8s-node02 ops-k8s-harbor01 ops-k8s-harbor02;do scp /etc/hosts $i:/etc/;done
+# 创建 TLS Bootstrapping Token
+#BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')
+BOOTSTRAP_TOKEN=0fb61c46f8991b718eb38d27b605b008
+
+cat > token.csv <<EOF
+${BOOTSTRAP_TOKEN},kubelet-bootstrap,10001,"system:kubelet-bootstrap"
+EOF
+
+#----------------------
+
+APISERVER=$1
+SSL_DIR=$2
+
+# 创建kubelet bootstrapping kubeconfig 
+export KUBE_APISERVER="https://$APISERVER:6443"
+
+# 设置集群参数
+kubectl config set-cluster kubernetes \
+  --certificate-authority=$SSL_DIR/ca.pem \
+  --embed-certs=true \
+  --server=${KUBE_APISERVER} \
+  --kubeconfig=bootstrap.kubeconfig
+
+# 设置客户端认证参数
+kubectl config set-credentials kubelet-bootstrap \
+  --token=${BOOTSTRAP_TOKEN} \
+  --kubeconfig=bootstrap.kubeconfig
+
+# 设置上下文参数
+kubectl config set-context default \
+  --cluster=kubernetes \
+  --user=kubelet-bootstrap \
+  --kubeconfig=bootstrap.kubeconfig
+
+# 设置默认上下文
+kubectl config use-context default --kubeconfig=bootstrap.kubeconfig
+
+#----------------------
+
+# 创建kube-proxy kubeconfig文件
+
+kubectl config set-cluster kubernetes \
+  --certificate-authority=$SSL_DIR/ca.pem \
+  --embed-certs=true \
+  --server=${KUBE_APISERVER} \
+  --kubeconfig=kube-proxy.kubeconfig
+
+kubectl config set-credentials kube-proxy \
+  --client-certificate=$SSL_DIR/kube-proxy.pem \
+  --client-key=$SSL_DIR/kube-proxy-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kube-proxy.kubeconfig
+
+kubectl config set-context default \
+  --cluster=kubernetes \
+  --user=kube-proxy \
+  --kubeconfig=kube-proxy.kubeconfig
+
+kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+
 ```
 
 

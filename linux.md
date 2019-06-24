@@ -389,3 +389,9 @@ source 配置文件
 CONF_NAME="CONF_VAL"
 ```
 
+## 批量分发
+
+```shell
+for i in ops-k8s-master02 ops-k8s-master03 ops-k8s-node01 ops-k8s-node02 ops-k8s-harbor01 ops-k8s-harbor02;do scp /etc/hosts $i:/etc/;done
+```
+
