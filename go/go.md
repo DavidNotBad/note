@@ -18,6 +18,58 @@ http://c.biancheng.net/golang/
 http://www.itcast.cn/course/go.shtml
 ```
 
+## 备份
+
+```url
+//https://www.cnblogs.com/mmdsnb/p/6439267.html
+//https://www.jianshu.com/p/c4ec92afeca8
+```
+
+
+
+## json-to-go
+
+```go
+//在线版
+https://mholt.github.io/json-to-go/
+//安装版
+https://github.com/ChimeraCoder/gojson
+
+
+
+func JsonToStruct(jsonStr string, structName string, pkgName string, targetFile string)(err error)  {
+	//import "github.com/ChimeraCoder/gojson"
+	//将json转化成struct字符串
+	i := strings.NewReader(jsonStr)
+	res, err := gojson.Generate(i, gojson.ParseJson, structName, pkgName, []string{"json"}, false, true)
+
+	//将struct字符串保存到文件里
+	file, err := os.OpenFile(targetFile, os.O_WRONLY|os.O_CREATE, 0666)
+	defer func() {
+		err = file.Close()
+	}()
+	writer := bufio.NewWriter(file)
+	_, err = writer.WriteString(string(res))
+	err = writer.Flush()
+
+	return
+}
+```
+
+## curl-to-go
+
+```go
+https://mholt.github.io/curl-to-go/
+```
+
+## go执行js
+
+```go
+https://github.com/robertkrimen/otto
+```
+
+
+
 项目思路
 
 ```go
@@ -1069,6 +1121,22 @@ func TypeJudge(items ...interface{}) {
         }
     }
 }
+
+
+func add(a, b interface{}) {
+    switch t := a.(type) {
+    case int:
+        fmt.Printf("type [%T] add res[%d]\n", t, a.(int)+b.(int))
+    case int16:
+        fmt.Printf("type [%T] add res[%d]\n", t, a.(int16)+b.(int16))
+    case float32:
+        fmt.Printf("type [%T] add res[%f]\n", t, a.(float32)+b.(float32))
+    case float64:
+        fmt.Printf("type [%T] add res[%f]\n", t, a.(float64)+b.(float64))
+    default:
+        fmt.Printf("type [%T] not support!\n", t)
+    }
+}
 ```
 
 ## 文件操作
@@ -1643,5 +1711,95 @@ func main() {
 ```go
 //1. 除法
 10 / 12.0 = 0
+```
+
+## go get慢
+
+```go
+gopm 安装：go get -u github.com/gpmgo/gopm
+gopm 安装go包：gopm get -g -v github.com/xxx
+```
+
+## orm
+
+```go
+https://www.kancloud.cn/fizz/gorose-2/1135836
+```
+
+## mysql
+
+```go
+package main
+
+import (
+    "database/sql" // 这是一个抽象层包，比如区分mysql、orcal等数据库，只有这个包是连接不上mysql的，还需要搭配下面的mysql包
+       "fmt"
+    _ "github.com/go-sql-driver/mysql" //导入mysql驱动包
+)
+
+func init() {
+
+}
+
+func main() {
+    db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/test?charset=utf8")
+    if err != nil {
+        panic(err)
+    }
+    //增加数据
+        stmt, err := db.Prepare(`INSERT student (name,age) values (?,?)`)
+        res, err := stmt.Exec("wangwu", 26)
+        id, err := res.LastInsertId()
+        fmt.Println("自增id=", id)
+    //修改数据
+        stmt, err := db.Prepare(`UPDATE student SET age=? WHERE id=?`)
+        res, err := stmt.Exec(21, 5)
+        num, err := res.RowsAffected() //影响行数
+        fmt.Println(num)
+    //删除数据
+        stmt, err := db.Prepare(`DELETE FROM student WHERE id=?`)
+        res, err := stmt.Exec(5)
+        num, err := res.RowsAffected()
+        fmt.Println(num)
+    //查询数据
+    rows, err := db.Query("SELECT * FROM student")
+
+    //--------简单一行一行输出---start
+    //    for rows.Next() { //满足条件依次下一层
+    //        var id int
+    //        var name string
+    //        var age int
+    //        rows.Columns()
+
+    //        err = rows.Scan(&id, &name, &age)
+    //        fmt.Println(id)
+    //        fmt.Println(name)
+    //        fmt.Println(age)
+    //    }
+    //--------简单一行一行输出---end
+
+    //--------遍历放入map----start
+    //构造scanArgs、values两个数组，scanArgs的每个值指向values相应值的地址
+    columns, _ := rows.Columns()
+    scanArgs := make([]interface{}, len(columns))
+    values := make([]interface{}, len(columns))
+
+    for i := range values {
+        scanArgs[i] = &values[i]
+    }
+
+    for rows.Next() {
+        //将行数据保存到record字典
+        err = rows.Scan(scanArgs...)
+        record := make(map[string]string)
+        for i, col := range values {
+            if col != nil {
+                record[columns[i]] = string(col.([]byte))
+            }
+        }
+        fmt.Println(record)
+    }
+    //--------遍历放入map----end
+}
 ```
 

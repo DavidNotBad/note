@@ -13,6 +13,18 @@
 
 [使用中国镜像](https://pkg.phpcomposer.com/#how-to-use-packagist-mirror)
 
+```shell
+# 配置文件：
+# C:\Users\Administrator\AppData\Roaming\Composer
+
+# 允许http下载
+composer config -g secure-http false
+# 更改镜像
+composer config -g repo.packagist composer https://packagist.phpcomposer.com
+```
+
+
+
 ## 库
 
 ### phpexcel

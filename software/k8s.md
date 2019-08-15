@@ -1,5 +1,10 @@
 ## 集群架构与组件
 
+```shell
+# 梳理流程
+https://www.jianshu.com/p/bb973ab1029b
+```
+
 ### 单master架构图
 
 ![image-20190619194635594](../image/k8s/image-20190619194635594.png)![image-20190619194635594](../image/k8s/WX20190619-200224.png)
@@ -212,6 +217,21 @@ ps -ef |grep doc
 ip addr
 ## docker0与flannal处于同一网段
 sudo /opt/etcd/bin/my_etcdctl ls /coreos.com/network
+
+
+# 验证通信环境是否良好
+# 1. 检查node1节点是否可以访问node2上的容器
+## node2
+docker run -it busybox
+ip addr
+## node1
+ping node2的容器的ip地址
+# 2. 检查node1节点的容器是否可以访问node2上的容器
+## node1
+docker run -it busybox
+ip addr
+## node1
+ping node2的容器的ip地址
 ```
 
 ### 部署master组件
@@ -287,41 +307,116 @@ sudo cp ~/soft/kubernetes/server/bin/kubectl /usr/bin/
 kubectl get cs
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### 部署node组件
 
 ![WX20190619-201449](../image/k8s/20190622111238.png)
 
+```shell
+#---------------------------master机子上操作--------------------
+# 将kubelet-bootstrap用户绑定到系统集群角色
+## 与 cat /opt/kubernetes/cfg/token.csv
+kubectl create clusterrolebinding kubelet-bootstrap \
+--clusterrole=system:node-bootstrapper \
+--user=kubelet-bootstrap
+### 删除是kubectl delete clusterrolebinding kubelet-bootstrap
+
+# 创建kubeconfig文件
+vi ~/k8s/kubeconfig.sh
+## 内容见附录: kubeconfig.sh
+sudo bash kubeconfig.sh 192.168.1.30 ~/k8s/k8s-cert
+## 检查user的token是否存在
+sudo cat bootstrap.kubeconfig
+## 拷贝到node机器上
+sudo scp bootstrap.kubeconfig kube-proxy.kubeconfig vagrant@192.168.1.31:~/
+sudo scp /home/vagrant/soft/kubernetes/server/bin/{kubelet,kube-proxy} vagrant@192.168.1.31:~/
+
+#---------------------------在node机器上执行--------------------
+sudo cp bootstrap.kubeconfig kube-proxy.kubeconfig /opt/kubernetes/cfg/
+sudo cp kubelet kube-proxy /opt/kubernetes/bin/
+# 部署kubelet, kube-proxy组件
+vi ~/kubelet.sh
+## 内容见附录: kubelet.sh
+sudo mkdir /opt/kubernetes/logs
+sudo bash kubelet.sh 192.168.1.31
+sudo systemctl restart kubelet
+## 排错
+sudo ps -aux|grep kubelet
+less /var/log/messages
+tail -f /var/log/messages
+less /opt/kubernetes/logs/kubelet.INFO
+
+# 把节点加入集群(master)
+sudo kubectl get csr
+sudo kubectl certificate approve csr-字符串
+sudo kubectl get node
+
+vi ~/proxy.sh
+## 内容见附录: proxy.sh
+sudo bash proxy.sh 192.168.1.31
+sudo ps -aux |grep proxy
+
+# 从node1拷贝到node2
+## 查找 （grep 31 *）
+sudo scp -r /opt/kubernetes/ vagrant@192.168.1.32:/opt/
+sudo scp /usr/lib/systemd/system/{kubelet,kube-proxy}.service vagrant@192.168.1.32:/usr/lib/systemd/system/
+sudo rm -rf /opt/kubernetes/ssl/*
+cd /opt/kubernetes/cfg
+sudo vim kubelet ## 修改ip192.168.1.31为192.168.1.32
+sudo vim kubelet.config ## 修改ip192.168.1.31为192.168.1.32
+sudo vim kube-proxy ## 修改ip192.168.1.31为192.168.1.32
+sudo systemctl daemon-reload
+sudo systemctl restart kube-proxy
+sudo systemctl restart kubelet
+## master手动颁发证书
+sudo kubectl get csr
+sudo kubectl certificate approve csr-字符串
+sudo kubectl get node
+```
+
+### 部署一个测试示例
+
+```shell
+# 下载pods
+sudo kubectl run nginx --image=nginx
+# 查看pods
+sudo kubectl get pods
+sudo kubectl get all
+# 暴露端口
+sudo kubectl expose deployment nginx --port=80 --target-port=80 --type=NodePort
+# 查看端口
+sudo kubectl get svc
+# 尝试访问
+curl 10.0.0.12:80
+
+# 如果失败， 确保flannel运行正常
+ifconfig # 查看docker/flannel1是否在同一个网段
+ps -aux |grep flanneld
+sudo systemctl status flanneld
+sudo systemctl restart flanneld
+sudo systemctl restart docker
+
+sudo tail -f /var/log/messages
+
+# master
+sudo kubectl get pods -o wide
+sudo kubectl get svc
+sudo kubectl get pods
+sudo kubectl logs pos-name
+
+# node1和node2
+sudo vim /opt/kubernetes/cfg/kubelet.config
+authentication:
+  anonymous:
+    enabled: true
+sudo systemctl restart kubelet
+sudo ps -ef |grep kubelet
+```
 
 
-   <https://edu.51cto.com//center/course/lesson/index?id=235849>
+
+<https://edu.51cto.com//center/course/lesson/index?id=319528>
+
+
 
 
 
@@ -985,18 +1080,9 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kube
 ## 附录: kubeconfig.sh
 
 ```shell
-# 创建 TLS Bootstrapping Token
-#BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')
-BOOTSTRAP_TOKEN=0fb61c46f8991b718eb38d27b605b008
-
-cat > token.csv <<EOF
-${BOOTSTRAP_TOKEN},kubelet-bootstrap,10001,"system:kubelet-bootstrap"
-EOF
-
-#----------------------
-
 APISERVER=$1
 SSL_DIR=$2
+BOOTSTRAP_TOKEN=0fb61c46f8991b718eb38d27b605b008
 
 # 创建kubelet bootstrapping kubeconfig 
 export KUBE_APISERVER="https://$APISERVER:6443"
@@ -1044,8 +1130,110 @@ kubectl config set-context default \
   --kubeconfig=kube-proxy.kubeconfig
 
 kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
-
 ```
+
+## 附录: kubelet.sh
+
+```shell
+#!/bin/bash
+
+NODE_ADDRESS=$1
+DNS_SERVER_IP=${2:-"10.0.0.2"}
+
+cat <<EOF >/opt/kubernetes/cfg/kubelet
+
+KUBELET_OPTS="--logtostderr=false \\
+--log-dir=/opt/kubernetes/logs \\
+--v=4 \\
+--address=${NODE_ADDRESS} \\
+--hostname-override=${NODE_ADDRESS} \\
+--kubeconfig=/opt/kubernetes/cfg/kubelet.kubeconfig \\
+--experimental-bootstrap-kubeconfig=/opt/kubernetes/cfg/bootstrap.kubeconfig \\
+--config=/opt/kubernetes/cfg/kubelet.config \\
+--cert-dir=/opt/kubernetes/ssl \\
+--pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google-containers/pause-amd64:3.0"
+
+EOF
+
+cat <<EOF >/opt/kubernetes/cfg/kubelet.config
+
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+address: ${NODE_ADDRESS}
+port: 10250
+cgroupDriver: cgroupfs
+clusterDNS:
+- ${DNS_SERVER_IP} 
+clusterDomain: cluster.local.
+failSwapOn: false
+
+EOF
+
+cat <<EOF >/usr/lib/systemd/system/kubelet.service
+[Unit]
+Description=Kubernetes Kubelet
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/opt/kubernetes/cfg/kubelet
+ExecStart=/opt/kubernetes/bin/kubelet \$KUBELET_OPTS
+Restart=on-failure
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kubelet
+systemctl restart kubelet
+```
+
+## 附录: proxy.sh
+
+```shell
+#!/bin/bash
+
+NODE_ADDRESS=$1
+
+cat <<EOF >/opt/kubernetes/cfg/kube-proxy
+
+KUBE_PROXY_OPTS="--logtostderr=true \\
+--v=4 \\
+--hostname-override=${NODE_ADDRESS} \\
+--cluster-cidr=10.0.0.0/24 \\
+--proxy-mode=ipvs \\
+--kubeconfig=/opt/kubernetes/cfg/kube-proxy.kubeconfig"
+
+EOF
+
+cat <<EOF >/usr/lib/systemd/system/kube-proxy.service
+[Unit]
+Description=Kubernetes Proxy
+After=network.target
+
+[Service]
+EnvironmentFile=-/opt/kubernetes/cfg/kube-proxy
+ExecStart=/opt/kubernetes/bin/kube-proxy \$KUBE_PROXY_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kube-proxy
+systemctl restart kube-proxy
+```
+
+## 单机版？?
+
+```shell
+https://www.missshi.cn/api/view/blog/5b0e8af013d85b22bc000001
+```
+
+
 
 
 

@@ -53,8 +53,6 @@ import (
 //	return
 //}
 
-
-
 ////根据客户端发送消息种类的不同， 决定调用哪个函数来处理
 //func serverProcessMes(conn net.Conn, mes *message.Message)(err error)  {
 //	switch mes.Type {
@@ -69,7 +67,6 @@ import (
 //	}
 //	return
 //}
-
 
 //处理和客户端的通讯
 func process(conn net.Conn) {
@@ -115,10 +112,9 @@ func initUserDao() {
 	model.MyUserDao = model.NewUserDao(pool)
 }
 
-
-func main()  {
+func main() {
 	//初始化连接池
-	initPool("0.0.0.0:6379", 8, 0, 300 * time.Second)
+	initPool("0.0.0.0:6379", 8, 0, 300*time.Second)
 	//初始化UserDao， 顺序要在initPool后面
 	initUserDao()
 
@@ -138,8 +134,6 @@ func main()  {
 		}
 
 		//连接成功后， 启动协程和客户端保持客户端的通讯
-		 go process(conn)
+		go process(conn)
 	}
 }
-
-

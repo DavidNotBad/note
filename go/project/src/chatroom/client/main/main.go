@@ -11,7 +11,7 @@ var userId int
 var userPwd string
 var userName string
 
-func main()  {
+func main() {
 	//接收用户的输入
 	var key int
 	stdin := bufio.NewReader(os.Stdin)
@@ -28,7 +28,7 @@ func main()  {
 
 		switch key {
 		case 1:
-			fmt.Println("1. 登陆聊天室")//说明用户要登录
+			fmt.Println("1. 登陆聊天室") //说明用户要登录
 			fmt.Println("请输入用户的id")
 			fmt.Fscan(stdin, &userId)
 			stdin.ReadString('\n')
@@ -65,6 +65,5 @@ func main()  {
 			continue
 		}
 	}
-
 
 }

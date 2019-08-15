@@ -58,6 +58,8 @@ git fetch --all
 git pull origin master
 ```
 
+## php调用系统命令
+
 ```php
 // 输出 shell 命令 "ls" 的返回结果
 // 并且将输出的最后一样内容返回到 $last_line。
@@ -69,4 +71,12 @@ $last_line = exec('gitpullbox', $output, $returnVar);
 // 打印更多信息
 echo (implode('<br>', $output));
 ```
+
+## shell脚本统计当前并发连接数
+
+```shell
+netstat -pnt |grep :80 |grep ESTABLISHED |wc -l
+```
+
+
 

@@ -8,7 +8,7 @@ import (
 )
 
 //显示登录成功后的界面。。
-func ShowMenu()  {
+func ShowMenu() {
 	fmt.Println("恭喜xxx登录成功")
 	fmt.Println("1. 显示用户在线列表")
 	fmt.Println("2. 发送消息")
@@ -51,9 +51,6 @@ func serverProcessMes(conn net.Conn) {
 		}
 		//如果读取到消息， 又是下一步处理逻辑
 		fmt.Printf("mes=%v\n", mes)
-//string set list hash
+		//string set list hash
 	}
 }
-
-
-

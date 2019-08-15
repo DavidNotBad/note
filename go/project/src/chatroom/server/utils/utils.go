@@ -10,12 +10,10 @@ import (
 
 type Transfer struct {
 	Conn net.Conn
-	Buf [8096]byte
+	Buf  [8096]byte
 }
 
-
-
-func (this *Transfer) ReadPkg()(mes message.Message, err error) {
+func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 	//buf := make([]byte, 8096)
 	fmt.Println("读取客户端发送的数据。。。")
 	_, err = this.Conn.Read(this.Buf[:4])
@@ -42,7 +40,7 @@ func (this *Transfer) ReadPkg()(mes message.Message, err error) {
 	return
 }
 
-func (this *Transfer) WritePkg(data []byte)(err error)  {
+func (this *Transfer) WritePkg(data []byte) (err error) {
 	//发送通讯内容的长度给对方， 用来验证是否丢包
 	//var buf [4]byte
 	binary.BigEndian.PutUint32(this.Buf[:4], uint32(len(data)))
@@ -65,7 +63,3 @@ func (this *Transfer) WritePkg(data []byte)(err error)  {
 	fmt.Println("发送消息", string(data), "ok")
 	return
 }
-
-
-
-

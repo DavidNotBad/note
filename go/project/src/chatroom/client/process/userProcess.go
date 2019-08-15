@@ -11,7 +11,6 @@ import (
 )
 
 type UserProcess struct {
-
 }
 
 //请求注册
@@ -59,7 +58,6 @@ func (this *UserProcess) Register(userId int, userPwd string, userName string) (
 		fmt.Println("注册发送信息出错了 err=", err)
 	}
 
-
 	mes, err = tf.ReadPkg()
 	if err != nil {
 		fmt.Println("readPkg err", err)
@@ -70,7 +68,7 @@ func (this *UserProcess) Register(userId int, userPwd string, userName string) (
 	err = json.Unmarshal([]byte(mes.Data), &registerResMes)
 	if registerResMes.Code == 200 {
 		fmt.Println("注册成功")
-	}else{
+	} else {
 		fmt.Println(registerResMes.Error)
 	}
 
@@ -78,10 +76,8 @@ func (this *UserProcess) Register(userId int, userPwd string, userName string) (
 	return
 }
 
-
-
 //写一个函数， 完成登录
-func (this *UserProcess) Login(userId int, userPwd string)(err error) {
+func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	//开始定协议
 	//fmt.Printf("userId = %d userPwd=%s\n", userId, userPwd)
 	//return nil
@@ -169,7 +165,7 @@ func (this *UserProcess) Login(userId int, userPwd string)(err error) {
 		for {
 			ShowMenu()
 		}
-	}else{
+	} else {
 		fmt.Println(loginResMes.Error)
 	}
 

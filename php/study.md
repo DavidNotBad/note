@@ -380,6 +380,8 @@ var_dump($data);
 
 ```python
 https://www.cnblogs.com/leestar54/p/5342665.html
+https://blog.csdn.net/yangwenxue_admin/article/details/73936803
+https://www.jianshu.com/p/1d20fd8c3029
 ```
 
 ## 获取数组特定的列
@@ -506,36 +508,6 @@ $method->invoke($instance);
 
 ```php
 http://www.php.cn/php-weizijiaocheng-393275.html
-```
-
-
-
-## 星期中的第几天
-
-```php
-//本周一
-echo date('Y-m-d',(time()-((date('w')==0?7:date('w'))-1)*24*3600)); //w为星期几的数字形式,这里0为周日
-
-//本周日
-echo date('Y-m-d',(time()+(7-(date('w')==0?7:date('w')))*24*3600)); //同样使用w,以现在与周日相关天数算
-
-//上周一
-echo date('Y-m-d',strtotime('-1 monday', time())); //无论今天几号,-1 monday为上一个有效周未
-
-//上周日
-echo date('Y-m-d',strtotime('-1 sunday', time())); //上一个有效周日,同样适用于其它星期
-
-//本月一日
-echo date('Y-m-d',strtotime(date('Y-m', time()).'-01 00:00:00')); //直接以strtotime生成
-
-//本月最后一日
-echo date('Y-m-d',strtotime(date('Y-m', time()).'-'.date('t', time()).' 00:00:00')); //t为当月天数,28至31天
-
-//上月一日
-echo date('Y-m-d',strtotime('-1 month', strtotime(date('Y-m', time()).'-01 00:00:00'))); //本月一日直接strtotime上减一个月
-
-//上月最后一日
-echo date('Y-m-d',strtotime(date('Y-m', time()).'-01 00:00:00')-86400); //本月一日减一天即是上月最后一日
 ```
 
 ## 数组根据key排序
@@ -867,6 +839,40 @@ class Flag
 
 $flag = new Flag();
 $flag->setFlags(Flag::FLAG_02 | Flag::FLAG_04)->handle();
+```
+
+## 生成身份证
+
+```shell
+# https://github.com/airob0t/idcardgenerator
+```
+
+## 图片后缀
+
+```php
+$imageInfo = getimagesizefromstring(file_get_contents($data));
+$ext = '';
+switch ($imageInfo['mime']){
+    case image_type_to_mime_type(IMAGETYPE_JPEG):
+        $ext = '.jpeg';
+        break;
+    case image_type_to_mime_type(IMAGETYPE_PNG):
+        $ext = '.png';
+        break;
+    case image_type_to_mime_type(IMAGETYPE_GIF):
+        $ext = '.gif';
+        break;
+    default:
+        //不支持的图片类型
+        break;
+}
+```
+
+## 执行字符串表达式
+
+```php
+$dynamic_func = create_function('$x, $y', 'return $x+$y;');
+echo $dynamic_func(1, 2);
 ```
 
 

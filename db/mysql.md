@@ -77,3 +77,29 @@ WHERE
 AND t.`TABLE_SCHEMA` = 'tc'
 ```
 
+## 查找出重复的字段
+
+```mysql
+SELECT
+	device_id,
+	count( device_id ) 
+FROM
+	tc_device 
+GROUP BY
+	device_id 
+HAVING
+	device_id >1
+```
+
+## 获取列名
+
+```mysql
+SHOW FULL COLUMNS FROM tc_business
+```
+
+## 打印insert语句
+
+```mysql
+mysqldump -t -u root -proot tc tc_service_provider --where="id=1"
+```
+

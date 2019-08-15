@@ -1,12 +1,13 @@
 package dbops
 
 import (
+	"database/sql"
+	"log"
 	"strconv"
 	"sync"
-	"log"
-	"database/sql"
 	"video_server_1_5/api/defs"
 )
+
 
 func InsertSession(sid string, ttl int64, uname string) error {
 	ttlstr := strconv.FormatInt(ttl, 10)

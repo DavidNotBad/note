@@ -10,11 +10,11 @@ import (
 )
 
 type UserProcess struct {
-	Conn net.Conn
+	Conn   net.Conn
 	UserId int
 }
 
-func (this *UserProcess) ServerProcessRegister(mes *message.Message)(err error) {
+func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error) {
 	//1. 从mes中取出mes.Data， 并直接反序列化成RegisterMes
 	var registerMes message.RegisterMes
 	err = json.Unmarshal([]byte(mes.Data), &registerMes)
@@ -36,11 +36,11 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message)(err error) 
 		if err == model.ERROR_USER_EXISTS {
 			registerResMes.Code = 505
 			registerResMes.Error = model.ERROR_USER_EXISTS.Error()
-		}else{
+		} else {
 			registerResMes.Code = 506
 			registerResMes.Error = "注册发生未知错误"
 		}
-	}else{
+	} else {
 		registerResMes.Code = 200
 	}
 
@@ -71,7 +71,7 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message)(err error) 
 }
 
 //处理登录请求
-func (this *UserProcess) ServerProcessLogin(mes *message.Message)(err error)  {
+func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	//1. 从mes中取出mes.Data， 并直接反序列化成LoginMes
 	var loginMes message.LoginMes
 	err = json.Unmarshal([]byte(mes.Data), &loginMes)
@@ -98,7 +98,7 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message)(err error)  {
 	if err != nil {
 		loginResMes.Code = 500
 		loginResMes.Error = "该用户不存在， 请注册后使用..."
-	}else{
+	} else {
 		loginResMes.Code = 200
 
 		//把登录成功的用户放入到userMgr中
@@ -135,5 +135,3 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message)(err error)  {
 
 	return
 }
-
-

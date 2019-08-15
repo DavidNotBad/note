@@ -13,9 +13,8 @@ type Processor struct {
 	Conn net.Conn
 }
 
-
 //根据客户端发送消息种类的不同， 决定调用哪个函数来处理
-func (this *Processor) serverProcessMes(mes *message.Message)(err error)  {
+func (this *Processor) serverProcessMes(mes *message.Message) (err error) {
 
 	switch mes.Type {
 	//处理登录的逻辑
@@ -36,7 +35,7 @@ func (this *Processor) serverProcessMes(mes *message.Message)(err error)  {
 	return
 }
 
-func (this *Processor) process()(err error) {
+func (this *Processor) process() (err error) {
 	//读客户端发送的信息
 	tf := &utils.Transfer{
 		Conn: this.Conn,
@@ -46,7 +45,7 @@ func (this *Processor) process()(err error) {
 		if err != nil {
 			if err == io.EOF {
 				fmt.Println("客户端退出， 服务端协程关闭")
-			}else {
+			} else {
 				fmt.Println("readPkg err=", err)
 			}
 			return err
@@ -56,7 +55,7 @@ func (this *Processor) process()(err error) {
 		if err != nil {
 			if err == io.EOF {
 				fmt.Println("客户端退出， 服务端协程关闭")
-			}else{
+			} else {
 				fmt.Println("serverProcessMes fail", err)
 			}
 			return err

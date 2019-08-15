@@ -7,7 +7,7 @@ var (
 )
 
 type UserMgr struct {
-	onlineUsers map[int] *UserProcess
+	onlineUsers map[int]*UserProcess
 }
 
 //完成对userMgr初始化工作
@@ -23,7 +23,7 @@ func (this *UserMgr) AddOnlineUser(up *UserProcess) {
 }
 
 //删除
-func (this *UserMgr) DelOnlineUser(userId int)  {
+func (this *UserMgr) DelOnlineUser(userId int) {
 	delete(this.onlineUsers, userId)
 }
 
@@ -33,21 +33,11 @@ func (this *UserMgr) GetAllOnlineUser() map[int]*UserProcess {
 }
 
 //根据id返回对应的值
-func (this *UserMgr) GetOnlineUserById(userId int)(up *UserProcess, err error)  {
+func (this *UserMgr) GetOnlineUserById(userId int) (up *UserProcess, err error) {
 	up, ok := this.onlineUsers[userId]
-	if ! ok {
+	if !ok {
 		err = fmt.Errorf("用户%d不存在", userId)
 		return
 	}
 	return
 }
-
-
-
-
-
-
-
-
-
-
