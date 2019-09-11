@@ -1231,6 +1231,9 @@ systemctl restart kube-proxy
 
 ```shell
 https://www.missshi.cn/api/view/blog/5b0e8af013d85b22bc000001
+
+使用 kubeadm 创建一个单主集群
+https://kubernetes.io/zh/docs/setup/independent/create-cluster-kubeadm/
 ```
 
 

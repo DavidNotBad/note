@@ -475,6 +475,13 @@ OrdUser::getUser($orduserSelect, $userSelect);
 
 ## 扩展collection
 
+```shell
+# 待扩展内容
+# get支持点语法
+# array_count_values
+# 求和判断是否数字
+```
+
 ```php
 # 1.扩展Eloquent\Collection
 //在app下新建Supports\Collection.php
@@ -628,6 +635,17 @@ class AppServiceProvider extends ServiceProvider
 
 //设置默认的最外层资源
 JsonResource::wrap('_data');
+```
+
+## 数组递归变Collection对象
+
+```php
+private function mapToCollection(array $array)
+{
+    return Collection::make($array)->transform(function($item){
+        return (is_array($item) || $item instanceof Arrayable) ? $this->collectionTree($item) : $item;
+    });
+}
 ```
 
 ## 扩展resources

@@ -1,72 +1,61 @@
 package main
 
-import (
-	"database/sql"
-	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"reflect"
-)
+import "fmt"
 
-var db *sql.DB
-
-type User struct {
-	UID   int `json:"uid"`
-	Name string `json:"name"`
-	Age int `json:"age"`
+type S struct {
+    i int
 }
 
-//https://www.cnblogs.com/mmdsnb/p/6439267.html
-//https://www.jianshu.com/p/c4ec92afeca8
+func (p *S) Get() int {
+    return p.i
+}
+func (p *S) Put(v int) {
+    p.i = v
+}
+
+type I interface {
+    Get() int
+    Put(int)
+}
+
+func f1(p I) {
+    fmt.Println(p.Get())
+    p.Put(888)
+}
+
+func f2(p interface{}) {
+    switch t := p.(type) {
+    case int:
+        fmt.Println("this is int number")
+    case I:
+        fmt.Println("I:", t.Get())
+    default:
+        fmt.Println("unknow type")
+    }
+}
+
+//指针修改原数据
+func dd(a *S) {
+    a.Put(999)
+    fmt.Println(a.Get(), "in dd func")
+}
+
+//临时数据
+func aa(a S) {
+    a.Put(2222)
+    fmt.Println(a.Get(), "in aa func")
+}
+
 func main() {
-	db, _ = sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/test?charset=utf8")
+    var s S
+    s.Put(333)
+    fmt.Println(s.Get())
+    f1(&s)
+    fmt.Println(s.Get())
+    f2(&s)
+    dd(&s)
+    fmt.Println(s.Get())
+    aa(s)
+    fmt.Println(s.Get())
 
-	sqlStr := "select * from users"
-
-	var datas2 []User
-	e := Parse(sqlStr, &datas2)
-	fmt.Println(datas2, e)
 }
-
-func Parse(sqlStr string, m interface{}) error {
-	mVal := reflect.ValueOf(m)
-	//mTyp := reflect.TypeOf(m)
-	mInd := reflect.Indirect(mVal)
-
-	rows, err := db.Query(sqlStr)
-	if err != nil{
-		return err
-	}
-	defer func() {
-		err = rows.Close()
-		return
-	}()
-
-	columns, _ := rows.Columns()
-	rs := mVal.Elem().Type().Elem()
-
-	for rows.Next() {
-		r := reflect.New(rs)
-
-		tmp := make([]interface{}, len(columns))
-		rsNumField := rs.NumField()
-		for i := 0; i < rsNumField; i++ {
-			tmp[i] = r.Elem().Field(i).Addr().Interface()
-		}
-
-		err = rows.Scan(tmp...)
-		if err != nil{
-			return err
-		}
-
-		mInd.Set(reflect.Append(mInd, reflect.Indirect(r)))
-	}
-	return err
-}
-
-
-
-
-
-
-
-

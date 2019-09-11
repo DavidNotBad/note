@@ -291,5 +291,127 @@ open xx.bat
 exec xx.bat
 ```
 
+## window下git本地服务器
+
+```shell
+https://www.cnblogs.com/strongwong/p/9145451.html\
+https://cloud.tencent.com/developer/article/1199207
+https://www.jianshu.com/p/97eff04df358
+
+# ks-post-receive.groovy
+//声明类
+import com.gitblit.GitBlit
+import com.gitblit.Keys
+import com.gitblit.models.RepositoryModel
+import com.gitblit.models.TeamModel
+import com.gitblit.models.UserModel
+import com.gitblit.utils.JGitUtils
+import com.gitblit.utils.StringUtils
+import java.text.SimpleDateFormat
+import org.eclipse.jgit.api.CloneCommand
+import org.eclipse.jgit.api.PullCommand
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.Config
+import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.transport.ReceiveCommand
+import org.eclipse.jgit.transport.ReceiveCommand.Result
+import org.eclipse.jgit.util.FileUtils
+import org.slf4j.Logger
+
+//logger.info() 服务器日志信息
+//clientLogger.info() 客户端日志信息
+
+// 文件夹目录
+def rootFolder = 'D:/www'
+def bare = false
+//是否全部分支
+def allBranches = false
+//目标分支
+def branch = 'refs/heads/master'
+def includeSubmodules = true
+
+//版本库名称
+def repoName = repository.name
+//文件夹对象
+def destinationFolder = new File(rootFolder, StringUtils.stripDotGit(repoName))
+//版本库路径
+def srcUrl = 'file://' + new File(gitblit.getRepositoriesFolder(), repoName).absolutePath
+
+def updatedRef
+for (ReceiveCommand command : commands) {
+    updatedRef = command.refName
+    clientLogger.info("${updatedRef.equals(branch)}")
+}
+
+//判断是否全部分支更新
+if(allBranches){
+    logger.info("用户 ${user.username} 请求从 ${repository.name} 版本库下[所有分支]克隆文件")
+    //不终止，继续执行
+}else{
+    logger.info("用户 ${user.username} 请求从 ${repository.name} 版本库下 ${updatedRef} 分支更新文件")
+    //单线分支
+    //判断 推送分支 是否与 设置分支相同
+    if (updatedRef.equals(branch)){
+        //不终止，继续执行
+        clientLogger.info("准备从目标分支获取文件")
+    }else{
+        //终止后续操作
+        logger.info("推送分支 ${updatedRef} 不在更新范围内,结束操作")
+        clientLogger.info("推送分支 ${updatedRef} 不在更新范围内,结束操作")
+        return false
+    }
+}
+
+clientLogger.info("正在检查文件目录")
+// 检查目标文件目录是否存在
+if (destinationFolder.exists()) {
+    //已存在，使用 pull 拉取推送的不同文件
+    logger.info("正在把 ${srcUrl} 版本库文件更新至 ${destinationFolder}")
+    clientLogger.info("文件目录已存在，准备更新文件")
+    //git 获取文件夹路径
+    Git git = Git.open(destinationFolder)
+    //调用 pull 类下的 pull 方法
+    PullCommand cmd = git.pull()
+    //设置对象分支
+    cmd.setRemoteBranchName(branch)
+    //执行
+    cmd.call()
+    //关闭
+    git.close()
+    logger.info("文件更新成功")
+    clientLogger.info("文件已更新完成")
+} else {
+    //不存在，使用 clone 克隆对应分支 
+    logger.info("正在把 ${srcUrl} 版本库克隆到 ${destinationFolder}")
+    clientLogger.info("准备新建文件目录，正在确认版本库")
+    //调用 clone 类 下的 方法
+    CloneCommand cmd = Git.cloneRepository();
+    cmd.setBare(bare)
+    //判断是否判断全部分区
+    if (allBranches){
+        logger.info("开始克隆全部分支")
+        clientLogger.info("开始克隆全部分支")
+        cmd.setCloneAllBranches(true)
+    }else{
+        logger.info("开始克隆 ${branch} 分支")
+        clientLogger.info("开始克隆 ${branch} 分支")
+        cmd.setBranch(branch)       
+    }
+    cmd.setCloneSubmodules(includeSubmodules)
+    //设置路径
+    cmd.setURI(srcUrl)
+    //设置文件夹路径
+    cmd.setDirectory(destinationFolder)
+    //执行
+    Git git = cmd.call();
+    git.repository.close()
+    logger.info("克隆已完成")
+    clientLogger.info("克隆已完成")
+}
+ 
+logger.info("操作完成")
+```
+
 
 

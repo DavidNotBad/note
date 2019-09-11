@@ -2,58 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2e0b2034-f5eb-43af-b2ca-6c08ff096f44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../apiproject/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../apiproject/test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/app/controllers/Controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/app/controllers/UserController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/app/http/middleware.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/app/models/Model.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/app/models/User.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/config/app.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/routers/app.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mvc/utils/dev.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../db/mysql.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../db/mysql.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../beego.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../beego.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../go.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../go.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/main/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/process/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/process/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/process/smsProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/process/smsProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/process/userProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/process/userProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/utils/utils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/common/message/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/common/message/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/common/message/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/common/message/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/common/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/common/utils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/main/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/main/processor.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/main/processor.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/main/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/main/redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/model/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/model/error.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/model/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/model/userDao.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/model/userDao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/process/smsProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/process/smsProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/process/userMgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/process/userMgr.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/process/userProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/process/userProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/utils/utils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../github.com/go-sql-driver/mysql" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/go-sql-driver/mysql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../test/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/dbops/api.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/dbops/conn.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/defs/apidef.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/defs/errors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/handlers.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/main.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/api/response.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/video_server_1_5.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/video_server_1_5.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mvc/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../mvc/test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aa" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/dbops/internal.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/dbops/internal.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../php/composer.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/composer.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../php/study.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/study.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../software/k8s.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../software/k8s.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../url.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../url.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../系统运维/server.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../系统运维/server.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../software/git.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../software/git.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -66,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../mvc/test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="416">
-              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            <state relative-caret-position="312">
+              <caret line="39" column="38" lean-forward="true" selection-start-line="39" selection-start-column="38" selection-end-line="39" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -173,9 +124,9 @@
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="2560" />
-    <option name="height" value="1440" />
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -192,11 +143,6 @@
             <path>
               <item name="video_server_1_5" type="b2602c69:ProjectViewProjectNode" />
               <item name="video_server_1_5" type="47feb1d3:ProjectViewModuleNode" />
-            </path>
-            <path>
-              <item name="video_server_1_5" type="b2602c69:ProjectViewProjectNode" />
-              <item name="video_server_1_5" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="mvc" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -250,7 +196,7 @@
     <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4974773" visible="true" weight="0.20396146" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4974773" visible="true" weight="0.21112311" />
       <window_info id="Structure" order="1" sideWeight="0.5025227" side_tool="true" type="SLIDING" weight="0.14453961" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -263,7 +209,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.21190716" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.407669" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -589,8 +535,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../mvc/test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        <state relative-caret-position="312">
+          <caret line="39" column="38" lean-forward="true" selection-start-line="39" selection-start-column="38" selection-end-line="39" selection-end-column="38" />
         </state>
       </provider>
     </entry>
