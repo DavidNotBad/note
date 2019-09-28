@@ -411,6 +411,20 @@ if (destinationFolder.exists()) {
 }
  
 logger.info("操作完成")
+
+
+# 线上真实仓库的.git/config
+# 修改url, 主要是使用ssh会报权限问题
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	logallrefupdates = true
+[remote "origin"]
+	url = file:///D:\env\gitblit-1.8.0\data\project\zx.git
+	fetch = +refs/heads/:refs/remotes/origin/
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
 ```
 
 

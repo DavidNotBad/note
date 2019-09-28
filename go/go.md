@@ -9,13 +9,20 @@ https://juejin.im/entry/59104f2d128fe1005857f534
 //go语言项目优化
 https://cloud.tencent.com/developer/article/1374180
 //书籍
-http://www.imooc.com/article/271514
+https://blog.51cto.com/cyberpunkzym/1915406
+https://yar999.gitbooks.io/gopl-zh/
+////go web 编程
+https://www.kancloud.cn/kancloud/web-application-with-golang/44105
 //文档
 http://docscn.studygolang.com/
 //详细文档
 http://c.biancheng.net/golang/
 //路线
 http://www.itcast.cn/course/go.shtml
+
+//collection
+https://github.com/chenhg5/collection
+https://godoc.org/github.com/chenhg5/collection
 ```
 
 ## 备份

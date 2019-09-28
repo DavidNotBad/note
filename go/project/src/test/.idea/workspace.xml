@@ -2,47 +2,91 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e41a93b6-a58d-4fb0-93cc-88809ec26d2c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../apiproject/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../apiproject/test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../db/mysql.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../db/mysql.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../beego.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../beego.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/app/controllers/Controllers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/app/controllers/UserControllers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/app/defs/User.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/app/middleware.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/app/models/Model.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/app/models/User.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/configs/DBConfig.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/configs/ServerConfig.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/core/driver/mysql.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/routers/app.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mvc2/test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/calc/calc.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../go.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../go.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/main/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/process/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/process/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/process/smsProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/process/smsProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/process/userProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/process/userProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/client/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/client/utils/utils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/common/message/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/common/message/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/common/message/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/common/message/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/common/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/common/utils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/main/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/main/processor.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/main/processor.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/main/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/main/redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/model/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/model/error.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/model/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/model/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/model/userDao.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/model/userDao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/process/smsProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/process/smsProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/process/userMgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/process/userMgr.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/process/userProcess.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/process/userProcess.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatroom/server/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/../chatroom/server/utils/utils.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../github.com/go-sql-driver/mysql" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/go-sql-driver/mysql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/helper/InArray.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/helper/InArray.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/structAutoGenerate/generate.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/structAutoGenerate/generate.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/structAutoGenerate/generate_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/structAutoGenerate/generate_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/structAutoGenerate/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/structAutoGenerate/users.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/structEngin/structEngin.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/structEngin/structEngin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/structEngin/structEngin_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/structEngin/structEngin_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/varBindValue/vbv.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/varBindValue/vbv.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gocar/varBindValue/vbv_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gocar/varBindValue/vbv_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/binder.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/binder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/binder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/binder_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_clickhouse.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_clickhouse.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_default.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_driver.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_driver.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_mssql.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_mssql.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_mysql.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_mysql.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_oracle.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_oracle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_postgres.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_sqlite3.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/builder_sqlite3.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/engin.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/engin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/engin_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/engin_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/engin_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/engin_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/err.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/err.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/gorose.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/gorose.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/gorose_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/gorose_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/logger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/logger_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/logger_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/logger_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/logger_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_api.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_api.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_api_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_api_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_execute.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_execute.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_execute_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_execute_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_execute_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_execute_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_session_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_session_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/orm_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/session_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/session_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/session_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/session_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/util.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/gorose/util_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/gorose/util_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/convertion.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/convertion.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/convertion_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/convertion_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/t.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/t.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../github.com/gohouse/t/t_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/../github.com/gohouse/t/t_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/dbops/api.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/dbops/conn.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/defs/apidef.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/defs/errors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/handlers.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/main.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/response.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../video_server_1_5/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../video_server_1_5/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../video_server_1_5/aa" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../video_server_1_5/api/dbops/internal.go" beforeDir="false" afterPath="$PROJECT_DIR$/../video_server_1_5/api/dbops/internal.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../php/composer.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/composer.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../php/study.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../php/study.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../software/k8s.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../software/k8s.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../url.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../url.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../系统运维/server.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../系统运维/server.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../sql.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../sql.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -55,26 +99,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="42" column="19" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
+            <state relative-caret-position="364">
+              <caret line="29" column="19" lean-forward="true" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="19" />
+              <folding>
+                <element signature="e#14#39#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../github.com/gohouse/gorose/orm_interface.go">
+        <entry file="file://$PROJECT_DIR$/calc/calc.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1638">
-              <caret line="63" column="21" selection-start-line="63" selection-start-column="21" selection-end-line="63" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query_interface.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
+            <state relative-caret-position="130">
+              <caret line="5" selection-start-line="5" selection-end-line="5" />
             </state>
           </provider>
         </entry>
@@ -88,6 +126,12 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>setwh</find>
+      <find>type ni</find>
+    </findStrings>
+  </component>
   <component name="GOROOT" path="E:\Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
@@ -96,11 +140,17 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/QueryBuilder.go" />
+        <option value="$PROJECT_DIR$/defs/Users.go" />
+        <option value="$PROJECT_DIR$/conn.go" />
+        <option value="$PROJECT_DIR$/models/User.go" />
+        <option value="$PROJECT_DIR$/db/conn.go" />
+        <option value="$PROJECT_DIR$/models/Model.go" />
+        <option value="$PROJECT_DIR$/calc/calc.go" />
         <option value="$PROJECT_DIR$/main.go" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="1" fullScreen="true">
     <option name="x" value="339" />
     <option name="y" value="27" />
     <option name="width" value="1400" />
@@ -123,6 +173,11 @@
             </path>
             <path>
               <item name="test" type="b2602c69:ProjectViewProjectNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="calc" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="test" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
@@ -142,6 +197,11 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\www\note\go\project\src\test\db" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -155,9 +215,9 @@
     </option>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
+    <frame x="0" y="0" width="1920" height="1080" extended-state="1" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26284796" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16220556" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -211,24 +271,59 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
+    <entry file="file://$PROJECT_DIR$/../mvc2/test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="42" column="19" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
+        <state relative-caret-position="78">
+          <caret line="46" column="13" selection-start-line="46" selection-start-column="13" selection-end-line="59" selection-end-column="19" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/gohouse/gorose/orm_api_interface.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="5" column="33" lean-forward="true" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/defs/Users.go" />
     <entry file="file://$PROJECT_DIR$/../github.com/gohouse/gorose/orm_interface.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1638">
-          <caret line="63" column="21" selection-start-line="63" selection-start-column="21" selection-end-line="63" selection-end-column="21" />
+        <state relative-caret-position="210">
+          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../github.com/gohouse/gorose/orm_query_interface.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
+        <state relative-caret-position="130">
+          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Go/src/builtin/builtin.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="227" lean-forward="true" selection-start-line="227" selection-end-line="227" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/conn.go" />
+    <entry file="file://$PROJECT_DIR$/models/Model.go" />
+    <entry file="file://$PROJECT_DIR$/models/User.go" />
+    <entry file="file://$PROJECT_DIR$/calc/calc.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="29" column="19" lean-forward="true" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="19" />
+          <folding>
+            <element signature="e#14#39#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

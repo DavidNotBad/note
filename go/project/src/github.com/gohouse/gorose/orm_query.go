@@ -15,7 +15,8 @@ func (dba *Orm) Select() error {
 	}
 
 	// 执行查询
-	return dba.GetISession().Query(sqlStr, args...)
+	_, err = dba.GetISession().Query(sqlStr, args...)
+	return err
 }
 
 // First : select one row , relation limit set
@@ -88,7 +89,7 @@ func (dba *Orm) _unionBuild(union, field string) (interface{}, error) {
 	}
 
 	// 执行查询
-	err = dba.GetISession().Query(sqls, args...)
+	_, err = dba.GetISession().Query(sqls, args...)
 	if err != nil {
 		return tmp, err
 	}
@@ -108,46 +109,20 @@ func (dba *Orm) _unionBuild(union, field string) (interface{}, error) {
 	return tmp, nil
 }
 
-// Get : select more rows , relation limit set
-func (dba *Orm) Value(field string) (v t.T, err error) {
-	dba.Limit(1)
-	err = dba.Select()
-	if err != nil {
-		return
-	}
-	//var binder = dba.GetISession().GetIBinder()
-	//switch binder.GetBindType() {
-	//case OBJECT_MAP, OBJECT_MAP_SLICE, OBJECT_MAP_SLICE_T, OBJECT_MAP_T:
-	//	v = t.New(binder.GetBindResult().MapIndex(reflect.ValueOf(field)).Interface())
-	//case OBJECT_STRUCT, OBJECT_STRUCT_SLICE:
-	//	bindResult := reflect.Indirect(binder.GetBindResult())
-	//	v = dba._valueFromStruct(bindResult, field)
-	//}
-	return
-}
-func (dba *Orm) _valueFromStruct(bindResult reflect.Value, field string) (v t.T) {
-	ostype := bindResult.Type()
-	for i := 0; i < ostype.NumField(); i++ {
-		tag := ostype.Field(i).Tag.Get(TAGNAME)
-		if tag == field || ostype.Field(i).Name == field {
-			v = t.New(bindResult.FieldByName(ostype.Field(i).Name))
-		}
-	}
-	return
-}
-
 // Pluck 获取一列数据, 第二个字段可以指定另一个字段的值作为这一列数据的key
-func (dba *Orm) Pluck(field string, fieldKey ...string) (v t.T, err error) {
+func (dba *Orm) Pluck(field string, fieldKey ...string) (v interface{}, err error) {
+	var binder = dba.GetISession().GetIBinder()
+	var resMap = make(map[interface{}]interface{}, 0)
+	var resSlice = make([]interface{}, 0)
+
 	err = dba.Select()
 	if err != nil {
 		return
 	}
-	var binder = dba.GetISession().GetIBinder()
-	var resMap = make(t.MapInterface, 0)
-	var resSlice = t.Slice{}
+
 	switch binder.GetBindType() {
 	case OBJECT_MAP, OBJECT_MAP_T, OBJECT_STRUCT: // row
-		var key, val t.T
+		var key, val interface{}
 		if len(fieldKey) > 0 {
 			key, err = dba.Value(fieldKey[0])
 			if err != nil {
@@ -157,21 +132,20 @@ func (dba *Orm) Pluck(field string, fieldKey ...string) (v t.T, err error) {
 			if err != nil {
 				return
 			}
-			v = t.New(t.Map{key: val})
+			resMap[key] = val
 		} else {
 			v, err = dba.Value(field)
 			if err != nil {
 				return
 			}
 		}
-		return
 	case OBJECT_MAP_SLICE, OBJECT_MAP_SLICE_T:
 		for _, item := range t.New(binder.GetBindResultSlice().Interface()).Slice() {
 			val := item.MapInterface()
 			if len(fieldKey) > 0 {
-				resMap[val[fieldKey[0]].Interface()] = val[field]
+				resMap[val[fieldKey[0]].Interface()] = val[field].Interface()
 			} else {
-				resSlice = append(resSlice, val[field])
+				resSlice = append(resSlice, val[field].Interface())
 			}
 		}
 	case OBJECT_STRUCT_SLICE: // rows
@@ -181,16 +155,60 @@ func (dba *Orm) Pluck(field string, fieldKey ...string) (v t.T, err error) {
 			if len(fieldKey) > 0 {
 				mapkey := dba._valueFromStruct(val, fieldKey[0])
 				mapVal := dba._valueFromStruct(val, field)
-				resMap[mapkey.Interface()] = mapVal
+				resMap[mapkey] = mapVal
 			} else {
 				resSlice = append(resSlice, dba._valueFromStruct(val, field))
 			}
 		}
+	case OBJECT_STRING:
+		res := dba.GetISession().GetBindAll()
+		if len(res) > 0 {
+			for _, val := range res {
+				if len(fieldKey) > 0 {
+					resMap[val[fieldKey[0]]] = val[field]
+				} else {
+					resSlice = append(resSlice, val[field])
+				}
+			}
+		}
 	}
 	if len(fieldKey) > 0 {
-		v = t.New(t.New(resMap).Map())
+		v = resMap
 	} else {
-		v = t.New(resSlice)
+		v = resSlice
+	}
+	return
+}
+
+// Get : select more rows , relation limit set
+func (dba *Orm) Value(field string) (v interface{}, err error) {
+	dba.Limit(1)
+	err = dba.Select()
+	if err != nil {
+		return
+	}
+	var binder = dba.GetISession().GetIBinder()
+	switch binder.GetBindType() {
+	case OBJECT_MAP, OBJECT_MAP_SLICE, OBJECT_MAP_SLICE_T, OBJECT_MAP_T:
+		v = reflect.ValueOf(binder.GetBindResult()).MapIndex(reflect.ValueOf(field)).Interface()
+	case OBJECT_STRUCT, OBJECT_STRUCT_SLICE:
+		bindResult := reflect.Indirect(reflect.ValueOf(binder.GetBindResult()))
+		v = dba._valueFromStruct(bindResult, field)
+	case OBJECT_STRING:
+		res := dba.GetISession().GetBindAll()
+		if len(res) > 0 {
+			v = res[0][field]
+		}
+	}
+	return
+}
+func (dba *Orm) _valueFromStruct(bindResult reflect.Value, field string) (v interface{}) {
+	ostype := bindResult.Type()
+	for i := 0; i < ostype.NumField(); i++ {
+		tag := ostype.Field(i).Tag.Get(TAGNAME)
+		if tag == field || ostype.Field(i).Name == field {
+			v = bindResult.FieldByName(ostype.Field(i).Name).Interface()
+		}
 	}
 	return
 }
@@ -215,6 +233,53 @@ func (dba *Orm) Chunk(limit int, callback func([]Data) error) (err error) {
 		// 而第二次以后执行的, 都会再次解析并保存, 数据结构是slice, 故会累积起来
 		dba.ClearBindValues()
 		result, _ = dba.Offset(page * limit).Get()
+	}
+	return
+}
+
+// ChunkStruct : 同Chunk,只不过不用返回map, 而是绑定数据到传入的对象上
+// 这里一定要传入绑定struct
+func (dba *Orm) ChunkStruct(limit int, callback func() error) (err error) {
+	var page = 0
+	//var tableName = dba.GetISession().GetIBinder().GetBindName()
+	// 先执行一条看看是否报错, 同时设置指定的limit, offset
+	err = dba.Limit(limit).Offset(page * limit).Select()
+	if err != nil {
+		return
+	}
+	switch dba.GetIBinder().GetBindType() {
+	case OBJECT_STRUCT,OBJECT_MAP:
+		var ibinder = dba.GetIBinder()
+		var result = ibinder.GetBindResult()
+		for result!=nil {
+			if err = callback(); err != nil {
+				break
+			}
+			page++
+			// 清空结果
+			result = nil
+			// 清理绑定数据, 进行下一次操作, 因为绑定数据是每一次执行的时候都会解析并保存的
+			// 而第二次以后执行的, 都会再次解析并保存, 数据结构是slice, 故会累积起来
+			dba.ClearBindValues()
+			_ = dba.Table(ibinder.GetBindOrigin()).Offset(page * limit).Select()
+			result = dba.GetIBinder().GetBindResultSlice()
+		}
+	case OBJECT_STRUCT_SLICE,OBJECT_MAP_SLICE:
+		var ibinder = dba.GetIBinder()
+		var result = ibinder.GetBindResultSlice()
+		for result.Interface()!=nil {
+			if err = callback(); err != nil {
+				break
+			}
+			page++
+			// 清空结果
+			result.Set(result.Slice(0,0))
+			// 清理绑定数据, 进行下一次操作, 因为绑定数据是每一次执行的时候都会解析并保存的
+			// 而第二次以后执行的, 都会再次解析并保存, 数据结构是slice, 故会累积起来
+			dba.ClearBindValues()
+			_ = dba.Table(ibinder.GetBindOrigin()).Offset(page * limit).Select()
+			result = dba.GetIBinder().GetBindResultSlice()
+		}
 	}
 	return
 }

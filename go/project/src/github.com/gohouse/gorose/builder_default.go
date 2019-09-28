@@ -141,6 +141,8 @@ func (b *BuilderDefault) BuildData(operType string) (string, string, string) {
 		case reflect.Map:
 			return b.parseData(operType, t.New(data).SliceMapStringInterface())
 		}
+	case reflect.String:
+		return data.(string), "", ""
 	}
 	return "", "", ""
 }
@@ -282,13 +284,18 @@ func (b *BuilderDefault) BuildJoin() (s string, err error) {
 		}
 
 		argsLength := len(args)
+		var prefix = b.IOrm.GetISession().GetIEngin().GetPrefix()
 		switch argsLength {
 		case 1: // join字符串 raw
-			w = args[0].(string)
+			//w = args[0].(string)
+			w = fmt.Sprintf("%s%s", prefix, args[0])
 		case 2: // join表 + 字符串
-			w = args[0].(string) + " ON " + args[1].(string)
+			//w = args[0].(string) + " ON " + args[1].(string)
+			w = fmt.Sprintf("%s%s ON %s", prefix, args[0], args[1])
 		case 4: // join表 + (a字段+关系+a字段)
-			w = args[0].(string) + " ON " + args[1].(string) + " " + args[2].(string) + " " + args[3].(string)
+			//w = args[0].(string) + " ON " + args[1].(string) + " " + args[2].(string) + " " + args[3].(string)
+
+			w = fmt.Sprintf("%s%s ON %s %s %s", prefix, args[0], args[1], args[2], args[3])
 		default:
 			err = errors.New("join format error")
 			b.IOrm.GetISession().GetIEngin().GetLogger().Error(err.Error())
@@ -336,7 +343,7 @@ func (b *BuilderDefault) BuildOrder() string {
 }
 
 func (b *BuilderDefault) BuildLimit() string {
-	if b.IOrm.GetUnion()!=nil {
+	if b.IOrm.GetUnion() != nil {
 		return ""
 	}
 	return If(b.IOrm.GetLimit() == 0, "", " LIMIT "+strconv.Itoa(b.IOrm.GetLimit())).(string)
@@ -346,7 +353,7 @@ func (b *BuilderDefault) BuildOffset() string {
 	if b.BuildLimit() == "" {
 		return ""
 	}
-	if b.IOrm.GetUnion()!=nil {
+	if b.IOrm.GetUnion() != nil {
 		return ""
 	}
 	return If(b.IOrm.GetOffset() == 0, "", " OFFSET "+strconv.Itoa(b.IOrm.GetOffset())).(string)
@@ -384,25 +391,37 @@ func (b *BuilderDefault) parseWhere(ormApi IOrm) (string, error) {
 			switch paramReal := params[0].(type) {
 			case string:
 				where = append(where, condition+" ("+paramReal+")")
-			case map[string]interface{}: // 一维数组
+			case map[string]interface{}: // map
 				var whereArr []string
 				for key, val := range paramReal {
 					whereArr = append(whereArr, key+"="+b.GetPlaceholder())
 					b.IOrm.SetBindValues(val)
 				}
-				where = append(where, condition+" ("+strings.Join(whereArr, " and ")+")")
+				if len(whereArr) != 0 {
+					where = append(where, condition+" ("+strings.Join(whereArr, " and ")+")")
+				}
+			case []interface{}: // 一维数组
+				var whereArr []string
+				whereMoreLength := len(paramReal)
+				switch whereMoreLength {
+				case 3, 2:
+					res, err := b.parseParams(paramReal, ormApi)
+					if err != nil {
+						return res, err
+					}
+					whereArr = append(whereArr, res)
+				default:
+					return "", errors.New("where data format is wrong")
+				}
+				if len(whereArr) != 0 {
+					where = append(where, condition+" ("+strings.Join(whereArr, " and ")+")")
+				}
 			case [][]interface{}: // 二维数组
 				var whereMore []string
 				for _, arr := range paramReal { // {{"a", 1}, {"id", ">", 1}}
 					whereMoreLength := len(arr)
 					switch whereMoreLength {
-					case 3:
-						res, err := b.parseParams(arr, ormApi)
-						if err != nil {
-							return res, err
-						}
-						whereMore = append(whereMore, res)
-					case 2:
+					case 3, 2:
 						res, err := b.parseParams(arr, ormApi)
 						if err != nil {
 							return res, err
@@ -412,7 +431,9 @@ func (b *BuilderDefault) parseWhere(ormApi IOrm) (string, error) {
 						return "", errors.New("where data format is wrong")
 					}
 				}
-				where = append(where, condition+" ("+strings.Join(whereMore, " and ")+")")
+				if len(whereMore) != 0 {
+					where = append(where, condition+" ("+strings.Join(whereMore, " and ")+")")
+				}
 			case func():
 				// 清空where,给嵌套的where让路,复用这个节点
 				ormApi.SetWhere([][]interface{}{})
@@ -469,10 +490,10 @@ func (b *BuilderDefault) parseParams(args []interface{}, ormApi IOrm) (s string,
 		paramsToArr = append(paramsToArr, argsReal[0].(string))
 		paramsToArr = append(paramsToArr, argsReal[1].(string))
 
-		switch argsReal[1] {
-		case "like", "not like":
-			paramsToArr = append(paramsToArr, b.GetPlaceholder())
-			b.IOrm.SetBindValues(argsReal[2])
+		switch strings.Trim(strings.ToLower(t.New(argsReal[1]).String()), " ") {
+		//case "like", "not like":
+		//	paramsToArr = append(paramsToArr, b.GetPlaceholder())
+		//	b.IOrm.SetBindValues(argsReal[2])
 		case "in", "not in":
 			var tmp []string
 			var ar2 = t.New(argsReal[2]).Slice()
@@ -481,11 +502,13 @@ func (b *BuilderDefault) parseParams(args []interface{}, ormApi IOrm) (s string,
 				b.IOrm.SetBindValues(t.New(item).Interface())
 			}
 			paramsToArr = append(paramsToArr, "("+strings.Join(tmp, ",")+")")
+
 		case "between", "not between":
 			var ar2 = t.New(argsReal[2]).Slice()
 			paramsToArr = append(paramsToArr, b.GetPlaceholder()+" and "+b.GetPlaceholder())
 			b.IOrm.SetBindValues(ar2[0].Interface())
 			b.IOrm.SetBindValues(ar2[1].Interface())
+
 		default:
 			paramsToArr = append(paramsToArr, b.GetPlaceholder())
 			b.IOrm.SetBindValues(argsReal[2])

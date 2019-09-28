@@ -1,49 +1,38 @@
 package main
 
 import (
-    "fmt"
-    _ "github.com/go-sql-driver/mysql"
-    //https://www.kancloud.cn/fizz/gorose-2/1135835
-    "github.com/gohouse/gorose"
+	"fmt"
+	"time"
 )
 
 
-type Users struct {
-	Uid  int64       `gorose:"uid"`
-	Name string      `gorose:"name"`
-	Age  int64       `gorose:"age"`
-	Xxx  interface{} `gorose:"-"` // 这个字段在orm中会忽略
+type Person struct {
+	FirstName, LastName string
+	Dob time.Time
+	Email, Location string
+}
+func (p *Person) ChangeLocation(newLocation string) {
+	p.Location= newLocation
+}
+func (p Person) PrintName() {
+	fmt.Printf("\n%s %s\n", p.FirstName, p.LastName)
+}
+//A person method
+func (p Person) PrintDetails() {
+	fmt.Printf("[Date of Birth: %s, Email: %s, Location: %s ]\n", p.Dob.String(), p.Email,
+		p.Location)
 }
 
-func (u *Users) TableName() string {
-	return "users"
+
+func main()  {
+	p := Person{
+		"Shiju",
+		"Varghese",
+		time.Date(1979, time.February, 17, 0, 0, 0, 0, time.UTC),
+		"shiju@email.com",
+		"Kochi",
+	}
+	p.ChangeLocation("Santa Clara")
+	p.PrintName()
+	p.PrintDetails()
 }
-
-var engin *gorose.Engin
-
-func init() {
-	engin, _ = gorose.Open(&gorose.Config{
-		Driver: "mysql",
-		Dsn:    "root:root@tcp(127.0.0.1:3306)/test?charset=utf8",
-	})
-}
-
-var (
-    db = engin.NewOrm()
-    u1 Users
-    Users1 = db.Table(&u1)
-)
-
-func main() {
-    var db = engin.NewOrm()
-
-    var u1 Users
-    _ = db.Table(&u1).Fields("uid,name,age").Where("age", ">", 0).OrderBy("uid desc").Select()
-    db.Reset()
-    fmt.Println(u1)
-
-    var u2 []Users
-    _ = db.Table(&u2).Fields("uid,name,age").Select()
-    fmt.Println(u2)
-}
-

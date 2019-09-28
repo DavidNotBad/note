@@ -6,20 +6,22 @@ import (
 	"testing"
 )
 
-func TestOrm_First(t *testing.T) {
+func TestOrm_BuildSql2(t *testing.T) {
 	db := DB()
-	var u = Users{}
-	var err error
-	//res, err := db.Table(&u).Get()
-	//if err != nil {
-	//	t.Error(err.Error())
-	//}
-	//t.Log(res)
-	err = db.Table(&u).Select()
+	var u = "age=age+1,num=num+1"
+	var wheres interface{}
+	wheres = [][]interface{}{{"a",">","b"},{"a","b"}}
+	sqlstr,a,b := db.Force().Table("users").Data(u).Where(wheres).BuildSql("update")
+
+	t.Log(sqlstr,a,b)
+}
+
+func TestOrm_First(t *testing.T) {
+	res, err := DB().Table("users").First()
 	if err != nil {
 		t.Error(err.Error())
 	}
-	t.Log(u)
+	t.Log(res)
 }
 
 func TestOrm_Select(t *testing.T) {
@@ -66,7 +68,6 @@ func TestOrm_Select2(t *testing.T) {
 	t.Log(u)
 }
 
-
 type Users2 struct {
 	Name string `orm:"name"`
 	Age  int    `orm:"age"`
@@ -82,8 +83,11 @@ func TestOrm_Get2(t *testing.T) {
 	var err error
 	var u []Users2
 
-	//res, err := db.Table("users").Where("uid", ">", 2).Limit(2).Get()
-	res, err := db.Table(&u).Where("uid", ">", 0).Limit(2).Get()
+	res, err := db.Table("users").Where("uid", ">", 2).
+		//Where("1","=","1").
+		Where("1 = 1").
+		Limit(2).Get()
+	//res, err := db.Table(&u).Where("uid", ">", 0).Limit(2).Get()
 	fmt.Println(db.LastSql())
 	if err != nil {
 		t.Error(err.Error())
@@ -106,6 +110,7 @@ func TestOrm_Get(t *testing.T) {
 		OrWhereNotIn("ee", []interface{}{1, 2}).
 		WhereBetween("ff", []interface{}{11, 21}).
 		WhereNotBetween("ff", []interface{}{1, 2}).
+		Where("a", "like", "%3%").
 		OrWhere(func() {
 			orm.Where("c", 3).OrWhere(func() {
 				orm.Where("d", ">", 4)
@@ -122,27 +127,26 @@ func TestOrm_Get(t *testing.T) {
 func TestOrm_Pluck(t *testing.T) {
 	orm := DB()
 
-	//var u = UsersMap{}
-	var u = UsersMapSlice{}
-	//var u Users
+	//var u = UsersMapSlice{}
 	//var u []Users
-	ormObj := orm.Table(&u)
+	ormObj := orm.Table("users")
 	//res,err := ormObj.Pluck("name", "uid")
 	res, err := ormObj.Limit(5).Pluck("name")
 	if err != nil {
 		t.Error(err.Error())
 	}
-	t.Log(res, u)
+	t.Log(res, orm.LastSql())
 }
 
 func TestOrm_Value(t *testing.T) {
 	db := DB()
 
 	//var u = UsersMap{}
-	var u = UsersMapSlice{}
-	//var u Users
-	//var u []Users
-	ormObj := db.Table(&u)
+	//var u = UsersMapSlice{}
+	////var u Users
+	////var u []Users
+	//ormObj := db.Table(&u)
+	ormObj := db.Table("users")
 	res, err := ormObj.Limit(5).Value("name")
 	if err != nil {
 		t.Error(err.Error())
@@ -153,13 +157,25 @@ func TestOrm_Value(t *testing.T) {
 func TestOrm_Count(t *testing.T) {
 	db := DB()
 
-	var u = UsersMap{}
-	ormObj := db.Table(&u)
+	//var u = UsersMap{}
+	//ormObj := db.Table(&u)
+	ormObj := db.Table("users")
+
 	res, err := ormObj.Count()
 	if err != nil {
 		t.Error(err.Error())
 	}
 	t.Log(res, db.LastSql())
+}
+
+func TestOrm_Count2(t *testing.T) {
+	var u Users
+	var count int64
+	count, err := DB().Table(&u).Count()
+	if err != nil {
+		t.Error(err.Error())
+	}
+	t.Log(count)
 }
 
 func TestOrm_Chunk(t *testing.T) {
@@ -177,6 +193,27 @@ func TestOrm_Chunk(t *testing.T) {
 		t.Error(err.Error())
 	}
 	t.Log("Chunk() success")
+}
+
+func TestOrm_Chunk2(t *testing.T) {
+	orm := DB()
+
+	var u []Users
+	var i int
+	err := orm.Table(&u).ChunkStruct(2, func() error {
+		//for _, item := range u {
+			t.Log(u)
+		//}
+		if i==2{
+			return errors.New("故意停止,防止数据过多,浪费时间")
+		}
+		i++
+		return nil
+	})
+	if err != nil && err.Error() != "故意停止,防止数据过多,浪费时间" {
+		t.Error(err.Error())
+	}
+	t.Log("ChunkStruct() success")
 }
 
 func TestOrm_Loop(t *testing.T) {
@@ -201,12 +238,11 @@ func TestOrm_Loop(t *testing.T) {
 	t.Log("Loop() success")
 }
 
-
 func TestOrm_Paginate(t *testing.T) {
 	db := DB()
 
 	var u []Users
-	res,err := db.Table(&u).Limit(2).Paginate()
+	res, err := db.Table(&u).Limit(2).Paginate()
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -215,15 +251,15 @@ func TestOrm_Paginate(t *testing.T) {
 }
 
 func BenchmarkNewOrm(b *testing.B) {
-	engin:=initDB()
-	for i:=0;i<b.N;i++{
+	engin := initDB()
+	for i := 0; i < b.N; i++ {
 		engin.NewOrm().Table("users").First()
 	}
 }
 
 func BenchmarkNewOrm2(b *testing.B) {
-	engin:=initDB()
-	for i:=0;i<b.N;i++{
+	engin := initDB()
+	for i := 0; i < b.N; i++ {
 		engin.NewOrm().Table("users").First()
 	}
 }
