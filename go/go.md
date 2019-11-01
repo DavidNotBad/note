@@ -32,6 +32,18 @@ https://godoc.org/github.com/chenhg5/collection
 //https://www.jianshu.com/p/c4ec92afeca8
 ```
 
+## 安装被墙的库
+
+```go
+//找到要安装的库的git仓库地址
+//安装git仓库到该目录下
+mkdir -p $GOPATH/src/golang.org/x
+cd $GOPATH/src/golang.org/x
+git clone xxx.git
+//再执行go get, 报错可忽略, 看到github目录有相应文件夹就代表成功
+//可选: 删除$GOPATH/src/golang.org/x下的下载文件
+```
+
 
 
 ## json-to-go
@@ -1247,7 +1259,7 @@ err := json.Unmarshal([]byte("json字符串"), &a)
 //线程(其他语言称进程)
 //协程(类似其他语言的线程), 拥有独立的栈空间, 共享堆空间, 由程序员控制, 优化后的线程
 
-//1. 启动一个协程
+//1. 启动一个协程(并发)
 go 函数名()
 
 //MPG
@@ -1260,11 +1272,116 @@ go 函数名()
 //3. 当协程阻塞时, go语言有一种各个协程间来回切换的机制, 
 //   这种机制既能够让主线程执行, 同时也能让排队的协程得到执行的机会
 
-//设置运行的cpu数
+//设置运行的cpu数(并行)
 import "runtime"
 num := runtime.NumCPU()  //获取当前的系统cpu数量
 runtime.GOMAXPROCS(num - 1)  //设置num-1的cpu运行go程序
-//go1.8后, 默认让程序运行在多个核上, 可以不用设置了
+//go1.8(1.5??)后, 默认让程序运行在多个核上, 可以不用设置了
+```
+
+## 终止程序前执行多个goroutines
+
+```go
+// This sample program demonstrates how to create goroutines
+package main
+import (
+	"fmt"
+	"math/rand"
+	"sync"
+	"time"
+)
+// wg is used to wait for the program to finish goroutines.
+var wg sync.WaitGroup
+func main() {
+	// Add a count of two, one for each goroutine.
+	wg.Add(2)
+	fmt.Println("Start Goroutines")
+	//launch a goroutine with label "A"
+	go printCounts("A")
+	//launch a goroutine with label "B"
+	go printCounts("B")
+	// Wait for the goroutines to finish.
+	fmt.Println("Waiting To Finish")
+	wg.Wait()
+	fmt.Println("\nTerminating Program")
+}
+
+func printCounts(label string) {
+	// Schedule the call to WaitGroup's Done to tell we are done.
+	defer wg.Done()
+	// Randomly wait
+	for count := 1; count <= 10; count++ {
+		sleep := rand.Int63n(1000)
+		time.Sleep(time.Duration(sleep) * time.Millisecond)
+		fmt.Printf("Count: %d from %s\n", count, label)
+	}
+}
+```
+
+## 无缓冲管道
+
+```go
+package main
+import (
+	"fmt"
+	"sync"
+)
+// wg is used to wait for the program to finish.
+var wg sync.WaitGroup
+func main() {
+	count := make(chan int)
+	// Add a count of two, one for each goroutine.
+	wg.Add(2)
+	fmt.Println("Start Goroutines")
+	//launch a goroutine with label "A"
+	go printCounts("A", count)
+	//launch a goroutine with label "B"
+	go printCounts("B", count)
+	fmt.Println("Channel begin")
+	count <- 1
+	// Wait for the goroutines to finish.
+	fmt.Println("Waiting To Finish")
+	wg.Wait()
+	fmt.Println("\nTerminating Program")
+}
+
+func printCounts(label string, count chan int) {
+	// Schedule the call to WaitGroup's Done to tell we are done.
+	defer wg.Done()
+	for {
+		//Receives message from Channel
+		val, ok := <-count
+		if !ok {
+			fmt.Println("Channel was closed")
+			return
+		}
+		fmt.Printf("Count: %d received from %s \n", val, label)
+		if val == 10 {
+			fmt.Printf("Channel Closed from %s \n", label)
+			// Close the channel
+			close(count)
+			return
+		}
+		val++
+		// Send count back to the other goroutine.
+		count <- val
+	}
+}
+```
+
+## 缓冲管道
+
+```go
+package main
+import "fmt"
+func main() {
+	messages := make(chan string, 2)
+	messages <- "Golang"
+	messages <- "Gopher"
+	//Recieve value from buffered channel
+	fmt.Println(<-messages)
+	fmt.Println(<-messages)
+}
 ```
 
 ## channel管道
@@ -1272,6 +1389,11 @@ runtime.GOMAXPROCS(num - 1)  //设置num-1的cpu运行go程序
 ```go
 //说明
 //https://www.jianshu.com/p/24ede9e90490
+
+//缓冲管道
+var intChan = make(chan int, 3)
+//无缓冲管道
+var intChan = make(chan int)
 
 //1. 创建一个可以存放三个int类型的管道
 var intChan = make(chan int, 3)
@@ -1807,6 +1929,37 @@ func main() {
         fmt.Println(record)
     }
     //--------遍历放入map----end
+}
+```
+
+## 把json映射到结构体里
+
+```go
+//来源于文件
+file, _ := os.Open("config.json")
+defer file.Close()
+decoder := json.NewDecoder(file)
+config = Configuration{}
+err := decoder.Decode(&config)
+if err != nil {
+	log.Fatal(err)
+}
+
+//来源于字符串
+const jsonStream = `
+	{"Name": "Ed", "Text": "Knock knock."}
+	{"Name": "Sam", "Text": "Who's there?"}
+	{"Name": "Ed", "Text": "Go fmt."}
+	{"Name": "Sam", "Text": "Go fmt who?"}
+	{"Name": "Ed", "Text": "Go fmt yourself!"}
+`
+type Message struct {
+	Name, Text string
+}
+var m Message
+err := json.NewDecoder(strings.NewReader(jsonStream)).Decode(&m)
+if err != nil {
+	log.Fatal(err)
 }
 ```
 
