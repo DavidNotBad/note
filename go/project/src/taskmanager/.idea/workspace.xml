@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e41a93b6-a58d-4fb0-93cc-88809ec26d2c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../go.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../go.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../apiproject/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../apiproject/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/test.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/calc/calc.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/main.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../software/git.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../software/git.md" afterDir="false" />
-    </list>
+    <list default="true" id="e41a93b6-a58d-4fb0-93cc-88809ec26d2c" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,8 +59,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/userController.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="16" column="55" selection-start-line="16" selection-start-column="43" selection-end-line="16" selection-end-column="55" />
+            <state relative-caret-position="390">
+              <caret line="22" column="16" lean-forward="true" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -586,8 +574,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/userController.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="16" column="55" selection-start-line="16" selection-start-column="43" selection-end-line="16" selection-end-column="55" />
+        <state relative-caret-position="390">
+          <caret line="22" column="16" lean-forward="true" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
         </state>
       </provider>
     </entry>
